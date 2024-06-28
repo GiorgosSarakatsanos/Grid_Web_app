@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Grid PDF Generator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo" class="logo">
+        <span class="company-name">Your Company Name</span>
+        <button class="settings-toggle">Settings</button>
+        <button class="contact-btn">Contact</button>
+    </nav>
+    <div class="container">
+        <div class="sidebar">
+            <form method="POST" enctype="multipart/form-data">
+                {{ form.hidden_tag() }}
+                <div class="form-group">
+                    {{ form.image.label }}<br>
+                    {{ form.image }}
+                </div>
+                <div class="form-group">
+                    {{ form.paper_size.label }}<br>
+                    {{ form.paper_size }}
+                </div>
+                <div class="form-group">
+                    {{ form.custom_width.label }}<br>
+                    {{ form.custom_width }}
+                </div>
+                <div class="form-group">
+                    {{ form.custom_height.label }}<br>
+                    {{ form.custom_height }}
+                </div>
+                <div class="form-group">
+                    {{ form.gap.label }}<br>
+                    {{ form.gap }}
+                </div>
+                <button type="submit">{{ form.submit }}</button>
+            </form>
+        </div>
+        <div class="main-content">
+            {% if pdf_path %}
+            <embed src="{{ url_for('download', filename=pdf_path.split('/')[-1]) }}" width="100%" height="600px" />
+            <a href="{{ url_for('download', filename=pdf_path.split('/')[-1]) }}" target="_blank">Download PDF</a>
+            {% endif %}
+            {% if outline_pdf_path %}
+            <embed src="{{ url_for('download', filename=outline_pdf_path.split('/')[-1]) }}" width="100%" height="600px" />
+            <a href="{{ url_for('download', filename=outline_pdf_path.split('/')[-1]) }}" target="_blank">Download Outline PDF</a>
+            {% endif %}
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
