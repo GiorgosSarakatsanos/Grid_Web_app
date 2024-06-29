@@ -10,7 +10,7 @@ class ImageForm(FlaskForm):
         ('A3', 'A3 (420mm x 297mm)'),
         ('A4', 'A4 (297mm x 210mm)')
         ], validators=[DataRequired()])
-    gap = FloatField('Gap Between Images (mm)', default=2, validators=[Optional(), NumberRange(min=0)])
+    gap = FloatField('Gap Between Images (mm)', default=10, validators=[Optional(), NumberRange(min=0)])
     img_size = SelectField('Paper Size', choices=[
         ('Card', 'Card (85mm x 55mm)'),
         ('Square', 'Square (55mm x 55mm)')

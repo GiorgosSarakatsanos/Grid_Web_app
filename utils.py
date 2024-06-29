@@ -33,26 +33,25 @@ def generate_pdf(image_path, form):
     c = canvas.Canvas(pdf_path, pagesize=landscape((width, height)))
     
     # Numbers in mm
-    margin_top_bottom = 15  * mm
+    margin_bottom = 15  * mm
+    margin_top = 15  * mm
     margin_left = 37  * mm
     margin_right = 17  * mm
-    gap = (form.gap.data or 2)
-
-    img_width, img_height = image.size
-    img_width = img_width * mm
-    img_height = img_height * mm
+    padding = 5  * mm
+    gap = (form.gap.data or 10)
     
-    # Numbers in points
+    # define image size
+    img_width, img_height = img_size(form.img_size.data)
     
-    x = margin_left
-    y = height - margin_top_bottom - img_height
+    x = margin_left + padding
+    y = height - margin_top - img_height - padding
 
-    while y > margin_top_bottom:
+    while y > margin_bottom:
         while x + img_width < width - margin_right:
             c.drawImage(image_path, x, y, width=img_width, height=img_height)
-            x += img_width + gap
-        y -= img_height + gap
-        x = margin_left
+            x += img_width + gap + padding * 2
+        y -= img_height + gap + padding * 2
+        x = margin_left + padding
     
     c.save()
     return pdf_path
@@ -66,7 +65,8 @@ def generate_outline_pdf(image_path, form):
     outline_pdf_path = os.path.splitext(image_path)[0] + '_outline.pdf'
     c = canvas.Canvas(outline_pdf_path, pagesize=landscape((width, height)))
     
-    margin_top_bottom = 15
+    margin_top = 15
+    margin_bottom = 15
     margin_left = 37
     margin_right = 17
 
@@ -76,20 +76,20 @@ def generate_outline_pdf(image_path, form):
     c.setLineWidth(line_thickness)
 
     # Top-left corner
-    c.line(margin_left, height - margin_top_bottom, margin_left + corner_line_length, height - margin_top_bottom)
-    c.line(margin_left, height - margin_top_bottom, margin_left, height - margin_top_bottom - corner_line_length)
+    c.line(margin_left, height - margin_top, margin_left + corner_line_length, height - margin_bottom)
+    c.line(margin_left, height - margin_top, margin_left, height - margin_bottom - corner_line_length)
 
     # Top-right corner
-    c.line(width - margin_right, height - margin_top_bottom, width - margin_right - corner_line_length, height - margin_top_bottom)
-    c.line(width - margin_right, height - margin_top_bottom, width - margin_right, height - margin_top_bottom - corner_line_length)
+    c.line(width - margin_right, height - margin_top, width - margin_right - corner_line_length, height - margin_bottom)
+    c.line(width - margin_right, height - margin_top, width - margin_right, height - margin_bottom - corner_line_length)
 
     # Bottom-left corner
-    c.line(margin_left, margin_top_bottom, margin_left + corner_line_length, margin_top_bottom)
-    c.line(margin_left, margin_top_bottom, margin_left, margin_top_bottom + corner_line_length)
+    c.line(margin_left, margin_top, margin_left + corner_line_length, margin_bottom)
+    c.line(margin_left, margin_top, margin_left, margin_bottom + corner_line_length)
 
     # Bottom-right corner
-    c.line(width - margin_right, margin_top_bottom, width - margin_right - corner_line_length, margin_top_bottom)
-    c.line(width - margin_right, margin_top_bottom, width - margin_right, margin_top_bottom + corner_line_length)
+    c.line(width - margin_right, margin_top, width - margin_right - corner_line_length, margin_bottom)
+    c.line(width - margin_right, margin_top, width - margin_right, margin_bottom + corner_line_length)
 
     # Draw the outline of the image
     image = Image.open(image_path)
@@ -106,8 +106,8 @@ def generate_outline_pdf(image_path, form):
     temp_image_path = "temp_image.png"
     image.save(temp_image_path)
 
-    c.drawImage(temp_image_path, margin_left, margin_top_bottom, width=image.width, height=image.height, mask='auto')
+    c.drawImage(temp_image_path, margin_left, margin_top, margin_bottom, mask='auto')
 
     c.save()
-    os.remove(temp_image_path)
+    # os.remove(temp_image_path)
     return outline_pdf_path

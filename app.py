@@ -1,6 +1,6 @@
 from flask import Flask, render_template, send_file
 from forms import ImageForm
-from utils import generate_pdf
+from utils import generate_pdf, generate_outline_pdf
 import os
 
 app = Flask(__name__)
@@ -16,7 +16,8 @@ def index():
         image.save(image_path)
         # Generate PDFs
         pdf_path = generate_pdf(image_path, form)
-        return render_template('index.html', form=form, pdf_path=pdf_path)
+        outline_pdf_path = generate_outline_pdf(image_path, form)
+        return render_template('index.html', form=form, pdf_path=pdf_path, outline_pdf_path=outline_pdf_path)
     return render_template('index.html', form=form)
 
 @app.route('/download/<filename>')
