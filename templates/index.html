@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="el">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,13 +8,17 @@
 </head>
 <body>
     <nav class="navbar">
-        <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo" class="logo">
-        <span class="company-name">Your Company Name</span>
-        <button class="settings-toggle">Settings</button>
-        <button class="contact-btn">Contact</button>
+        <div class="brand-container">
+            <img class="logo-img" src="{{ url_for('static', filename='img/logo.png') }}" alt="Fix Store">
+            <span class="company-name">Fix Store</span>
+        </div>
+        <div class="button-container">
+            <button class="settings-toggle">Settings</button>
+            <button class="contact-btn">Contact</button>
+        </div>
     </nav>
-    <div class="container">
-        <div class="sidebar">
+    <div class="main-content">
+        <aside>
             <form method="POST" enctype="multipart/form-data">
                 {{ form.hidden_tag() }}
                 <div class="form-group">
@@ -26,31 +30,60 @@
                     {{ form.paper_size }}
                 </div>
                 <div class="form-group">
-                    {{ form.custom_width.label }}<br>
-                    {{ form.custom_width }}
-                </div>
-                <div class="form-group">
-                    {{ form.custom_height.label }}<br>
-                    {{ form.custom_height }}
+                    {{ form.img_size.label }}<br>
+                    {{ form.img_size }}
                 </div>
                 <div class="form-group">
                     {{ form.gap.label }}<br>
                     {{ form.gap }}
                 </div>
-                <button type="submit">{{ form.submit }}</button>
+                <div class="form-group">
+                <button type="submit" style="background-color: transparent;" >{{ form.submit }}</button>
+                </div>
             </form>
-        </div>
-        <div class="main-content">
+            <div>
+                {% if outline_pdf_path %}
+                <!-- <embed src="{{ url_for('download', filename=outline_pdf_path.split('/')[-1]) }}" width="100%" height="600px" /> -->
+                <a href="{{ url_for('download', filename=outline_pdf_path.split('/')[-1]) }}" target="_blank">Download Outline PDF</a>
+                {% endif %}
+            </div>
+        </aside>
+        <main>
             {% if pdf_path %}
             <embed src="{{ url_for('download', filename=pdf_path.split('/')[-1]) }}" width="100%" height="600px" />
-            <a href="{{ url_for('download', filename=pdf_path.split('/')[-1]) }}" target="_blank">Download PDF</a>
+            <!-- <a href="{{ url_for('download', filename=pdf_path.split('/')[-1]) }}" target="_blank">Download PDF</a> -->
             {% endif %}
-            {% if outline_pdf_path %}
-            <embed src="{{ url_for('download', filename=outline_pdf_path.split('/')[-1]) }}" width="100%" height="600px" />
-            <a href="{{ url_for('download', filename=outline_pdf_path.split('/')[-1]) }}" target="_blank">Download Outline PDF</a>
-            {% endif %}
-        </div>
+        </main>
     </div>
+    <footer>
+        <div class="copyright">
+            &copy; 2021 Fix Store. All rights reserved.
+        </div>
+        <div class="contact-info">
+            <span>Email:
+                <a href="mailto:support@fixstore.info">Επικοινωνία</a>
+            </span>
+            <span>Phone: 2651075049</span>
+        </div>
+    </footer>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const paperSizeSelect = document.querySelector('#paper_size');
+            const customSizeGroup = document.querySelector('#custom-size-group');
+
+            function toggleCustomSize() {
+                if (paperSizeSelect.value === 'Custom') {
+                    customSizeGroup.style.display = 'block';
+                } else {
+                    customSizeGroup.style.display = 'none';
+                }
+            }
+
+            paperSizeSelect.addEventListener('change', toggleCustomSize);
+            toggleCustomSize(); // Initial call to set the correct display
+        });
+    </script>
 </body>
+
 </html>
