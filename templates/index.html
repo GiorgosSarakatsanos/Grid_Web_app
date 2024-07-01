@@ -23,52 +23,56 @@
                 <h2>Settings</h2>
                 <form method="POST" enctype="multipart/form-data">
                     {{ form.hidden_tag() }}
+                    <div class="form-group">
+                        <input type="file" name="image" accept="image/*" required>
+                    </div>
                     <div class="form-container">
                         <div class="form-group">
-                            {{ form.mode.label }}<br>
-                            {{ form.mode }}
+                            <select name="mode" id="mode" required>
+                                <option value="Page">Page</option>
+                                <option value="Numbering">Numbering</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="numbering-fields">
+                            <input type="number" name="start_number" placeholder="Start Number">
+                            <input type="number" name="end_number" placeholder="End Number">
                         </div>
                     </div>
                     
-                    <div class="form-group" id="numbering-fields" style="display: none;">
-                        {{ form.start_number.label }}<br>
-                        {{ form.start_number }}
-                        {{ form.end_number.label }}<br>
-                        {{ form.end_number }}
+                    <div class="form-container">
+                        <div class="form-group">
+                            <select name="paper_size" id="paper_size" required>
+                                <option value="C3">C3 (458mm x 324mm)</option>
+                                <option value="A3">A3 (420mm x 297mm)</option>
+                                <option value="A4">A4 (297mm x 210mm)</option>
+                                <option value="Custom">Custom</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="toggleCustomSize">
+                            <input type="number" name="custom_paper_width" placeholder="Custom Paper Width" required>
+                            <input type="number" name="custom_paper_height" placeholder="Custom Paper Height" required>
+                            
+                        </div>
                     </div>
                     <div class="form-group">
-                        {{ form.image.label }}<br>
-                        {{ form.image }}
+                        <select name="img_size" id="img_size" required>
+                            <option value="Card">Card</option>
+                            <option value="Square">Square</option>
+                            <option value="Custom">Custom</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="toggleCustomImgSize">
+                        <input type="number" name="custom_image_width" placeholder="Custom Image Width" required>
+                        <input type="number" name="custom_image_height" placeholder="Custom Image Height" required>
                     </div>
                     <div class="form-group">
-                        {{ form.paper_size.label }}<br>
-                        {{ form.paper_size }}
-                    </div>
-                    <div class="form-group" id="custom-size-group">
-                        {{ form.custom_paper_width.label }}<br>
-                        {{ form.custom_paper_width }}
-                        {{ form.custom_paper_height.label }}<br>
-                        {{ form.custom_paper_height }}
+                        <input type="number" name="gap" placeholder="Gap" required>
                     </div>
                     <div class="form-group">
-                        {{ form.img_size.label }}<br>
-                        {{ form.img_size }}
-                    </div>
-                    <div class="form-group" id="custom-img-size">
-                        {{ form.custom_image_width.label }}<br>
-                        {{ form.custom_image_width }}
-                        {{ form.custom_image_height.label }}<br>
-                        {{ form.custom_image_height }}
-                    </div>
-                    <div class="form-group">
-                        {{ form.gap.label }}<br>
-                        {{ form.gap }}
-                    </div>
-                    <div class="form-group">
-                    <button type="submit" style="background-color: transparent;" >{{ form.submit }}</button>
+                        <button type="submit">Generate PDF</button>
                     </div>
                 </form>
-            </div>
+             </div>
             
             <div>
                 {% if outline_pdf_path %}

@@ -31,19 +31,3 @@ class ImageForm(FlaskForm):
     custom_paper_height = IntegerField('Custom Paper Height (mm)', default=700, validators=[Optional()])
     custom_image_width = IntegerField('Custom Image Width (mm)', validators=[Optional()])
     custom_image_height = IntegerField('Custom Image Height (mm)', validators=[Optional()])
-
-    # def validate(self, **kwargs):
-    #     if not super().validate():
-    #         return False
-    #     if self.paper_size.data == 'Custom':
-    #         if not self.custom_paper_width.data or not self.custom_paper_height.data:
-    #             self.custom_paper_width.errors = list(self.custom_paper_width.errors) + ['This field is required for custom paper sizes.']
-    #             self.custom_paper_height.errors = list(self.custom_paper_height.errors) + ['This field is required for custom paper sizes.']
-    #             return False
-    #     if self.img_size.data == 'Custom':
-    #         if not self.custom_image_width.data or not self.custom_image_height.data:
-    #             self.custom_image_width.errors = list(self.custom_image_width.errors) + ['This field is required for custom image sizes.']
-    #             self.custom_image_height.errors = list(self.custom_image_height.errors) + ['This field is required for custom image sizes.']
-    #             return False
-    #     return True
-    

@@ -2,9 +2,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const modeSelect = document.querySelector('#mode');
     const numberingFields = document.querySelector('#numbering-fields');
     const paperSizeSelect = document.querySelector('#paper_size');
-    const customSizeGroup = document.querySelector('#custom-size-group'); // Corrected selector for custom page size
     const imgSizeSelect = document.querySelector('#img_size');
-    const customImgSizeGroup = document.querySelector('#custom-img-size');
+    const customSizeGroup = document.querySelector('#toggleCustomSize'); // Updated ID reference
+    const customImgSizeGroup = document.querySelector('#toggleCustomImgSize'); // Updated ID reference
 
     function toggleNumberingFields() {
         numberingFields.style.display = modeSelect.value === 'Numbering' ? 'block' : 'none';
