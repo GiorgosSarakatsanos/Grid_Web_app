@@ -44,9 +44,21 @@
                         {{ form.paper_size.label }}<br>
                         {{ form.paper_size }}
                     </div>
+                    <div class="form-group" id="custom-size-group">
+                        {{ form.custom_paper_width.label }}<br>
+                        {{ form.custom_paper_width }}
+                        {{ form.custom_paper_height.label }}<br>
+                        {{ form.custom_paper_height }}
+                    </div>
                     <div class="form-group">
                         {{ form.img_size.label }}<br>
                         {{ form.img_size }}
+                    </div>
+                    <div class="form-group" id="custom-img-size">
+                        {{ form.custom_image_width.label }}<br>
+                        {{ form.custom_image_width }}
+                        {{ form.custom_image_height.label }}<br>
+                        {{ form.custom_image_height }}
                     </div>
                     <div class="form-group">
                         {{ form.gap.label }}<br>

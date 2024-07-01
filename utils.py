@@ -6,26 +6,29 @@ import os
 from PyPDF2 import PdfReader, PdfWriter
 
 
-def mm_to_points(mm):
-    return mm * 2.83465
 
-
-def get_paper_size(size):
+def get_paper_size(size, custom_width=None, custom_height=None):
     sizes = {
         'C3': (458 * mm, 324 * mm),
         'A3': (420 * mm, 297 * mm),
-        'A4': (297 * mm, 210 * mm)
+        'A4': (297 * mm, 210 * mm),
+        'Custom': (custom_width, custom_height)
     }
-    return sizes.get(size, (458 * mm, 324 * mm))
+    if size == 'Custom' and custom_width and custom_height:
+        return (custom_width * mm, custom_height * mm)
+    return sizes.get(size, (297 * mm, 210 * mm))
 
 
-def img_size(size):
+
+def img_size(size, custom_width=None, custom_height=None):
     sizes = {
         'Card': (85 * mm, 55 * mm),
-        'Square': (55 * mm, 55 * mm)
+        'Square': (55 * mm, 55 * mm),
+        'Custom': (custom_width, custom_height)
     }
+    if size == 'Custom' and custom_width and custom_height:
+        return (custom_width * mm, custom_height * mm)
     return sizes.get(size, (85 * mm, 55 * mm))
-
 
 def generate_pdf(image_path: str, form):
     mode = form.mode.data
@@ -44,11 +47,11 @@ def generate_pdf(image_path: str, form):
     if mode == 'Page':
         width, height = get_paper_size(form.paper_size.data)
         if form.paper_size.data == 'Custom':
-            width = (form.custom_width.data or 297 * mm)
-            height = (form.custom_height.data or 210 * mm)
+            width = (form.custom_paper_width.data * mm  or 297 * mm)
+            height = (form.custom_paper_height.data * mm  or 210 * mm)
 
         pdf_path = os.path.splitext(image_path)[0] + '_grid.pdf'
-        c = canvas.Canvas(pdf_path, pagesize=landscape((width, height)))  # Create a canvas for the PDF
+        c = canvas.Canvas(pdf_path, pagesize=landscape((width, height)))
 
         # Numbers in mm
         margin_bottom = 15 * mm
@@ -60,6 +63,10 @@ def generate_pdf(image_path: str, form):
 
         # define image size
         img_width, img_height = img_size(form.img_size.data)
+        #add custom image size
+        if form.img_size.data == 'Custom':
+            img_width = (form.custom_image_width.data or 85) * mm
+            img_height = (form.custom_image_height.data or 55) * mm
 
         x = margin_left + padding
         y = height - margin_top - img_height - padding
@@ -80,8 +87,8 @@ def generate_pdf(image_path: str, form):
         end_number = form.end_number.data or 10
         width, height = get_paper_size(form.paper_size.data)
         if form.paper_size.data == 'Custom':
-            width = (form.custom_width.data or 297 * mm)
-            height = (form.custom_height.data or 210 * mm)
+            width = (form.custom_paper_width.data * mm or 297 * mm)
+            height = (form.custom_paper_height.data * mm  or 210 * mm)
 
         pdf_path = os.path.splitext(image_path)[0] + '_numbering.pdf'
         c = canvas.Canvas(pdf_path, pagesize=landscape((width, height)))
@@ -122,11 +129,10 @@ def generate_pdf(image_path: str, form):
 
 
 def generate_outline_pdf(image_path: str, form):
-    width, height = get_paper_size(form.paper_size.data)  # Default to A4
+    width, height = get_paper_size(form.paper_size.data, form.custom_paper_width.data, form.custom_paper_height.data)
     if form.paper_size.data == 'Custom':  # Use custom paper size if selected
-        width = (form.custom_width.data or 297) * mm  # Default to A4 width in mm
-        height = (form.custom_height.data or 210) * mm  # Default to A4 height in mm
-
+        width, height = get_paper_size(form.paper_size.data, form.custom_paper_width.data, form.custom_paper_height.data)
+        img_width, img_height = img_size(form.img_size.data, form.custom_image_width.data, form.custom_image_height.data)
     # Path for the corner lines PDF
     corner_lines_pdf_path = os.path.splitext(image_path)[0] + '_corner_lines.pdf'
     c = canvas.Canvas(corner_lines_pdf_path, pagesize=landscape((width, height)))  # Create a canvas for the corner lines

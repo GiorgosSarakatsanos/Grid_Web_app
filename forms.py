@@ -1,23 +1,49 @@
 from flask_wtf import FlaskForm
-from wtforms import FileField, SelectField, SubmitField, IntegerField, FloatField, FormField
-from wtforms.validators import DataRequired, NumberRange, Optional
+from wtforms import FileField, SelectField, SubmitField, IntegerField, FloatField
+from wtforms.validators import DataRequired, NumberRange, Optional, ValidationError
 
-   
+
+def validate_custom_dimensions(form, field):
+    if form.paper_size.data == 'Custom' and not field.data:
+        raise ValidationError('This field is required for custom paper sizes.')
+
 class ImageForm(FlaskForm):
     image = FileField('Upload Image', validators=[DataRequired()])
     paper_size = SelectField('Paper Size', choices=[
         ('C3', 'C3 (458mm x 324mm)'),
         ('A3', 'A3 (420mm x 297mm)'),
-        ('A4', 'A4 (297mm x 210mm)')
+        ('A4', 'A4 (297mm x 210mm)'),
+        ('Custom', 'Custom')
         ], validators=[DataRequired()])
     gap = FloatField('Gap Between Images (mm)', default=5, validators=[Optional(), NumberRange(min=0)])
     img_size = SelectField('Image Size', choices=[
         ('Card', 'Card (85mm x 55mm)'),
-        ('Square', 'Square (55mm x 55mm)')
+        ('Square', 'Square (55mm x 55mm)'),
+        ('Custom', 'Custom')
         ], validators=[DataRequired()])
-    
+
     mode = SelectField('Mode', choices=[('Page', 'Page'), ('Numbering', 'Numbering')], validators=[DataRequired()])
     start_number = IntegerField('Start Number', default=1, validators=[Optional()])
     end_number = IntegerField('End Number', default=10, validators=[Optional()])
     offset_number_position = IntegerField('Offset Number Position', default=15, validators=[Optional()])
     submit = SubmitField('Create PDF')
+    custom_paper_width = IntegerField('Custom Paper Width (mm)', default=1000, validators=[Optional()])
+    custom_paper_height = IntegerField('Custom Paper Height (mm)', default=700, validators=[Optional()])
+    custom_image_width = IntegerField('Custom Image Width (mm)', validators=[Optional()])
+    custom_image_height = IntegerField('Custom Image Height (mm)', validators=[Optional()])
+
+    # def validate(self, **kwargs):
+    #     if not super().validate():
+    #         return False
+    #     if self.paper_size.data == 'Custom':
+    #         if not self.custom_paper_width.data or not self.custom_paper_height.data:
+    #             self.custom_paper_width.errors = list(self.custom_paper_width.errors) + ['This field is required for custom paper sizes.']
+    #             self.custom_paper_height.errors = list(self.custom_paper_height.errors) + ['This field is required for custom paper sizes.']
+    #             return False
+    #     if self.img_size.data == 'Custom':
+    #         if not self.custom_image_width.data or not self.custom_image_height.data:
+    #             self.custom_image_width.errors = list(self.custom_image_width.errors) + ['This field is required for custom image sizes.']
+    #             self.custom_image_height.errors = list(self.custom_image_height.errors) + ['This field is required for custom image sizes.']
+    #             return False
+    #     return True
+    
