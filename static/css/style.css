@@ -1,9 +1,9 @@
 :root {
        /* Coloring */
-    --light-color: #F2EFEB;
-    --accent-color: #D9C9BA;
-    --button-color: #888C81;
-    --button-color-hover: #3D403A;
+    --light-color: #D5E5F2;
+    --accent-color: #a7bfd5ed;
+    --button-color: #235a7c;
+    --button-color-hover: #1781a8;
     --text-color: #0D0D0D;
 
     /* Variables for spacing */
@@ -14,13 +14,13 @@
     --xl-gap: 1em;
 
     /* Font sizes */
-    --small-font-size: 0.8rem;
-    --base-font-size: 1rem;
-    --head-font-size: 1.2rem;
+    --small-font-size: 0.7rem;
+    --base-font-size: 0.8rem;
+    --head-font-size: 1rem;
 
     /* Font weight */
     --font-normal: 400;
-    --font-bold: 700;
+    --font-bold: 500;
 
     /* Radius */
     --border-radius: 10px;
@@ -38,11 +38,6 @@ html {
   }
 
 
-a, button {
-    text-decoration: none;
-    color: var(--accent-color);
-    font-weight: var(--font-bold);
-}
 
 h1, h2{
     color: var(--text-color);
@@ -53,7 +48,7 @@ h1, h2{
 
 p, label, span{
     color: var(--text-color);
-    font-size: var(--base-font-size);
+    font-size: var(--small-font-size);
     margin: var(--m-gap);
 }
 
@@ -125,6 +120,13 @@ html, body {
     height: 80px;
 }
 
+.container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+}
+
 .brand-container {
     display: inline-flex;
     gap: var(--xl-gap);
@@ -143,7 +145,7 @@ html, body {
 }
 
 aside {
-    width: 35%;
+    width: 25%;
     padding: var(--xl-gap);
     background-color: var(--accent-color);
     border-radius: 0 var(--border-radius) 0 0;
@@ -152,8 +154,8 @@ aside {
 }
 
 main {
-    width: 65%;
-    padding-left: var(--xl-gap);
+    width: 100%;
+    padding: 0 var(--xl-gap);
     background-color: var(--bg-color);
     float: right;
 }
@@ -166,11 +168,11 @@ main {
 embed {
     width: 100%;
     height: 100%;
-    border-radius: var(--border-radius) 0 0 0 ;
+    border-radius: var(--border-radius) var(--border-radius) 0 0 ;
 }
 
 .form-group {
-    margin-bottom: var(--xl-gap);
+    margin-bottom: var(--s-gap);
 }
 
 footer {
@@ -188,20 +190,24 @@ footer {
     footer a, footer p, footer span, .copyright {
         font-size: var(--small-font-size);
         color: var(--text-color);
+        font-weight: var(--font-bold);
     }
         footer a:hover {
             font-size: var(--small-font-size);
             color: var(--light-color);
         }
 
-button {
+button, .btn, button[type="submit"], a  {
     width: 100%;
     padding: var(--m-gap) var(--xl-gap);
     background-color: var(--button-color);
-    color: var(--text-color);
+    color: var(--light-color);
     border: none;
     cursor: pointer;
     border-radius: var(--border-radius);
+    font-weight: var(--font-bold);
+    font-size: var(--base-font-size);
+    text-decoration: none;
 }
 
 button:hover {
@@ -222,4 +228,10 @@ body {
 
 .button:hover {
     background-color: var(--button-color-hover);
+}
+
+label {
+    display: block;
+    margin-top: var(--s-gap);
+    font: var(--small-font-size) sans-serif;
 }

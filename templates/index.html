@@ -9,18 +9,20 @@
 <body>
     <nav class="navbar">
         <div class="brand-container">
-            <img class="logo-img" src="{{ url_for('static', filename='img/logo.png') }}" alt="Fix Store">
-            <span class="company-name">Fix Store</span>
+            <div class="container">
+                <img class="logo-img" src="{{ url_for('static', filename='img/logo.png') }}" alt="Fix Store">
+            </div>
+            <div class="container">
+                <h1>Πολλαπλασιαστής εικόνων</h1>
+            </div>
         </div>
         <div class="button-container">
-            <button class="settings-toggle">Settings</button>
-            <button class="contact-btn">Contact</button>
+            <a href="mailto:support@fixstore.info" class="btn">Βοήθεια</a>
         </div>
     </nav>
     <div class="main-content">
         <aside>
-            <div class="wrapper">
-                <h2>Settings</h2>
+            <div class="sidebar-container">
                 <form method="POST" enctype="multipart/form-data">
                     {{ form.hidden_tag() }}
                     <div class="form-group">
@@ -28,63 +30,66 @@
                     </div>
                     <div class="form-container">
                         <div class="form-group">
+                            <span>Λειτουργία</span>
                             <select name="mode" id="mode" required>
                                 <option value="Page">Page</option>
                                 <option value="Numbering">Numbering</option>
                             </select>
                         </div>
                         <div class="form-group" id="numbering-fields">
-                            <input type="number" name="start_number" placeholder="Start Number">
-                            <input type="number" name="end_number" placeholder="End Number">
+                            <input type="number" name="start_number" placeholder="Start Number" value="100"><label for="start_number">Start number</label>
+                            <input type="number" name="end_number" placeholder="End Number" value="150"><label for="end_number">End number</label>
+                            <input type="offset_number_position" name="Offset Number Position" value="15" placeholder="Offset X"><label for="offset_number_position">Offset X</label>
                         </div>
                     </div>
                     
                     <div class="form-container">
                         <div class="form-group">
+                            <span>Διαστάσεις χαρτιού</span>
                             <select name="paper_size" id="paper_size" required>
-                                <option value="C3">C3 (458mm x 324mm)</option>
-                                <option value="A3">A3 (420mm x 297mm)</option>
-                                <option value="A4">A4 (297mm x 210mm)</option>
+                                <option value="C3">C3 (458 x 324)</option>
+                                <option value="A3">A3 (420 x 297)</option>
+                                <option value="A4">A4 (297 x 210)</option>
                                 <option value="Custom">Custom</option>
                             </select>
                         </div>
                         <div class="form-group" id="toggleCustomSize">
-                            <input type="number" name="custom_paper_width" placeholder="Custom Paper Width" required>
-                            <input type="number" name="custom_paper_height" placeholder="Custom Paper Height" required>
+                            <input type="number" name="custom_paper_width" placeholder="Custom Paper Width">
+                            <input type="number" name="custom_paper_height" placeholder="Custom Paper Height">
                             
                         </div>
                     </div>
                     <div class="form-group">
+                        <span>Διαστάσεις εικόνων</span>
                         <select name="img_size" id="img_size" required>
-                            <option value="Card">Card</option>
-                            <option value="Square">Square</option>
+                            <option value="Card">Card 85x55</option>
+                            <option value="Square">Square 55x55</option>
                             <option value="Custom">Custom</option>
                         </select>
                     </div>
                     <div class="form-group" id="toggleCustomImgSize">
-                        <input type="number" name="custom_image_width" placeholder="Custom Image Width" required>
-                        <input type="number" name="custom_image_height" placeholder="Custom Image Height" required>
+                        <input type="number" name="custom_image_width" placeholder="Custom Image Width">
+                        <input type="number" name="custom_image_height" placeholder="Custom Image Height">
                     </div>
                     <div class="form-group">
-                        <input type="number" name="gap" placeholder="Gap" required>
+                        <span>Απόσταση μεταξύ τους</span>
+                        <input type="number" name="gap" placeholder="Gap" value="5" required>
                     </div>
                     <div class="form-group">
                         <button type="submit">Generate PDF</button>
                     </div>
                 </form>
-             </div>
-            
-            <div>
                 {% if outline_pdf_path %}
-                <embed src="{{ url_for('download', filename=outline_pdf_path.split('/')[-1]) }}"/>
-                <a href="{{ url_for('download', filename=outline_pdf_path.split('/')[-1]) }}" class="button" target="_blank">Download Outline PDF</a>
-                {% endif %}
+            <embed src="{{ url_for('download', filename=outline_pdf_path.split('/')[-1]) }}"/>
+            <a href="{{ url_for('download', filename=outline_pdf_path.split('/')[-1]) }}" class="btn" target="_blank">Download Outlines</a>
+            {% endif %}
             </div>
         </aside>
         <main>
             {% if pdf_path %}
+            
             <embed src="{{ url_for('download', filename=pdf_path.split('/')[-1]) }}"/>
-            <a href="{{ url_for('download', filename=pdf_path.split('/')[-1]) }}" class="button" target="_blank">Download PDF</a>
+            <a href="{{ url_for('download', filename=pdf_path.split('/')[-1]) }}" class="btn" target="_blank">Download PDF</a>
             {% endif %}
         </main>
     </div>
@@ -100,23 +105,6 @@
         </div>
     </footer>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const paperSizeSelect = document.querySelector('#paper_size');
-            const customSizeGroup = document.querySelector('#custom-size-group');
-
-            function toggleCustomSize() {
-                if (paperSizeSelect.value === 'Custom') {
-                    customSizeGroup.style.display = 'block';
-                } else {
-                    customSizeGroup.style.display = 'none';
-                }
-            }
-
-            paperSizeSelect.addEventListener('change', toggleCustomSize);
-            toggleCustomSize(); // Initial call to set the correct display
-        });
-    </script>
 </body>
 
 </html>
