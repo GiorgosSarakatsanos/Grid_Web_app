@@ -19,49 +19,56 @@
     </nav>
     <div class="main-content">
         <aside>
-            <form method="POST" enctype="multipart/form-data">
-                {{ form.hidden_tag() }}
-                <div class="form-group">
-                    {{ form.mode.label }}<br>
-                    {{ form.mode }}
-                </div>
-                <div class="form-group" id="numbering-fields" style="display: none;">
-                    {{ form.start_number.label }}<br>
-                    {{ form.start_number }}
-                    {{ form.end_number.label }}<br>
-                    {{ form.end_number }}
-                </div>
-                <div class="form-group">
-                    {{ form.image.label }}<br>
-                    {{ form.image }}
-                </div>
-                <div class="form-group">
-                    {{ form.paper_size.label }}<br>
-                    {{ form.paper_size }}
-                </div>
-                <div class="form-group">
-                    {{ form.img_size.label }}<br>
-                    {{ form.img_size }}
-                </div>
-                <div class="form-group">
-                    {{ form.gap.label }}<br>
-                    {{ form.gap }}
-                </div>
-                <div class="form-group">
-                <button type="submit" style="background-color: transparent;" >{{ form.submit }}</button>
-                </div>
-            </form>
+            <div class="wrapper">
+                <h2>Settings</h2>
+                <form method="POST" enctype="multipart/form-data">
+                    {{ form.hidden_tag() }}
+                    <div class="form-container">
+                        <div class="form-group">
+                            {{ form.mode.label }}<br>
+                            {{ form.mode }}
+                        </div>
+                    </div>
+                    
+                    <div class="form-group" id="numbering-fields" style="display: none;">
+                        {{ form.start_number.label }}<br>
+                        {{ form.start_number }}
+                        {{ form.end_number.label }}<br>
+                        {{ form.end_number }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.image.label }}<br>
+                        {{ form.image }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.paper_size.label }}<br>
+                        {{ form.paper_size }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.img_size.label }}<br>
+                        {{ form.img_size }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.gap.label }}<br>
+                        {{ form.gap }}
+                    </div>
+                    <div class="form-group">
+                    <button type="submit" style="background-color: transparent;" >{{ form.submit }}</button>
+                    </div>
+                </form>
+            </div>
+            
             <div>
                 {% if outline_pdf_path %}
-                <!-- <embed src="{{ url_for('download', filename=outline_pdf_path.split('/')[-1]) }}" width="100%" height="600px" /> -->
-                <a href="{{ url_for('download', filename=outline_pdf_path.split('/')[-1]) }}" target="_blank">Download Outline PDF</a>
+                <embed src="{{ url_for('download', filename=outline_pdf_path.split('/')[-1]) }}"/>
+                <a href="{{ url_for('download', filename=outline_pdf_path.split('/')[-1]) }}" class="button" target="_blank">Download Outline PDF</a>
                 {% endif %}
             </div>
         </aside>
         <main>
             {% if pdf_path %}
-            <embed src="{{ url_for('download', filename=pdf_path.split('/')[-1]) }}" width="100%" height="600px" />
-            <!-- <a href="{{ url_for('download', filename=pdf_path.split('/')[-1]) }}" target="_blank">Download PDF</a> -->
+            <embed src="{{ url_for('download', filename=pdf_path.split('/')[-1]) }}"/>
+            <a href="{{ url_for('download', filename=pdf_path.split('/')[-1]) }}" class="button" target="_blank">Download PDF</a>
             {% endif %}
         </main>
     </div>

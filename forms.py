@@ -10,14 +10,14 @@ class ImageForm(FlaskForm):
         ('A3', 'A3 (420mm x 297mm)'),
         ('A4', 'A4 (297mm x 210mm)')
         ], validators=[DataRequired()])
-    gap = FloatField('Gap Between Images (mm)', default=10, validators=[Optional(), NumberRange(min=0)])
-    img_size = SelectField('Paper Size', choices=[
+    gap = FloatField('Gap Between Images (mm)', default=5, validators=[Optional(), NumberRange(min=0)])
+    img_size = SelectField('Image Size', choices=[
         ('Card', 'Card (85mm x 55mm)'),
         ('Square', 'Square (55mm x 55mm)')
         ], validators=[DataRequired()])
     
     mode = SelectField('Mode', choices=[('Page', 'Page'), ('Numbering', 'Numbering')], validators=[DataRequired()])
-    start_number = IntegerField('Start Number', validators=[Optional()])
-    end_number = IntegerField('End Number', validators=[Optional()])
-    
+    start_number = IntegerField('Start Number', default=1, validators=[Optional()])
+    end_number = IntegerField('End Number', default=10, validators=[Optional()])
+    offset_number_position = IntegerField('Offset Number Position', default=15, validators=[Optional()])
     submit = SubmitField('Create PDF')

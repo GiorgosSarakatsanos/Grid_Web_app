@@ -1,4 +1,4 @@
-from flask import Flask, render_template, send_file
+from flask import Flask, render_template, send_file, session, redirect, url_for
 from forms import ImageForm
 from utils import generate_pdf, generate_outline_pdf
 import os
@@ -9,11 +9,13 @@ app.config['UPLOAD_FOLDER'] = 'static/uploads/'
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    form = ImageForm()
+    form = ImageForm() 
     if form.validate_on_submit():
         image = form.image.data
         image_path = os.path.join(app.config['UPLOAD_FOLDER'], image.filename)
+        
         image.save(image_path)
+
         # Generate PDFs
         pdf_path = generate_pdf(image_path, form)
         outline_pdf_path = generate_outline_pdf(image_path, form)

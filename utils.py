@@ -1,7 +1,7 @@
 from reportlab.lib.pagesizes import A3, A4, landscape
 from reportlab.lib.units import mm
 from reportlab.pdfgen import canvas
-from PIL import Image
+from PIL import Image, ImageFilter
 import os
 
 def mm_to_points(mm):
@@ -30,7 +30,7 @@ def generate_pdf(image_path, form):
         if form.paper_size.data == 'Custom':
             width = (form.custom_width.data or 297)
             height = (form.custom_height.data or 210)
-
+        
         pdf_path = os.path.splitext(image_path)[0] + '_grid.pdf'
         c = canvas.Canvas(pdf_path, pagesize=landscape((width, height)))
         
@@ -76,18 +76,18 @@ def generate_pdf(image_path, form):
         margin_left = 37  * mm
         margin_right = 17  * mm
         padding = 5  * mm
-        gap = (form.gap.data or 10)
-        
+        gap = (form.gap.data or 10) * mm
+        offset_number_position = (form.offset_number_position.data or 0) * mm
         # define image size
         img_width, img_height = img_size(form.img_size.data)
-        
+
         x = margin_left + padding
         y = height - margin_top - img_height - padding
         number = start_number
 
-        while number <= end_number:
-            if y <= margin_bottom:
-                c.showPage()
+        while number <= end_number: 
+            if y <= margin_bottom:      
+                c.showPage()    
                 y = height - margin_top - img_height - padding
             if x + img_width >= width - margin_right:
                 x = margin_left + padding
@@ -96,26 +96,26 @@ def generate_pdf(image_path, form):
                     c.showPage()
                     y = height - margin_top - img_height - padding
             c.drawImage(image_path, x, y, width=img_width, height=img_height)
-            c.drawString(x + padding, y + padding, str(number))
+            c.drawString((x + img_width / 2) + offset_number_position, y + padding, str(number)) # Number position in x
             number += 1
             x += img_width + gap + padding * 2
-        
+            
         c.save()
         return pdf_path
 
 def generate_outline_pdf(image_path, form):
-    width, height = get_paper_size(form.paper_size.data)
-    if form.paper_size.data == 'Custom':
-        width = (form.custom_width.data or 297)
-        height = (form.custom_height.data or 210)
+    width, height = get_paper_size(form.paper_size.data) # Default to A4
+    if form.paper_size.data == 'Custom': # Use custom paper size if selected
+        width = (form.custom_width.data or 297) # Default to A4 width
+        height = (form.custom_height.data or 210) # Default to A4 height
 
-    outline_pdf_path = os.path.splitext(image_path)[0] + '_outline.pdf'
-    c = canvas.Canvas(outline_pdf_path, pagesize=landscape((width, height)))
+    outline_pdf_path = os.path.splitext(image_path)[0] + '_outline.pdf' # Output path for the outline PDF
+    c = canvas.Canvas(outline_pdf_path, pagesize=landscape((width, height))) # Create a canvas for the outline PDF
     
-    margin_top = 15
-    margin_bottom = 15
-    margin_left = 37
-    margin_right = 17
+    margin_top = 15 * mm
+    margin_bottom = 15 * mm
+    margin_left = 37 * mm
+    margin_right = 17 * mm
 
     # Draw corner lines
     corner_line_length = 50
@@ -138,23 +138,29 @@ def generate_outline_pdf(image_path, form):
     c.line(width - margin_right, margin_top, width - margin_right - corner_line_length, margin_bottom)
     c.line(width - margin_right, margin_top, width - margin_right, margin_bottom + corner_line_length)
 
-    # Draw the outline of the image
-    image = Image.open(image_path)
-    image = image.convert("RGBA")
-    datas = image.getdata()
+    image = Image.open(image_path)  # Open the image
+    alpha = image.split()[-1]  # Get the alpha channel
+    
+# Create an image to hold the alpha channel with a transparent background
+    contour_image = Image.new('L', image.size, 0)
+    contour_image.paste(alpha, mask=alpha)  # Paste the alpha channel
 
-    new_data = []
-    for item in datas:
-        if item[3] == 0:
-            new_data.append((255, 255, 255, 255))
-        else:
-            new_data.append(item)
-    image.putdata(new_data)
-    temp_image_path = "temp_image.png"
-    image.save(temp_image_path)
+    # Detect edges in the alpha channel
+    edges = contour_image.filter(ImageFilter.FIND_EDGES)
 
-    c.drawImage(temp_image_path, margin_left, margin_top, margin_bottom, mask='auto')
-
-    c.save()
-    # os.remove(temp_image_path)
+    # Convert edges to black lines on a transparent background
+    final_image = Image.new('RGBA', image.size, (0, 0, 0, 0))
+    final_image.paste(Image.new('RGBA', image.size, (0, 0, 0, 255)), mask=edges)
+    # Invert the image
+    final_image = Image.composite(final_image, Image.new('RGBA', image.size, (255, 255, 255, 255)), edges)
+    temp_image_path = os.path.splitext(image_path)[0] + '_temp.png'
+    final_image.save(temp_image_path)  # Save the image
+    
+    # Set form mode to 'Page' for generating outline PDF
+    original_mode = form.mode.data
+    form.mode.data = 'Page'
+    outline_pdf_path = generate_pdf(temp_image_path, form)
+    form.mode.data = original_mode  # Restore the original mode
+    
+   # os.remove(temp_image_path)
     return outline_pdf_path
