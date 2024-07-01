@@ -15,4 +15,9 @@ class ImageForm(FlaskForm):
         ('Card', 'Card (85mm x 55mm)'),
         ('Square', 'Square (55mm x 55mm)')
         ], validators=[DataRequired()])
+    
+    mode = SelectField('Mode', choices=[('Page', 'Page'), ('Numbering', 'Numbering')], validators=[DataRequired()])
+    start_number = IntegerField('Start Number', validators=[Optional()])
+    end_number = IntegerField('End Number', validators=[Optional()])
+    
     submit = SubmitField('Create PDF')

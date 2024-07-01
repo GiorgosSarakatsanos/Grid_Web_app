@@ -22,6 +22,16 @@
             <form method="POST" enctype="multipart/form-data">
                 {{ form.hidden_tag() }}
                 <div class="form-group">
+                    {{ form.mode.label }}<br>
+                    {{ form.mode }}
+                </div>
+                <div class="form-group" id="numbering-fields" style="display: none;">
+                    {{ form.start_number.label }}<br>
+                    {{ form.start_number }}
+                    {{ form.end_number.label }}<br>
+                    {{ form.end_number }}
+                </div>
+                <div class="form-group">
                     {{ form.image.label }}<br>
                     {{ form.image }}
                 </div>
