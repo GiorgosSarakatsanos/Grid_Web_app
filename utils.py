@@ -103,6 +103,10 @@ def generate_pdf(image_path: str, form):
         offset_number_position = (form.offset_number_position.data or 0) * mm
         # define image size
         img_width, img_height = img_size(form.img_size.data)
+        # add custom image size
+        if form.img_size.data == 'Custom':
+            img_width = (form.custom_image_width.data or 85) * mm
+            img_height = (form.custom_image_height.data or 55) * mm
 
         x = margin_left + padding
         y = height - margin_top - img_height - padding
