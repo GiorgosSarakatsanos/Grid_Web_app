@@ -35,7 +35,9 @@ class ImageForm(FlaskForm):
     mode = SelectField('Mode', choices=[('Page', 'Page'), ('Numbering', 'Numbering')], validators=[DataRequired()])
     start_number = IntegerField('Start Number', default=1, validators=[Optional()])
     end_number = IntegerField('End Number', default=10, validators=[Optional()])
-    offset_number_position = IntegerField('Offset Number Position', default=15, validators=[Optional()])
+    
+    offset_number_x = IntegerField('Offset Number X Position', default=15, validators=[Optional()])
+    offset_number_y = IntegerField('Offset Number Y Position', default=15, validators=[Optional()])
     
     custom_paper_width = IntegerField('Custom Paper Width (mm)', default=1000, validators=[Optional()])
     custom_paper_height = IntegerField('Custom Paper Height (mm)', default=700, validators=[Optional()])

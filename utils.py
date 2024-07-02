@@ -108,31 +108,32 @@ def generate_pdf(image_path: str, form):
         padding = 5 * mm
         gap = (form.gap.data or 10) * mm
         
-        offset_number_position = (form.offset_number_position.data or 0) * mm
+        offset_number_y = (form.offset_number_x.data or 0) * mm
+        offset_number_x = (form.offset_number_y.data or 0) * mm
         
         img_width, img_height = img_size(form.img_size.data) # define image size
         if form.img_size.data == 'Custom':  # add custom image size
             img_width = (form.custom_image_width.data or 85) * mm
             img_height = (form.custom_image_height.data or 55) * mm
 
-        x = margin_left + padding
-        y = height - margin_top - img_height - padding
+        x = margin_left + padding   # Initial ud/down position
+        y = height - margin_top - img_height - padding # Initial left right position
         number = start_number
 
         while number <= end_number:
             if y <= margin_bottom:
                 c.showPage()
-                y = height - margin_top - img_height - padding
-            if x + img_width >= width - margin_right:
-                x = margin_left + padding
-                y -= img_height + gap + padding * 2
-                if y <= margin_bottom:
-                    c.showPage()
-                    y = height - margin_top - img_height - padding
-            c.drawImage(temp_image_path, x, y, width=img_width, height=img_height)
-            c.drawString((x + img_width / 2) + offset_number_position, y + padding, str(number))  # Number position in x
-            number += 1
-            x += img_width + gap + padding * 2
+                y = height - margin_top - img_height - padding # Reset y position
+            if x + img_width >= width - margin_right: # Check if image exceeds the right margin
+                x = margin_left + padding # Reset x position
+                y -= img_height + gap + padding * 2 # Move to the next line
+                if y <= margin_bottom: # Check if image exceeds the bottom margin
+                    c.showPage() # Show the next page
+                    y = height - margin_top - img_height - padding  # Reset y position
+            c.drawImage(temp_image_path, x, y, width=img_width, height=img_height) # Draw the image75
+            c.drawString((x-(image.width*2)) + offset_number_x, y + offset_number_y, str(number))   # Draw the number
+            number += 1 # Increment the number
+            x += img_width + gap + padding * 2 # Move to the next column
 
         c.save()
         os.remove(temp_image_path)
