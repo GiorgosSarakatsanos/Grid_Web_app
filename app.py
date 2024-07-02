@@ -1,9 +1,18 @@
 from flask import Flask, render_template, send_file, session, redirect, url_for
 from forms import ImageForm
 from utils import generate_pdf, generate_outline_pdf
+from dotenv import load_dotenv
+from flask_cors import CORS
 import os
 
+load_dotenv()
+
 app = Flask(__name__)
+CORS(app)
+
+# Get environment variables
+app.config['DEBUG'] = os.environ['FLASK_DEBUG']
+
 app.config['SECRET_KEY'] = 'your_secret_key'
 app.config['UPLOAD_FOLDER'] = 'static/uploads/'
 
@@ -27,4 +36,4 @@ def download(filename):
     return send_file(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()
