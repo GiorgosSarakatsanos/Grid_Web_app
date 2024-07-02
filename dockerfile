@@ -8,8 +8,7 @@ WORKDIR $APP_HOME
 COPY . ./
 
 RUN pip install --no-cache-dir --upgrade pip
-RUN pip install --no-cache-dir --PyPDF2==3.0.1
-RUN pip install --no-cache-dir --reportlab==4.2.2
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Run the web service on container startup. Here we use the gunicorn
 # webserver, with one worker process and 8 threads.
