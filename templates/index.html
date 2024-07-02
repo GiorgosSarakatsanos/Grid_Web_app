@@ -59,6 +59,23 @@
                             
                         </div>
                     </div>
+                    <div class="form-container">
+                        <div class="form-group">
+                            <span>Περιθώρια</span>
+                            <select name="margin_options" id="margin" required>
+                                <option value="cutter standard">Cutter standard</option>
+                                <option value="narrow margin">Narrow margin</option>
+                                <option value="Custom">Custom</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="toggleCustomMargins">
+                            <input type="number" name="custom_margin_top" placeholder="Custom margin top" value="10">
+                            <input type="number" name="custom_margin_right" placeholder="Custom margin right" value="10">
+                            <input type="number" name="custom_margin_bottom" placeholder="Custom margin bottom" value="10">
+                            <input type="number" name="custom_margin_left" placeholder="Custom margin left" value="10">
+                            
+                        </div>
+                    </div>
                     <div class="form-group">
                         <span>Διαστάσεις εικόνων</span>
                         <select name="img_size" id="img_size" required>
@@ -68,8 +85,8 @@
                         </select>
                     </div>
                     <div class="form-group" id="toggleCustomImgSize">
-                        <input type="number" name="custom_image_width" placeholder="Custom Image Width">
-                        <input type="number" name="custom_image_height" placeholder="Custom Image Height">
+                        <input type="number" name="custom_image_width" placeholder="Custom Image Width" value="25">
+                        <input type="number" name="custom_image_height" placeholder="Custom Image Height" value="25">
                     </div>
                     <div class="form-group">
                         <span>Απόσταση μεταξύ τους</span>

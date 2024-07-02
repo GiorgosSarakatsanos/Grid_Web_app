@@ -5,8 +5,6 @@ from PIL import Image, ImageFilter
 import os
 from PyPDF2 import PdfReader, PdfWriter
 
-
-
 def get_paper_size(size, custom_width=None, custom_height=None):
     sizes = {
         'C3': (458 * mm, 324 * mm),
@@ -18,8 +16,6 @@ def get_paper_size(size, custom_width=None, custom_height=None):
         return (custom_width * mm, custom_height * mm)
     return sizes.get(size, (297 * mm, 210 * mm))
 
-
-
 def img_size(size, custom_width=None, custom_height=None):
     sizes = {
         'Card': (85 * mm, 55 * mm),
@@ -29,6 +25,23 @@ def img_size(size, custom_width=None, custom_height=None):
     if size == 'Custom' and custom_width and custom_height:
         return (custom_width * mm, custom_height * mm)
     return sizes.get(size, (85 * mm, 55 * mm))
+
+
+
+# Constants for margin sizes (assuming mm is defined/imported)
+CUTTER_STANDARD = (15, 37, 15, 17)
+NARROW_MARGIN = (10, 5, 10, 5)
+DEFAULT_MARGIN = CUTTER_STANDARD
+
+# Margin options function
+def margin_options(size, custom_margin_top=None, custom_margin_right=None, custom_margin_bottom=None, custom_margin_left=None):
+    sizes = {
+        'cutter standard': CUTTER_STANDARD,
+        'narrow margin': NARROW_MARGIN,
+        'Custom': (custom_margin_top or 15, custom_margin_right or 37, custom_margin_bottom or 15, custom_margin_left or 17)
+    }
+    margins = sizes.get(size.lower(), DEFAULT_MARGIN)
+    return tuple(margin * mm for margin in margins)
 
 def generate_pdf(image_path: str, form):
     mode = form.mode.data
@@ -53,29 +66,24 @@ def generate_pdf(image_path: str, form):
         pdf_path = os.path.splitext(image_path)[0] + '_grid.pdf'
         c = canvas.Canvas(pdf_path, pagesize=landscape((width, height)))
 
-        # Numbers in mm
-        margin_bottom = 15 * mm
-        margin_top = 15 * mm
-        margin_left = 37 * mm
-        margin_right = 17 * mm
+        margins = margin_options(form.margin_options.data, 
+                                form.custom_margin_top.data, 
+                                form.custom_margin_right.data, 
+                                form.custom_margin_bottom.data, 
+                                form.custom_margin_left.data)
+        margin_top, margin_right, margin_bottom, margin_left = margins
+        
         padding = 5 * mm
         gap = (form.gap.data or 10) * mm
 
-        # define image size
-        img_width, img_height = img_size(form.img_size.data)
-        #add custom image size
-        if form.img_size.data == 'Custom':
-            img_width = (form.custom_image_width.data or 85) * mm
-            img_height = (form.custom_image_height.data or 55) * mm
-
         x = margin_left + padding
-        y = height - margin_top - img_height - padding
-
+        y = height - margin_top - img_size(form.img_size.data, form.custom_image_width.data, form.custom_image_height.data)[1] - padding
+        
         while y > margin_bottom:
-            while x + img_width < width - margin_right:
-                c.drawImage(temp_image_path, x, y, width=img_width, height=img_height)
-                x += img_width + gap + padding * 2
-            y -= img_height + gap + padding * 2
+            while x + img_size(form.img_size.data, form.custom_image_width.data, form.custom_image_height.data)[0] < width - margin_right:
+                c.drawImage(temp_image_path, x, y, width=img_size(form.img_size.data, form.custom_image_width.data, form.custom_image_height.data)[0], height=img_size(form.img_size.data, form.custom_image_width.data, form.custom_image_height.data)[1])
+                x += img_size(form.img_size.data, form.custom_image_width.data, form.custom_image_height.data)[0] + gap + padding * 2
+            y -= img_size(form.img_size.data, form.custom_image_width.data, form.custom_image_height.data)[1] + gap + padding * 2
             x = margin_left + padding
 
         c.save()
@@ -93,18 +101,17 @@ def generate_pdf(image_path: str, form):
         pdf_path = os.path.splitext(image_path)[0] + '_numbering.pdf'
         c = canvas.Canvas(pdf_path, pagesize=landscape((width, height)))
 
-        # Numbers in mm
-        margin_bottom = 15 * mm
-        margin_top = 15 * mm
-        margin_left = 37 * mm
-        margin_right = 17 * mm
+        margin_left = (form.custom_margin_left.data or 37) * mm
+        margin_right = (form.custom_margin_right.data or 17) * mm
+        margin_top = (form.custom_margin_top.data or 15) * mm
+        margin_bottom = (form.custom_margin_bottom.data or 15) * mm
         padding = 5 * mm
         gap = (form.gap.data or 10) * mm
+        
         offset_number_position = (form.offset_number_position.data or 0) * mm
-        # define image size
-        img_width, img_height = img_size(form.img_size.data)
-        # add custom image size
-        if form.img_size.data == 'Custom':
+        
+        img_width, img_height = img_size(form.img_size.data) # define image size
+        if form.img_size.data == 'Custom':  # add custom image size
             img_width = (form.custom_image_width.data or 85) * mm
             img_height = (form.custom_image_height.data or 55) * mm
 
@@ -141,10 +148,14 @@ def generate_outline_pdf(image_path: str, form):
     corner_lines_pdf_path = os.path.splitext(image_path)[0] + '_corner_lines.pdf'
     c = canvas.Canvas(corner_lines_pdf_path, pagesize=landscape((width, height)))  # Create a canvas for the corner lines
 
-    margin_top = 15 * mm
-    margin_bottom = 15 * mm
-    margin_left = 37 * mm
-    margin_right = 17 * mm
+    
+    # Get margins using margin_options
+    margins = margin_options(form.margin_options.data, 
+                            form.custom_margin_top.data, 
+                            form.custom_margin_right.data, 
+                            form.custom_margin_bottom.data, 
+                            form.custom_margin_left.data)
+    margin_top, margin_right, margin_bottom, margin_left = margins
 
     # Draw corner lines
     corner_line_length = 50
@@ -152,8 +163,8 @@ def generate_outline_pdf(image_path: str, form):
     c.setLineWidth(line_thickness)
 
     # Top-left corner
-    c.line(margin_left, height - margin_top, margin_left + corner_line_length, height - margin_top)
     c.line(margin_left, height - margin_top, margin_left, height - margin_top - corner_line_length)
+    c.line(margin_left, height - margin_top, margin_left + corner_line_length, height - margin_top)
 
     # Top-right corner
     c.line(width - margin_right, height - margin_top, width - margin_right - corner_line_length, height - margin_top)
