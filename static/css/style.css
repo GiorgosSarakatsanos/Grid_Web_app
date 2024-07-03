@@ -101,6 +101,18 @@ input, textarea{
             font-weight: var(--font-bold);
             font-size: var(--base-font-size);
           }
+
+          input label {
+            display: block;
+            margin: var(--m-gap);
+            font-size: var(--small-font-size);
+            color: var(--text-color);
+            font-weight: var(--font-bold);
+          }
+
+          input[type=button]:hover, input[type=submit]:hover, input[type=reset]:hover {
+            background-color: var(--button-color);
+          }
           
 html, body {
     font-size: 1.2rem;
@@ -139,13 +151,16 @@ html, body {
     min-width: fit-content;
 }
 
-.logo-img {
-    height: 50px;
+.logo-img, .logo-img a {
+    height: 30px;
     width: auto;
+    background-color: none;
+    border-radius: 0;
+    border: none;
 }
 
 aside {
-    width: 25%;
+    width: 40%;
     padding: var(--xl-gap);
     background-color: var(--accent-color);
     border-radius: 0 var(--border-radius) 0 0;
@@ -197,19 +212,6 @@ footer {
             color: var(--light-color);
         }
 
-button, .btn, button[type="submit"], a  {
-    width: 100%;
-    padding: var(--m-gap) var(--xl-gap);
-    background-color: var(--button-color);
-    color: var(--light-color);
-    border: none;
-    cursor: pointer;
-    border-radius: var(--border-radius);
-    font-weight: var(--font-bold);
-    font-size: var(--base-font-size);
-    text-decoration: none;
-}
-
 button:hover {
     background-color: var(--button-color-hover);
 }
@@ -222,16 +224,18 @@ body {
 }
 
 .button {
-    color: var(--text-color);
+    width: 100%;
     padding: var(--m-gap) var(--xl-gap);
+    background-color: var(--button-color);
+    color: var(--light-color);
+    border: none;
+    cursor: pointer;
+    border-radius: var(--border-radius);
+    font-weight: var(--font-bold);
+    font-size: var(--base-font-size);
+    text-decoration: none;
 }
 
 .button:hover {
     background-color: var(--button-color-hover);
-}
-
-label {
-    display: block;
-    margin-top: var(--s-gap);
-    font: var(--small-font-size) sans-serif;
 }

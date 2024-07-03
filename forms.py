@@ -14,6 +14,10 @@ class ImageForm(FlaskForm):
         ('C3', 'C3 (458mm x 324mm)'),
         ('A3', 'A3 (420mm x 297mm)'),
         ('A4', 'A4 (297mm x 210mm)'),
+        ('330x487', '330 mm x 487 mm'),
+        ('330x350', '330 mm x 350 mm'),
+        ('235x255', '235 mm x 255 mm'),
+        ('255x210', '255 mm x 210 mm'),
         ('Custom', 'Custom')
         ], validators=[DataRequired()])
     gap = FloatField('Gap Between Images (mm)', default=5, validators=[Optional(), NumberRange(min=0)])

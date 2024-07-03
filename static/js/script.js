@@ -47,4 +47,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     toggleFields(); // Initial call to set correct visibility
+    
 });
+
+
+

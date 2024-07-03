@@ -10,14 +10,14 @@
     <nav class="navbar">
         <div class="brand-container">
             <div class="container">
-                <img class="logo-img" src="{{ url_for('static', filename='img/logo.png') }}" alt="Fix Store">
+                <a href="/"><img class="logo-img" src="{{ url_for('static', filename='img/logo.png') }}" alt="Fix Store"></a>
             </div>
             <div class="container">
                 <h1>Πολλαπλασιαστής εικόνων</h1>
             </div>
         </div>
         <div class="button-container">
-            <a href="mailto:support@fixstore.info" class="btn">Βοήθεια</a>
+            <a href="mailto:support@fixstore.info" class="button">Βοήθεια</a>
         </div>
     </nav>
     <div class="main-content">
@@ -37,10 +37,10 @@
                             </select>
                         </div>
                         <div class="form-group" id="numbering-fields">
-                            <input type="number" name="start_number" placeholder="Start Number" value="100"><label for="start_number">Start number</label>
-                            <input type="number" name="end_number" placeholder="End Number" value="150"><label for="end_number">End number</label>
-                            <input type="number" name="offset_number_x" value="8" placeholder="Offset X"><label for="offset_number_x">Left/Right</label>
-                            <input type="number" name="offset_number_y" value="23" placeholder="Offset Y"><label for="offset_number_y">Up/Down</label>
+                            <input type="number" name="start_number" placeholder="Start Number" value="100"><label for="start_number">Αρχικός αριθμός</label>
+                            <input type="number" name="end_number" placeholder="End Number" value="150"><label for="end_number">Τελικός αριθμός</label>
+                            <input type="number" name="offset_number_x" value="8" placeholder="Offset X"><label for="offset_number_x">Απόσταση από αριστερά</label>
+                            <input type="number" name="offset_number_y" value="23" placeholder="Offset Y"><label for="offset_number_y">Απόσταση από κάτω</label>
                         </div>
                     </div>
                     
@@ -48,10 +48,13 @@
                         <div class="form-group">
                             <span>Διαστάσεις χαρτιού</span>
                             <select name="paper_size" id="paper_size" required>
+                                <option value="330x487">Custom 1 (330 x 487)</option>
+                                <option value="330x350">Custom 2 (330 x 350)</option>
+                                <option value="235x255">Custom 3 (235 x 255)</option>
+                                <option value="255x210">Custom 4 (255 x 210)</option>
                                 <option value="C3">C3 (458 x 324)</option>
                                 <option value="A3">A3 (420 x 297)</option>
                                 <option value="A4">A4 (297 x 210)</option>
-                                <option value="Custom">Custom</option>
                             </select>
                         </div>
                         <div class="form-group" id="toggleCustomSize">
@@ -70,15 +73,15 @@
                             </select>
                         </div>
                         <div class="form-group" id="toggleCustomMargins">
-                            <input type="number" name="custom_margin_top" placeholder="Custom margin top" value="10">
-                            <input type="number" name="custom_margin_right" placeholder="Custom margin right" value="10">
-                            <input type="number" name="custom_margin_bottom" placeholder="Custom margin bottom" value="10">
-                            <input type="number" name="custom_margin_left" placeholder="Custom margin left" value="10">
+                            <input type="number" name="custom_margin_top" placeholder="Custom margin top" value="10"><label for="custom_margin_top">Απόσταση από πάνω</label>
+                            <input type="number" name="custom_margin_right" placeholder="Custom margin right" value="10"><label for="custom_margin_right">Απόσταση από δεξιά</label>
+                            <input type="number" name="custom_margin_bottom" placeholder="Custom margin bottom" value="10"><label for="custom_margin_bottom">Απόσταση από κάτω</label>
+                            <input type="number" name="custom_margin_left" placeholder="Custom margin left" value="10"><label for="custom_margin_left">Απόσταση από αριστερά</label>
                             
                         </div>
                     </div>
                     <div class="form-group">
-                        <span>Διαστάσεις εικόνων</span>
+                        <span>Διάσταση εικόνας</span>
                         <select name="img_size" id="img_size" required>
                             <option value="Card">Card 85x55</option>
                             <option value="Square">Square 55x55</option>
@@ -86,20 +89,20 @@
                         </select>
                     </div>
                     <div class="form-group" id="toggleCustomImgSize">
-                        <input type="number" name="custom_image_width" placeholder="Custom Image Width" value="25">
-                        <input type="number" name="custom_image_height" placeholder="Custom Image Height" value="25">
+                        <input type="number" name="custom_image_width" placeholder="Custom Image Width" value="25"><label for="custom_image_height">Πλάτος εικόνας</label>
+                        <input type="number" name="custom_image_height" placeholder="Custom Image Height" value="25"><label for="custom_image_height">Ύψος εικόνας</label>
                     </div>
                     <div class="form-group">
-                        <span>Απόσταση μεταξύ τους</span>
+                        <span>Κενό μεταξύ εικόνων</span>
                         <input type="number" name="gap" placeholder="Gap" value="5" required>
                     </div>
                     <div class="form-group">
-                        <button type="submit">Generate PDF</button>
+                        <button type="submit" class="button">Generate PDF</button>
                     </div>
                 </form>
                 {% if outline_pdf_path %}
             <embed src="{{ url_for('download', filename=outline_pdf_path.split('/')[-1]) }}"/>
-            <a href="{{ url_for('download', filename=outline_pdf_path.split('/')[-1]) }}" class="btn" target="_blank">Download Outlines</a>
+            <a href="{{ url_for('download', filename=outline_pdf_path.split('/')[-1]) }}" class="button" target="_blank">Download Outlines</a>
             {% endif %}
             </div>
         </aside>
@@ -107,7 +110,7 @@
             {% if pdf_path %}
             
             <embed src="{{ url_for('download', filename=pdf_path.split('/')[-1]) }}"/>
-            <a href="{{ url_for('download', filename=pdf_path.split('/')[-1]) }}" class="btn" target="_blank">Download PDF</a>
+            <a href="{{ url_for('download', filename=pdf_path.split('/')[-1]) }}" class="button" target="_blank">Download PDF</a>
             {% endif %}
         </main>
     </div>

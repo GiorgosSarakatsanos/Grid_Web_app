@@ -2,6 +2,7 @@ from reportlab.lib.pagesizes import landscape
 from reportlab.lib.units import mm
 from reportlab.pdfgen import canvas
 from PIL import Image, ImageFilter
+
 import os
 from PyPDF2 import PdfReader, PdfWriter
 
@@ -10,6 +11,10 @@ def get_paper_size(size, custom_width=None, custom_height=None):
         'C3': (458 * mm, 324 * mm),
         'A3': (420 * mm, 297 * mm),
         'A4': (297 * mm, 210 * mm),
+        '330x487': (330 * mm, 487 * mm),
+        '330x350': (330 * mm, 350 * mm),
+        '235x255': (235 * mm, 255 * mm),
+        '255x210': (255 * mm, 210 * mm),
         'Custom': (custom_width, custom_height)
     }
     if size == 'Custom' and custom_width and custom_height:
