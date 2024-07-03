@@ -22,7 +22,7 @@ def get_paper_size(size, custom_width=None, custom_height=None):
 
 def img_size(size, custom_width=None, custom_height=None):
     sizes = {
-        'Sticker': (90 * mm, 60 * mm),
+        'Sticker': (60 * mm, 90 * mm),
         'Card': (85 * mm, 55 * mm),
         'Square': (55 * mm, 55 * mm),
         'Custom': (custom_width, custom_height)
@@ -78,8 +78,8 @@ def generate_pdf(image_path: str, form):
                                 form.custom_margin_left.data)
         margin_top, margin_right, margin_bottom, margin_left = margins
         
-        padding = 1 * mm
-        gap = (form.gap.data or 1) * mm
+        padding = (form.padding.data or 0) * mm
+        gap = (form.gap.data or 0) * mm
 
         x = margin_left + padding
         y = height - margin_top - img_size(form.img_size.data, form.custom_image_width.data, form.custom_image_height.data)[1] - padding
@@ -110,9 +110,10 @@ def generate_pdf(image_path: str, form):
         margin_right = (form.custom_margin_right.data or 17) * mm
         margin_top = (form.custom_margin_top.data or 15) * mm
         margin_bottom = (form.custom_margin_bottom.data or 15) * mm
-        padding = 1 * mm
-        gap = (form.gap.data or 1) * mm
-        
+        padding = (form.padding.data or 0) * mm
+        gap = (form.gap.data or 0) * mm
+        font_size = (form.font_size.data or 8)
+
         offset_number_y = (form.offset_number_x.data or 0) * mm
         offset_number_x = (form.offset_number_y.data or 0) * mm
         
@@ -123,7 +124,9 @@ def generate_pdf(image_path: str, form):
 
         x = margin_left + padding   # Initial ud/down position
         y = height - margin_top - img_height - padding # Initial left right position
-        number = start_number
+        number = start_number # Initial number
+        
+        
 
         while number <= end_number:
             if y <= margin_bottom:
@@ -136,6 +139,7 @@ def generate_pdf(image_path: str, form):
                     c.showPage() # Show the next page
                     y = height - margin_top - img_height - padding  # Reset y position
             c.drawImage(temp_image_path, x, y, width=img_width, height=img_height) # Draw the image
+            c.setFont("Times-Roman", form.font_size.data)  # Set font to Times New Roman, size 8
             c.drawString(x + offset_number_x, y + offset_number_y, str(number))   # Draw the number
             number += 1 # Increment the number
             x += img_width + gap + padding * 2 # Move to the next column
