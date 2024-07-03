@@ -8,13 +8,12 @@ from PyPDF2 import PdfReader, PdfWriter
 
 def get_paper_size(size, custom_width=None, custom_height=None):
     sizes = {
-        'C3': (458 * mm, 324 * mm),
+        '255x235': (255 * mm, 235 * mm),
+        '255x210': (255 * mm, 210 * mm),
+        '487x330': (487 * mm, 330 * mm),
+        '350x330': (350 * mm, 330 * mm),
         'A3': (420 * mm, 297 * mm),
         'A4': (297 * mm, 210 * mm),
-        '330x487': (330 * mm, 487 * mm),
-        '330x350': (330 * mm, 350 * mm),
-        '235x255': (235 * mm, 255 * mm),
-        '255x210': (255 * mm, 210 * mm),
         'Custom': (custom_width, custom_height)
     }
     if size == 'Custom' and custom_width and custom_height:
@@ -23,6 +22,7 @@ def get_paper_size(size, custom_width=None, custom_height=None):
 
 def img_size(size, custom_width=None, custom_height=None):
     sizes = {
+        'Sticker': (90 * mm, 60 * mm),
         'Card': (85 * mm, 55 * mm),
         'Square': (55 * mm, 55 * mm),
         'Custom': (custom_width, custom_height)
@@ -35,7 +35,7 @@ def img_size(size, custom_width=None, custom_height=None):
 
 # Constants for margin sizes (assuming mm is defined/imported)
 CUTTER_STANDARD = (15, 37, 15, 17)
-NARROW_MARGIN = (10, 5, 10, 5)
+NARROW_MARGIN = (5, 2, 5, 2)
 DEFAULT_MARGIN = CUTTER_STANDARD
 
 # Margin options function
@@ -43,7 +43,7 @@ def margin_options(size, custom_margin_top=None, custom_margin_right=None, custo
     sizes = {
         'cutter standard': CUTTER_STANDARD,
         'narrow margin': NARROW_MARGIN,
-        'Custom': (custom_margin_top or 15, custom_margin_right or 37, custom_margin_bottom or 15, custom_margin_left or 17)
+        'Custom': (custom_margin_top or 4, custom_margin_right or 4, custom_margin_bottom or 4, custom_margin_left or 4)
     }
     margins = sizes.get(size.lower(), DEFAULT_MARGIN)
     return tuple(margin * mm for margin in margins)
@@ -78,8 +78,8 @@ def generate_pdf(image_path: str, form):
                                 form.custom_margin_left.data)
         margin_top, margin_right, margin_bottom, margin_left = margins
         
-        padding = 5 * mm
-        gap = (form.gap.data or 10) * mm
+        padding = 1 * mm
+        gap = (form.gap.data or 1) * mm
 
         x = margin_left + padding
         y = height - margin_top - img_size(form.img_size.data, form.custom_image_width.data, form.custom_image_height.data)[1] - padding
@@ -110,8 +110,8 @@ def generate_pdf(image_path: str, form):
         margin_right = (form.custom_margin_right.data or 17) * mm
         margin_top = (form.custom_margin_top.data or 15) * mm
         margin_bottom = (form.custom_margin_bottom.data or 15) * mm
-        padding = 5 * mm
-        gap = (form.gap.data or 10) * mm
+        padding = 1 * mm
+        gap = (form.gap.data or 1) * mm
         
         offset_number_y = (form.offset_number_x.data or 0) * mm
         offset_number_x = (form.offset_number_y.data or 0) * mm

@@ -11,18 +11,20 @@ class ImageForm(FlaskForm):
     image = FileField('Upload Image', validators=[DataRequired()])
     
     paper_size = SelectField('Paper Size', choices=[
-        ('C3', 'C3 (458mm x 324mm)'),
+        ('255x235', '235 mm x 255 mm'),
+        ('255x210', '255 mm x 210 mm'),
+        ('487x330', '330 mm x 487 mm'),
+        ('350x330', '330 mm x 350 mm'),
         ('A3', 'A3 (420mm x 297mm)'),
         ('A4', 'A4 (297mm x 210mm)'),
-        ('330x487', '330 mm x 487 mm'),
-        ('330x350', '330 mm x 350 mm'),
-        ('235x255', '235 mm x 255 mm'),
-        ('255x210', '255 mm x 210 mm'),
         ('Custom', 'Custom')
         ], validators=[DataRequired()])
-    gap = FloatField('Gap Between Images (mm)', default=5, validators=[Optional(), NumberRange(min=0)])
+   
+    gap = FloatField('Gap Between Images (mm)', default=1, validators=[Optional(), NumberRange(min=1)])
     
     img_size = SelectField('Image Size', choices=[
+        
+        ('Sticker', 'Sticker (90mm x 60mm)'),
         ('Card', 'Card (85mm x 55mm)'),
         ('Square', 'Square (55mm x 55mm)'),
         ('Custom', 'Custom')
