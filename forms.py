@@ -33,6 +33,7 @@ class ImageForm(FlaskForm):
     ], validators=[DataRequired()])
 
     mode = SelectField('Mode', choices=[('Page', 'Page'), ('Numbering', 'Numbering')], validators=[DataRequired()])
+    
     start_number = IntegerField('Start Number', default=1, validators=[Optional()])
     end_number = IntegerField('End Number', default=10, validators=[Optional()])
     

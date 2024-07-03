@@ -130,8 +130,8 @@ def generate_pdf(image_path: str, form):
                 if y <= margin_bottom: # Check if image exceeds the bottom margin
                     c.showPage() # Show the next page
                     y = height - margin_top - img_height - padding  # Reset y position
-            c.drawImage(temp_image_path, x, y, width=img_width, height=img_height) # Draw the image75
-            c.drawString((x-(image.width*2)) + offset_number_x, y + offset_number_y, str(number))   # Draw the number
+            c.drawImage(temp_image_path, x, y, width=img_width, height=img_height) # Draw the image
+            c.drawString(x + offset_number_x, y + offset_number_y, str(number))   # Draw the number
             number += 1 # Increment the number
             x += img_width + gap + padding * 2 # Move to the next column
 
