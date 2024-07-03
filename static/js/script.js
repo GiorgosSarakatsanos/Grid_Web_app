@@ -7,6 +7,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const toggleCustomImgSize = document.querySelector('#toggleCustomImgSize');
     const marginField = document.querySelector('#margin');
     const toggleCustomMargins = document.querySelector('#toggleCustomMargins');
+    const imageInput = document.getElementById('image');
+    const uploadedImage = document.getElementById('uploaded-image');
+    const imageName = document.getElementById('image-name');
 
     function toggleFields() {
         const mode = modeField.value;
@@ -39,6 +42,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
     }
+
+    imageInput.addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                uploadedImage.src = e.target.result;
+                imageName.textContent = `Εικόνα: ${file.name}`;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
 
     modeField.addEventListener('change', toggleFields);
     paperSizeField.addEventListener('change', toggleFields);

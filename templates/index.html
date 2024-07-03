@@ -7,26 +7,28 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <nav class="navbar">
-        <div class="brand-container">
-            <div class="container">
-                <a href="/"><img class="logo-img" src="{{ url_for('static', filename='img/logo.png') }}" alt="Fix Store"></a>
-            </div>
-            <div class="container">
-                <h1>Πολλαπλασιαστής εικόνων</h1>
-            </div>
+    <nav class="navbar">    
+        <div class="container">
+            <a href="/"><img class="logo-img" src="{{ url_for('static', filename='img/logo.png') }}" alt="Fix Store"></a>
         </div>
-        <div class="button-container">
-            <a href="mailto:support@fixstore.info" class="button">Βοήθεια</a>
-        </div>
+        
     </nav>
     <div class="main-content">
-        <aside>
-            <div class="sidebar-container">
+        <div class="wrapper">
+            <aside>
+            <div class="container">
                 <form method="POST" enctype="multipart/form-data">
                     {{ form.hidden_tag() }}
                     <div class="form-group">
-                        <input type="file" name="image" accept="image/*" required>
+                        <button class="button" type="button" onclick="document.getElementById('image').click()">Επιλογή εικόνας</button>
+                        <input type="file"  id="image" name="image" accept="image/*" required style="display: none;">
+                    </div>
+                    
+                    <div class="form-group">
+                        <div id="image-preview">
+                            <img id="uploaded-image" src="{{ url_for('static', filename='img/default-image.png') }}" alt="Δεν έχει φορτωθεί εικόνα" style="max-width: 200px; max-height: 200px;">
+                            <p id="image-name"></p>
+                        </div>
                     </div>
                     <div class="form-container">
                         <div class="form-group">
@@ -102,29 +104,36 @@
                         <button type="submit" class="button">Δημιουργία PDF</button>
                     </div>
                 </form>
-                {% if outline_pdf_path %}
-            <embed src="{{ url_for('download', filename=outline_pdf_path.split('/')[-1]) }}"/>
-            <a href="{{ url_for('download', filename=outline_pdf_path.split('/')[-1]) }}" class="button" target="_blank">Περιγράμματα</a>
-            {% endif %}
             </div>
-        </aside>
-        <main>
-            {% if pdf_path %}
-            
-            <embed src="{{ url_for('download', filename=pdf_path.split('/')[-1]) }}"/>
-            <a href="{{ url_for('download', filename=pdf_path.split('/')[-1]) }}" class="button" target="_blank">Κατέβασμα PDF</a>
-            {% endif %}
-        </main>
+            </aside>
+        </div>
+        <div class="wrapper">
+            <main>
+                <div class="container">
+                    {% if pdf_path %}
+                    <iframe src="{{ url_for('download', filename=pdf_path.split('/')[-1]) }}" frameborder="0"></iframe>
+                    <!-- <a href="{{ url_for('download', filename=pdf_path.split('/')[-1]) }}" class="button" target="_blank">Κατέβασμα PDF</a> -->
+                    {% endif %}
+                </div>
+                <div class="container">
+                    {% if outline_pdf_path %}
+                    <h2>Κατέβασμα περιγράμματων</h2>
+                    <!-- <iframe src="{{ url_for('download', filename=outline_pdf_path.split('/')[-1]) }}" frameborder="0"></iframe> -->
+                    <a href="{{ url_for('download', filename=outline_pdf_path.split('/')[-1]) }}" class="button" target="_blank">Περιγράμματα</a>
+                    {% endif %}
+                </div>
+            </main>
+        </div>
     </div>
     <footer>
-        <div class="copyright">
+        <div class="container">
+            <p>Email: support@fixstore.info</p>
+        </div>
+        <div class="container">
             &copy; 2021 Fix Store. All rights reserved.
         </div>
-        <div class="contact-info">
-            <span>Email:
-                <a href="mailto:support@fixstore.info">Επικοινωνία</a>
-            </span>
-            <span>Phone: 2651075049</span>
+        <div class="container">
+            <p>Phone: 2651075049</p>
         </div>
     </footer>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
