@@ -1,3 +1,17 @@
 {
-    "python.analysis.typeCheckingMode": "basic"
+    "python.analysis.typeCheckingMode": "basic",
+    "files.autoSave": "afterDelay",
+    "editor.cursorStyle": "underline",
+    "editor.wordWrap": "on",
+    "window.zoomLevel": 0,
+    "python.analysis.diagnosticSeverityOverrides": {
+
+    },
+    "[python]": {
+        "prettier.insertPragma": false
+    },
+    "editor.codeActionsOnSave": {
+
+    },
+    "editor.formatOnType": true
 }

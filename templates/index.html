@@ -110,18 +110,11 @@
         <div class="wrapper">
             <main>
                 <div class="container">
-                    {% if pdf_path %}
-                    <iframe src="{{ url_for('download', filename=pdf_path.split('/')[-1]) }}" frameborder="0"></iframe>
-                    <!-- <a href="{{ url_for('download', filename=pdf_path.split('/')[-1]) }}" class="button" target="_blank">Κατέβασμα PDF</a> -->
+                    {% if merged_pdf_path %}
+                    <iframe src="{{ url_for('download', filename=merged_pdf_path.split('/')[-1]) }}" frameborder="0"></iframe>
                     {% endif %}
                 </div>
-                <div class="container">
-                    {% if outline_pdf_path %}
-                    <h2>Κατέβασμα περιγράμματων</h2>
-                    <!-- <iframe src="{{ url_for('download', filename=outline_pdf_path.split('/')[-1]) }}" frameborder="0"></iframe> -->
-                    <a href="{{ url_for('download', filename=outline_pdf_path.split('/')[-1]) }}" class="button" target="_blank">Περιγράμματα</a>
-                    {% endif %}
-                </div>
+
             </main>
         </div>
     </div>
