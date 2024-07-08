@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import FileField, SelectField, SubmitField, IntegerField, FloatField
+from wtforms import FileField, SelectField, SubmitField, IntegerField, FloatField, BooleanField
 from wtforms.validators import DataRequired, NumberRange, Optional, ValidationError
 
 
@@ -33,14 +33,6 @@ class ImageForm(FlaskForm):
         ('Custom', 'Custom')
         ], validators=[DataRequired()])
     
-    
-
-    margin_options = SelectField('Margin Options', choices=[
-        ('cutter standard', 'Cutter standard'),
-        ('narrow margin', 'Narrow margin'),
-        ('Custom', 'Custom')
-    ], validators=[DataRequired()])
-
     mode = SelectField('Mode', choices=[('Page', 'Page'), ('Numbering', 'Numbering')], validators=[DataRequired()])
     
     start_number = IntegerField('Start Number', default=1, validators=[Optional()])
@@ -53,10 +45,7 @@ class ImageForm(FlaskForm):
     custom_paper_height = IntegerField('Custom Paper Height (mm)', default=700, validators=[Optional()])
     custom_image_width = IntegerField('Custom Image Width (mm)', validators=[Optional()])
     custom_image_height = IntegerField('Custom Image Height (mm)', validators=[Optional()])
-    
-    custom_margin_left = IntegerField('Custom Margin Left (mm)', default=10, validators=[Optional()])
-    custom_margin_right = IntegerField('Custom Margin Right (mm)', default=10, validators=[Optional()])
-    custom_margin_top = IntegerField('Custom Margin Top (mm)', default=10, validators=[Optional()])
-    custom_margin_bottom = IntegerField('Custom Margin Bottom (mm)', default=10, validators=[Optional()])
+
+    show_marks = BooleanField('Show Marks', default=False)
     
     submit = SubmitField('Create PDF')

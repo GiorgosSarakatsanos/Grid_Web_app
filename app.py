@@ -38,16 +38,18 @@ def index():
 
         # Read the PDFs
         with open(str(grid_images_path), 'rb') as f1, open(str(corner_lines_path), 'rb') as f2:
-            pdf_path = PdfReader(f1)
+            grid_pdf = PdfReader(f1)
             corner_lines_pdf = PdfReader(f2)
 
-            # Assuming both PDFs have the same number of pages
-            for page_num in range(len(pdf_path.pages)):
-                image_grid_page = pdf_path.pages[page_num]
-                corner_lines_page = corner_lines_pdf.pages[page_num]
-                image_grid_page.merge_page(corner_lines_page)
-                pdf_writer.add_page(image_grid_page)
-        
+            # Get the first page of corner lines
+            corner_lines_page = corner_lines_pdf.pages[0]
+
+            # Merge each page of the grid with the corner lines page
+            for page_num in range(len(grid_pdf.pages)):
+                grid_page = grid_pdf.pages[page_num]
+                grid_page.merge_page(corner_lines_page)
+                pdf_writer.add_page(grid_page)
+
             # Write the merged PDF to a file
             with open(merged_pdf_path, 'wb') as out_f:
                 pdf_writer.write(out_f)

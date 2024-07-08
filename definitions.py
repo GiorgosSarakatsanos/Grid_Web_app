@@ -13,6 +13,7 @@ def get_paper_size(size, custom_width=None, custom_height=None):
     if size == 'Custom' and custom_width and custom_height:
         return (custom_width * mm, custom_height * mm)
     return sizes.get(size, (297 * mm, 210 * mm))
+    
 
 def img_size(size, custom_width=None, custom_height=None):
     sizes = {
@@ -24,6 +25,7 @@ def img_size(size, custom_width=None, custom_height=None):
     if size == 'Custom' and custom_width and custom_height:
         return (custom_width * mm, custom_height * mm)
     return sizes.get(size, (85 * mm, 55 * mm))
+
 
 
 
@@ -41,3 +43,24 @@ def margin_options(size, custom_margin_top=None, custom_margin_right=None, custo
     }
     margins = sizes.get(size.lower(), DEFAULT_MARGIN)
     return tuple(margin * mm for margin in margins)
+
+# Corner lines thikness and lenght
+mark_line_length = 10 * mm
+mark_line_thickness = 3
+
+# Mark margins
+mark_margin_top = 15 * mm
+mark_margin_right = 17 * mm
+mark_margin_bottom = 15 * mm
+mark_margin_left = 37 * mm
+
+# Page margins
+page_margin_top = 10 * mm
+page_margin_right = 5 * mm
+page_margin_bottom = 10 * mm
+page_margin_left = 28 * mm
+
+page_margins = page_margin_top, page_margin_right, page_margin_bottom, page_margin_left
+
+
+

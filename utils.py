@@ -2,29 +2,29 @@ from reportlab.lib.pagesizes import landscape
 from reportlab.lib.units import mm
 from reportlab.pdfgen import canvas
 from PIL import Image, ImageFilter
-from definitions import get_paper_size, margin_options, img_size
+from definitions import get_paper_size, img_size, page_margins, mark_margin_top, mark_line_length, mark_margin_bottom
 
 import os
 from PyPDF2 import PdfReader, PdfWriter
 
-def calculate_image_position(width, height, margin_left, margin_top, img_width, img_height, gap, padding):
+def calculate_image_position(width, height, margin_left, margin_top, img_width, img_height, gap):
     """Calculates the starting position for the image on the page."""
-    x = margin_left + padding
-    y = height - margin_top - img_height - padding
+    x = margin_left
+    y = height - mark_margin_top - img_height - mark_line_length
     return x, y
 
-def generate_pdf_content(c, image_path, form, width, height, margins, gap, padding, img_width, img_height):
+def generate_pdf_content(c, image_path, form, width, height, margins, gap, img_width, img_height):
     """Generates the PDF content based on the selected mode."""
-    margin_top, margin_right, margin_bottom, margin_left = margins
-    x, y = calculate_image_position(width, height, margin_left, margin_top, img_width, img_height, gap, padding)
+    margin_top, margin_right, margin_bottom, margin_left = page_margins
+    x, y = calculate_image_position(width, height, margin_left, margin_top, img_width, img_height, gap)
 
     if form.mode.data == 'Page':
-        while y > margin_bottom:
+        while y >   mark_margin_bottom + mark_line_length:
             while x + img_width < width - margin_right:
                 c.drawImage(image_path, x, y, width=img_width, height=img_height)
-                x += img_width + gap + padding * 2
-            y -= img_height + gap + padding * 2
-            x = margin_left + padding
+                x += img_width + gap
+            y -= img_height + gap
+            x = margin_left
 
     elif form.mode.data == 'Numbering':
         start_number = form.start_number.data or 1
@@ -35,20 +35,20 @@ def generate_pdf_content(c, image_path, form, width, height, margins, gap, paddi
         number = start_number
 
         while number <= end_number:
-            if y <= margin_bottom:
+            if y <=   mark_margin_bottom + mark_line_length:
                 c.showPage()
-                y = height - margin_top - img_height - padding
+                y = height - mark_margin_top - mark_line_length - img_height
             if x + img_width >= width - margin_right:
-                x = margin_left + padding
-                y -= img_height + gap + padding * 2
-                if y <= margin_bottom:
+                x = margin_left
+                y -= img_height + gap
+                if y <=   mark_margin_bottom + mark_line_length:
                     c.showPage()
-                    y = height - margin_top - img_height - padding
+                    y = height - mark_margin_top - mark_line_length - img_height
             c.drawImage(image_path, x, y, width=img_width, height=img_height)
             c.setFont("Times-Roman", font_size)
             c.drawString(x + offset_number_x, y + offset_number_y, str(number))
             number += 1
-            x += img_width + gap + padding * 2
+            x += img_width + gap
 
 def generate_pdf(image_path: str, form):
     """Generates the main PDF with images arranged in a grid."""
@@ -73,13 +73,6 @@ def generate_pdf(image_path: str, form):
     images_pdf_path = os.path.splitext(image_path)[0] + '_grid_images.pdf'
     c = canvas.Canvas(images_pdf_path, pagesize=landscape((width, height)))
 
-    margins = margin_options(form.margin_options.data,
-                            form.custom_margin_top.data,
-                            form.custom_margin_right.data,
-                            form.custom_margin_bottom.data,
-                            form.custom_margin_left.data)
-
-    padding = (form.padding.data or 0) * mm
     gap = (form.gap.data or 0) * mm
 
     img_width, img_height = img_size(form.img_size.data)
@@ -87,7 +80,7 @@ def generate_pdf(image_path: str, form):
         img_width = (form.custom_image_width.data or 85) * mm
         img_height = (form.custom_image_height.data or 55) * mm
 
-    generate_pdf_content(c, temp_image_path, form, width, height, margins, gap, padding, img_width, img_height)
+    generate_pdf_content(c, temp_image_path, form, width, height, page_margins, gap, img_width, img_height)
 
     c.save()
     os.remove(temp_image_path)

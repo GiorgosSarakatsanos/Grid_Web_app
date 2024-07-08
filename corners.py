@@ -1,6 +1,6 @@
 from reportlab.lib.pagesizes import landscape
 from reportlab.pdfgen import canvas
-from definitions import get_paper_size, margin_options, img_size
+from definitions import get_paper_size, margin_options, img_size, mark_line_length, mark_line_thickness,mark_margin_left, mark_margin_top, mark_margin_right, mark_margin_bottom
 import os
 
 def generate_corner_lines(image_path: str, form):
@@ -12,35 +12,24 @@ def generate_corner_lines(image_path: str, form):
     corner_lines_pdf_path = os.path.splitext(image_path)[0] + '_corner_lines.pdf'
     c = canvas.Canvas(corner_lines_pdf_path, pagesize=landscape((width, height)))  # Create a canvas for the corner lines
 
-    
-    # Get margins using margin_options
-    margins = margin_options(form.margin_options.data, 
-                            form.custom_margin_top.data, 
-                            form.custom_margin_right.data, 
-                            form.custom_margin_bottom.data, 
-                            form.custom_margin_left.data)
-    margin_top, margin_right, margin_bottom, margin_left = margins
-
     # Draw corner lines
-    corner_line_length = 50
-    line_thickness = 3  # Adjust as needed
-    c.setLineWidth(line_thickness)
+    c.setLineWidth(mark_line_thickness)
 
     # Top-left corner
-    c.line(margin_left, height - margin_top, margin_left, height - margin_top - corner_line_length)
-    c.line(margin_left, height - margin_top, margin_left + corner_line_length, height - margin_top)
+    c.line(mark_margin_left, height - mark_margin_top, mark_margin_left, height - mark_margin_top - mark_line_length)
+    c.line(mark_margin_left, height - mark_margin_top, mark_margin_left + mark_line_length, height - mark_margin_top)
 
     # Top-right corner
-    c.line(width - margin_right, height - margin_top, width - margin_right - corner_line_length, height - margin_top)
-    c.line(width - margin_right, height - margin_top, width - margin_right, height - margin_top - corner_line_length)
+    c.line(width - mark_margin_right, height - mark_margin_top, width - mark_margin_right - mark_line_length, height - mark_margin_top)
+    c.line(width - mark_margin_right, height - mark_margin_top, width - mark_margin_right, height - mark_margin_top - mark_line_length)
 
     # Bottom-left corner
-    c.line(margin_left, margin_bottom, margin_left + corner_line_length, margin_bottom)
-    c.line(margin_left, margin_bottom, margin_left, margin_bottom + corner_line_length)
+    c.line(mark_margin_left, mark_margin_bottom, mark_margin_left + mark_line_length, mark_margin_bottom)
+    c.line(mark_margin_left, mark_margin_bottom, mark_margin_left, mark_margin_bottom + mark_line_length)
 
     # Bottom-right corner
-    c.line(width - margin_right, margin_bottom, width - margin_right - corner_line_length, margin_bottom)
-    c.line(width - margin_right, margin_bottom, width - margin_right, margin_bottom + corner_line_length)
+    c.line(width - mark_margin_right, mark_margin_bottom, width - mark_margin_right - mark_line_length, mark_margin_bottom)
+    c.line(width - mark_margin_right, mark_margin_bottom, width - mark_margin_right, mark_margin_bottom + mark_line_length)
 
     c.save()
     return corner_lines_pdf_path  # Return the path to the corner lines PDF
