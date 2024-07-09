@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import FileField, SelectField, SubmitField, IntegerField, FloatField, BooleanField
+from wtforms import FileField, SelectField, SubmitField, IntegerField, FloatField, BooleanField, HiddenField
 from wtforms.validators import DataRequired, NumberRange, Optional, ValidationError
 
 
@@ -22,7 +22,6 @@ class ImageForm(FlaskForm):
         ], validators=[DataRequired()])
 
     gap = FloatField('Gap Between Images (mm)', default=0, validators=[Optional(), NumberRange(min=0)])
-    padding = FloatField('Padding (mm)', default=0, validators=[Optional(), NumberRange(min=0)])
     font_size = IntegerField('Font Size (px)', default=8, validators=[Optional(), NumberRange(min=0)])
 
     img_size = SelectField('Image Size', choices=[
@@ -38,8 +37,8 @@ class ImageForm(FlaskForm):
     start_number = IntegerField('Start Number', default=1, validators=[Optional()])
     end_number = IntegerField('End Number', default=10, validators=[Optional()])
 
-    offset_number_x = IntegerField('Offset Number X Position', default=15, validators=[Optional()])
-    offset_number_y = IntegerField('Offset Number Y Position', default=15, validators=[Optional()])
+    numbering_position_x = HiddenField('Numbering Position X')
+    numbering_position_y = HiddenField('Numbering Position Y')
 
     custom_paper_width = IntegerField('Custom Paper Width (mm)', default=1000, validators=[Optional()])
     custom_paper_height = IntegerField('Custom Paper Height (mm)', default=700, validators=[Optional()])

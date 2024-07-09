@@ -1,15 +1,13 @@
 from reportlab.lib.pagesizes import landscape
 from reportlab.lib.units import mm
 from reportlab.pdfgen import canvas
-from PIL import Image, ImageFilter
+from PIL import Image
 from definitions import get_paper_size, img_size, page_margins, mark_margin_top, mark_line_length, mark_margin_bottom
 from reportlab.pdfgen import canvas
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfbase import pdfmetrics
 import os
 
-import os
-from PyPDF2 import PdfReader, PdfWriter
 font_path = os.path.join(os.path.dirname(__file__), 'static', 'fonts', 'Arial.ttf')
 pdfmetrics.registerFont(TTFont('Arial', font_path))
 
@@ -19,7 +17,7 @@ def calculate_image_position(width, margin_left, img_width, gap, num_images_hori
     x = (width - total_img_width) / 2
     return x
 
-def generate_pdf_content(c, image_path, form, width, height, margins, gap, img_width, img_height):
+def generate_pdf_content(c, image_path, form, width, height, margins, gap, img_width, img_height, rel_x, rel_y):
     """Generates the PDF content based on the selected mode."""
     margin_top, margin_right, margin_bottom, margin_left = page_margins
 
@@ -40,8 +38,6 @@ def generate_pdf_content(c, image_path, form, width, height, margins, gap, img_w
         start_number = form.start_number.data or 1
         end_number = form.end_number.data or 10
         font_size = (form.font_size.data or 8)
-        offset_number_y = (form.offset_number_x.data or 0) * mm
-        offset_number_x = (form.offset_number_y.data or 0) * mm
         reverse_order = form.reverse_order.data
 
         if reverse_order:
@@ -62,12 +58,17 @@ def generate_pdf_content(c, image_path, form, width, height, margins, gap, img_w
                     c.showPage()
                     y = height - mark_margin_top - mark_line_length - img_height
             c.drawImage(image_path, x, y, width=img_width, height=img_height)
+
+            # Convert relative coordinates to absolute positions
+            abs_x = x + (rel_x * img_width)
+            abs_y = y + (rel_y * img_height)
+
             c.setFont("Arial", font_size)
-            c.drawString(x + offset_number_x, y + offset_number_y, str(number))
+            c.drawString(abs_x, abs_y, str(number))
             number += step
             x += img_width + gap
 
-def generate_pdf(image_path: str, form):
+def generate_pdf(image_path: str, form, numbering_position_x, numbering_position_y):
     """Generates the main PDF with images arranged in a grid."""
     mode = form.mode.data
 
@@ -97,7 +98,7 @@ def generate_pdf(image_path: str, form):
         img_width = (form.custom_image_width.data or 85) * mm
         img_height = (form.custom_image_height.data or 55) * mm
 
-    generate_pdf_content(c, temp_image_path, form, width, height, page_margins, gap, img_width, img_height)
+    generate_pdf_content(c, temp_image_path, form, width, height, page_margins, gap, img_width, img_height, numbering_position_x, numbering_position_y)
 
     c.save()
     os.remove(temp_image_path)

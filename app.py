@@ -3,6 +3,7 @@ from forms import ImageForm
 from utils import generate_pdf  # Import generate_pdf
 from corners import generate_corner_lines
 from PyPDF2 import PdfReader, PdfWriter
+from werkzeug.utils import secure_filename
 
 from dotenv import load_dotenv
 from flask_cors import CORS
@@ -24,12 +25,16 @@ def index():
     form = ImageForm()
     if form.validate_on_submit():
         image = form.image.data
-        image_path = os.path.join(app.config['UPLOAD_FOLDER'], image.filename)
-
+        image_path = os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(image.filename))
         image.save(image_path)
 
-        # Generate PDFs
-        grid_images_path = generate_pdf(image_path, form)  # Call generate_pdf and store the path
+        # Extract relative numbering position
+        rel_x = float(form.numbering_position_x.data)
+        rel_y = float(form.numbering_position_y.data)
+
+
+        # Generate PDF
+        grid_images_path = generate_pdf(image_path, form, rel_x, rel_y)
         corner_lines_path = generate_corner_lines(image_path, form)
 
         # Merge the corner lines PDF with the images grid PDF

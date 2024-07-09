@@ -26,10 +26,12 @@
 
                     <div class="form-group">
                         <div id="image-preview">
-                            <img id="uploaded-image" src="{{ url_for('static', filename='img/default-image.png') }}" alt="Δεν έχει φορτωθεί εικόνα" style="max-width: 200px; max-height: 200px;">
+                            <canvas id="image-canvas" style="max-width: 200px; max-height: 200px;" onclick="setNumberingPosition(event)"></canvas>
                             <p id="image-name"></p>
                         </div>
                     </div>
+                    <input type="hidden" name="numbering_position_x" id="numbering_position_x">
+                    <input type="hidden" name="numbering_position_y" id="numbering_position_y">
                     <div class="form-container">
                         <div class="form-group">
                             <span>Λειτουργία</span>
@@ -41,8 +43,6 @@
                         <div class="form-group" id="numbering-fields">
                             <div class="field-group"><input type="number" name="start_number"><label for="start_number">Αρχικός αριθμός</label></div>
                             <div class="field-group"><input type="number" name="end_number"><label for="end_number">Τελικός αριθμός</label></div>
-                            <div class="field-group"><input type="number" name="offset_number_x" value="8"><label for="offset_number_x">Απόσταση από αριστερά</label></div>
-                            <div class="field-group"><input type="number" name="offset_number_y" value="23"><label for="offset_number_y">Απόσταση από κάτω</label></div>
                             <div class="field-group"><input type="number" name="font_size" value="8"><label for="offset_number_y">Μέγεθος γραμματοσειράς</label></div>
                             <div class="field-group"><input type="checkbox" name="reverse_order"><label for="reverse_order">Αντιστροφή σειράς αρίθμησης</label></div>
                         </div>
@@ -83,7 +83,6 @@
                     </div>
                     <div class="form-group">
                         <div class="form-group"><input type="number" name="gap" value="0" required><label for="gap">Κενό ανάμεσα</label></div>
-                        <div class="form-group"><input type="number" name="padding" value="0" required><label for="padding">Κενό γύρω</label></div>
                     </div>
                     <div class="form-group">
                         <button type="submit" class="button">Δημιουργία PDF</button>

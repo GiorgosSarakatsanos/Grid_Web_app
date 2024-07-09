@@ -1,0 +1,11 @@
+20240709
+- Added changelog feature
+- Added new feature that allows users to create a changelog.
+- Updated dependencies to latest versions.
+- Fixed issue where the application crashed on startup.
+- Initial release.
+- Reverse numbering
+- Center the image grid
+- Removed the padding feature
+- Install the Arial font
+- Make a mark in image's preview that starts the numbering from click position
