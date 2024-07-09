@@ -48,4 +48,6 @@ class ImageForm(FlaskForm):
 
     show_marks = BooleanField('Show Marks', default=False)
 
+    reverse_order = BooleanField('Reverse Numbering Order')
+
     submit = SubmitField('Create PDF')
