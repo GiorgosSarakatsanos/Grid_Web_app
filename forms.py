@@ -9,7 +9,7 @@ def validate_custom_dimensions(form, field):
 
 class ImageForm(FlaskForm):
     image = FileField('Upload Image', validators=[DataRequired()])
-    
+
     paper_size = SelectField('Paper Size', choices=[
         ('255x235', '235 mm x 255 mm'),
         ('255x235', '235 mm x 255 mm'),
@@ -20,32 +20,32 @@ class ImageForm(FlaskForm):
         ('A4', 'A4 (297mm x 210mm)'),
         ('Custom', 'Custom')
         ], validators=[DataRequired()])
-   
+
     gap = FloatField('Gap Between Images (mm)', default=0, validators=[Optional(), NumberRange(min=0)])
     padding = FloatField('Padding (mm)', default=0, validators=[Optional(), NumberRange(min=0)])
     font_size = IntegerField('Font Size (px)', default=8, validators=[Optional(), NumberRange(min=0)])
-    
+
     img_size = SelectField('Image Size', choices=[
-        
+
         ('Sticker', 'Sticker (60mm x 90mm)'),
         ('Card', 'Card (85mm x 55mm)'),
         ('Square', 'Square (55mm x 55mm)'),
         ('Custom', 'Custom')
         ], validators=[DataRequired()])
-    
+
     mode = SelectField('Mode', choices=[('Page', 'Page'), ('Numbering', 'Numbering')], validators=[DataRequired()])
-    
+
     start_number = IntegerField('Start Number', default=1, validators=[Optional()])
     end_number = IntegerField('End Number', default=10, validators=[Optional()])
-    
+
     offset_number_x = IntegerField('Offset Number X Position', default=15, validators=[Optional()])
     offset_number_y = IntegerField('Offset Number Y Position', default=15, validators=[Optional()])
-    
+
     custom_paper_width = IntegerField('Custom Paper Width (mm)', default=1000, validators=[Optional()])
     custom_paper_height = IntegerField('Custom Paper Height (mm)', default=700, validators=[Optional()])
     custom_image_width = IntegerField('Custom Image Width (mm)', validators=[Optional()])
     custom_image_height = IntegerField('Custom Image Height (mm)', validators=[Optional()])
 
     show_marks = BooleanField('Show Marks', default=False)
-    
+
     submit = SubmitField('Create PDF')

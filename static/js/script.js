@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
             toggleCustomImgSize.style.display = 'block';
         } else {
             toggleCustomImgSize.style.display = 'none';
-        }        
+        }
     }
 
     imageInput.addEventListener('change', (event) => {
@@ -51,8 +51,5 @@ document.addEventListener('DOMContentLoaded', () => {
     imgSizeField.addEventListener('change', toggleFields);
 
     toggleFields(); // Initial call to set correct visibility
-    
+
 });
-
-
-

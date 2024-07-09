@@ -13,7 +13,7 @@ def get_paper_size(size, custom_width=None, custom_height=None):
     if size == 'Custom' and custom_width and custom_height:
         return (custom_width * mm, custom_height * mm)
     return sizes.get(size, (297 * mm, 210 * mm))
-    
+
 
 def img_size(size, custom_width=None, custom_height=None):
     sizes = {
@@ -61,6 +61,3 @@ page_margin_bottom = 10 * mm
 page_margin_left = 28 * mm
 
 page_margins = page_margin_top, page_margin_right, page_margin_bottom, page_margin_left
-
-
-

@@ -7,11 +7,11 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <nav class="navbar">    
+    <nav class="navbar">
         <div class="container">
             <a href="/"><img class="logo-img" src="{{ url_for('static', filename='img/logo.png') }}" alt="Fix Store"></a>
         </div>
-        
+
     </nav>
     <div class="main-content">
         <div class="wrapper">
@@ -23,7 +23,7 @@
                         <button class="button" type="button" onclick="document.getElementById('image').click()">Επιλογή εικόνας</button>
                         <input type="file"  id="image" name="image" accept="image/*" required style="display: none;">
                     </div>
-                    
+
                     <div class="form-group">
                         <div id="image-preview">
                             <img id="uploaded-image" src="{{ url_for('static', filename='img/default-image.png') }}" alt="Δεν έχει φορτωθεί εικόνα" style="max-width: 200px; max-height: 200px;">
@@ -46,7 +46,7 @@
                             <div class="field-group"><input type="number" name="font_size" value="8"><label for="offset_number_y">Μέγεθος γραμματοσειράς</label></div>
                         </div>
                     </div>
-                    
+
                     <div class="form-container">
                         <div class="form-group">
                             <span>Διαστάσεις χαρτιού</span>
@@ -63,7 +63,7 @@
                         <div class="form-group" id="toggleCustomSize">
                             <div class="input-group"><input type="number" name="custom_paper_width"><label for="custom_paper_width">Πλάτος</label></div>
                             <div class="input-group"><input type="number" name="custom_paper_height"><label for="custom_paper_height">Ύψος</label></div>
-                            
+
                         </div>
                     </div>
                     <div class="form-group">

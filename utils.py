@@ -85,8 +85,3 @@ def generate_pdf(image_path: str, form):
     c.save()
     os.remove(temp_image_path)
     return images_pdf_path
-
-
-    
-
-    

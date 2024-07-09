@@ -33,4 +33,3 @@ def generate_corner_lines(image_path: str, form):
 
     c.save()
     return corner_lines_pdf_path  # Return the path to the corner lines PDF
-

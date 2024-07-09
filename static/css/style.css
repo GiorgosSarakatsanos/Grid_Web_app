@@ -49,7 +49,7 @@ h1, h2{
     font-size: var(--head-font-size);
     font-weight: var(--font-bold);
     padding-bottom: var(--xl-gap);
-    
+
 }
 
 p, label, span{
@@ -79,13 +79,13 @@ input, textarea{
     overflow: hidden;
     text-overflow: ellipsis;
         }
-        
+
         input[type="file"]::file-selector-button {
             background-color: var(--button-color-hover);
-            padding: var(--m-gap) var(--l-gap); 
+            padding: var(--m-gap) var(--l-gap);
             transition: 1s;
           }
-          
+
           input[type="file"]::file-selector-button:hover {
             background-color: var(--button-color);
             border: none;
@@ -115,7 +115,7 @@ input, textarea{
           input[type=button]:hover, input[type=submit]:hover, input[type=reset]:hover {
             background-color: var(--button-color);
           }
-          
+
 html, body {
     font-size: 1.2rem;
     background-color: var(--bg-color);
@@ -206,7 +206,7 @@ iframe {
     margin-bottom: var(--s-gap);
     border: solid var(--light-color) 1px;
     border-radius: var(--border-radius);
-    font-family: Arial, Helvetica, sans-serif;    
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 .field-group {
@@ -253,4 +253,3 @@ img {
     font-size: 8px;
     color: gray;
 }
-
