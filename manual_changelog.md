@@ -1,11 +1,24 @@
 20240709
-- Added changelog feature
-- Added new feature that allows users to create a changelog.
-- Updated dependencies to latest versions.
-- Fixed issue where the application crashed on startup.
-- Initial release.
-- Reverse numbering
-- Center the image grid
-- Removed the padding feature
-- Install the Arial font
-- Make a mark in image's preview that starts the numbering from click position
+    - Added changelog feature
+    - Added new feature that allows users to create a changelog.
+    - Updated dependencies to latest versions.
+    - Fixed issue where the application crashed on startup.
+    - Initial release.
+    - Reverse numbering
+    - Center the image grid
+    - Removed the padding feature
+    - Install the Arial font
+    - Make a mark in image's preview that starts the numbering from click position
+
+20240710
+    - Created a mark in the click position in image preview, where the numbering will start from
+    - Fixed the position of the numbering to match exactly where the user click and match with the mark
+    - Add an exception to the "Page" mode to dont calculate the mouse position (bug fixed)
+    - Added a zoom feature to the image preview
+    - Fixed the mark for numbering to be in the click point on the image, no matter how much the zoom level is
+    - When uploaded an image, is in that level that is visible in the preview window
+    - Fixed the preview window to be in widht = 595px (actually auto) and height = 600px (based on golden ratio)
+    - I limit the mouse wheel zoom to be done only with the control key on windows and command on mac
+    - Zoom button controls added to the image preview window
+    - The green mark for numbering works only on numbering mode
+    - If the user place a green mark and choose again page mode, it clears the mark (bug fixed)

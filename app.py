@@ -28,10 +28,13 @@ def index():
         image_path = os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(image.filename))
         image.save(image_path)
 
-        # Extract relative numbering position
-        rel_x = float(form.numbering_position_x.data)
-        rel_y = float(form.numbering_position_y.data)
-
+        # Extract relative numbering position ONLY if mode is 'Numbering'
+        if form.mode.data == 'Numbering':
+            rel_x = float(form.numbering_position_x.data)
+            rel_y = float(form.numbering_position_y.data)
+        else:
+            rel_x = 0.0  # Default to 0.0 if not in Numbering mode
+            rel_y = 0.0
 
         # Generate PDF
         grid_images_path = generate_pdf(image_path, form, rel_x, rel_y)

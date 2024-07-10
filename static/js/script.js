@@ -8,8 +8,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const imageInput = document.getElementById('image');
     const imageCanvas = document.getElementById('image-canvas');
     const imageName = document.getElementById('image-name');
+    const zoomInButton = document.getElementById('zoom-in');
+    const zoomOutButton = document.getElementById('zoom-out');
     const ctx = imageCanvas.getContext('2d');
     let img = new Image();
+
+    let scale = 1;
+    let originX = 0;
+    let originY = 0;
+    let startX = 0;
+    let startY = 0;
+    let isDragging = false;
 
     function toggleFields() {
         const mode = modeField.value;
@@ -35,6 +44,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function drawImage() {
+        ctx.clearRect(0, 0, imageCanvas.width, imageCanvas.height);
+        ctx.save();
+        ctx.translate(originX, originY);
+        ctx.scale(scale, scale);
+        ctx.drawImage(img, 0, 0);
+        ctx.restore();
+    }
+
     imageInput.addEventListener('change', (event) => {
         const file = event.target.files[0];
         if (file) {
@@ -42,16 +60,20 @@ document.addEventListener('DOMContentLoaded', () => {
             reader.onload = (e) => {
                 img = new Image();
                 img.onload = () => {
-                    const displayWidth = 200;  // Assuming max-width is 200px
-                    const scale = displayWidth / img.width;
-                    const displayHeight = img.height * scale;
+                    const containerWidth = 595;
+                    const containerHeight = 600;
+
+                    const widthScale = containerWidth / img.width;
+                    const heightScale = containerHeight / img.height;
+                    scale = Math.min(widthScale, heightScale);
+
+                    originX = (containerWidth - img.width * scale) / 2;
+                    originY = (containerHeight - img.height * scale) / 2;
 
                     imageCanvas.width = img.width;
                     imageCanvas.height = img.height;
-                    imageCanvas.style.width = `${displayWidth}px`;
-                    imageCanvas.style.height = `${displayHeight}px`;
 
-                    ctx.drawImage(img, 0, 0, img.width, img.height);
+                    drawImage();
                 };
                 img.src = e.target.result;
                 imageName.textContent = `Εικόνα: ${file.name}`;
@@ -66,15 +88,62 @@ document.addEventListener('DOMContentLoaded', () => {
 
     toggleFields(); // Initial call to set correct visibility
 
+    imageCanvas.addEventListener('wheel', (event) => {
+        if (!event.ctrlKey && !event.metaKey) {
+            return;
+        }
+
+        event.preventDefault();
+        const mouseX = event.offsetX;
+        const mouseY = event.offsetY;
+        const wheel = event.deltaY < 0 ? 1.1 : 0.9;
+
+        const newScale = scale * wheel;
+        const scaleRatio = newScale / scale;
+
+        originX = mouseX - (mouseX - originX) * scaleRatio;
+        originY = mouseY - (mouseY - originY) * scaleRatio;
+
+        scale = newScale;
+
+        drawImage();
+    });
+
+    imageCanvas.addEventListener('mousedown', (event) => {
+        startX = event.offsetX - originX;
+        startY = event.offsetY - originY;
+        isDragging = true;
+    });
+
+    imageCanvas.addEventListener('mousemove', (event) => {
+        if (isDragging) {
+            originX = event.offsetX - startX;
+            originY = event.offsetY - startY;
+            drawImage();
+        }
+    });
+
+    imageCanvas.addEventListener('mouseup', () => {
+        isDragging = false;
+    });
+
+    imageCanvas.addEventListener('mouseout', () => {
+        isDragging = false;
+    });
+
     // Function to handle image click and set numbering position
     window.setNumberingPosition = function(event) {
+        if (modeField.value !== 'Numbering') {
+            return; // Exit if the mode is not "Numbering"
+        }
+
         const rect = imageCanvas.getBoundingClientRect();
-        const x = event.clientX - rect.left;
-        const y = event.clientY - rect.top;
+        const x = (event.clientX - rect.left - originX) / scale;
+        const y = (event.clientY - rect.top - originY) / scale;
 
         // Calculate relative position
-        const relX = x / rect.width;
-        const relY = y / rect.height;
+        const relX = x / img.width;
+        const relY = y / img.height;
 
         document.getElementById('numbering_position_x').value = relX;
         document.getElementById('numbering_position_y').value = relY;
@@ -84,15 +153,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const verticalMarkLength = fontSize * 1.5; // Vertical mark length
         const horizontalMarkLength = verticalMarkLength * 2; // Horizontal mark length
 
-        ctx.clearRect(0, 0, imageCanvas.width, imageCanvas.height);
-        ctx.drawImage(img, 0, 0, imageCanvas.width, imageCanvas.height);
-        const scaledX = relX * imageCanvas.width;
-        const scaledY = relY * imageCanvas.height;
+        drawImage(); // Redraw the image before drawing the mark
+        const scaledX = relX * img.width * scale + originX;
+        const scaledY = relY * img.height * scale + originY;
         ctx.strokeStyle = 'green';
         ctx.beginPath();
-        // Draw vertical line with bottom endpoint at click point
-        ctx.moveTo(scaledX, scaledY);
-        ctx.lineTo(scaledX, scaledY - verticalMarkLength);
+        ctx.moveTo(scaledX, scaledY - verticalMarkLength / 2);
+        ctx.lineTo(scaledX, scaledY + verticalMarkLength / 2);
         ctx.stroke();
         // Draw horizontal line
         ctx.beginPath();
@@ -105,4 +172,46 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.fillStyle = 'green';
         ctx.fillText('ΑΡΙΘΜΗΣΗ', scaledX + 2, scaledY - 2);
     };
+
+    // Add event listener to clear the mark when the mode changes from "Numbering" to another mode
+modeField.addEventListener('change', () => {
+    if (modeField.value !== 'Numbering') {
+        ctx.clearRect(0, 0, imageCanvas.width, imageCanvas.height);
+        drawImage(); // Redraw the image to clear the mark
+    }
+});
+    // Zoom in and zoom out button event listeners
+    zoomInButton.addEventListener('click', (event) => {
+        event.preventDefault();
+        const mouseX = imageCanvas.width / 2;
+        const mouseY = imageCanvas.height / 2;
+        const wheel = 1.1;
+
+        const newScale = scale * wheel;
+        const scaleRatio = newScale / scale;
+
+        originX = mouseX - (mouseX - originX) * scaleRatio;
+        originY = mouseY - (mouseY - originY) * scaleRatio;
+
+        scale = newScale;
+
+        drawImage();
+    });
+
+    zoomOutButton.addEventListener('click', (event) => {
+        event.preventDefault();
+        const mouseX = imageCanvas.width / 2;
+        const mouseY = imageCanvas.height / 2;
+        const wheel = 0.9;
+
+        const newScale = scale * wheel;
+        const scaleRatio = newScale / scale;
+
+        originX = mouseX - (mouseX - originX) * scaleRatio;
+        originY = mouseY - (mouseY - originY) * scaleRatio;
+
+        scale = newScale;
+
+        drawImage();
+    });
 });
