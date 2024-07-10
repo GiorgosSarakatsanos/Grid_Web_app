@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='grid_web_app',  # Replace with your project name
-    version='0.1.2',
+    version='0.1.3',
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
