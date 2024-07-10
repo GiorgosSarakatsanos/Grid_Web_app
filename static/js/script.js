@@ -81,7 +81,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Draw green mark on the canvas
         const fontSize = parseFloat(document.querySelector('input[name="font_size"]').value) || 8;
-        const markLength = fontSize * 1.5; // Example scaling
+        const verticalMarkLength = fontSize * 1.5; // Vertical mark length
+        const horizontalMarkLength = verticalMarkLength * 2; // Horizontal mark length
 
         ctx.clearRect(0, 0, imageCanvas.width, imageCanvas.height);
         ctx.drawImage(img, 0, 0, imageCanvas.width, imageCanvas.height);
@@ -89,8 +90,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const scaledY = relY * imageCanvas.height;
         ctx.strokeStyle = 'green';
         ctx.beginPath();
-        ctx.moveTo(scaledX, scaledY - markLength / 2);
-        ctx.lineTo(scaledX, scaledY + markLength / 2);
+        // Draw vertical line with bottom endpoint at click point
+        ctx.moveTo(scaledX, scaledY);
+        ctx.lineTo(scaledX, scaledY - verticalMarkLength);
         ctx.stroke();
+        // Draw horizontal line
+        ctx.beginPath();
+        ctx.moveTo(scaledX, scaledY);
+        ctx.lineTo(scaledX + horizontalMarkLength, scaledY);
+        ctx.stroke();
+
+        // Position numbering text at the top of the horizontal line with 1px padding
+        ctx.font = `${fontSize}px Arial`;
+        ctx.fillStyle = 'green';
+        ctx.fillText('ΑΡΙΘΜΗΣΗ', scaledX + 2, scaledY - 2);
     };
 });

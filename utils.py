@@ -47,6 +47,11 @@ def generate_pdf_content(c, image_path, form, width, height, margins, gap, img_w
             number = start_number
             step = 1
 
+        horizontalMarkLength = font_size * 1.5 * 2  # Define horizontalMarkLength here
+
+        # Mirror the vertical coordinate
+        mirrored_rel_y = 1 - rel_y
+
         while (reverse_order and number >= start_number) or (not reverse_order and number <= end_number):
             if y <= mark_margin_bottom + mark_line_length:
                 c.showPage()
@@ -61,10 +66,11 @@ def generate_pdf_content(c, image_path, form, width, height, margins, gap, img_w
 
             # Convert relative coordinates to absolute positions
             abs_x = x + (rel_x * img_width)
-            abs_y = y + (rel_y * img_height)
+            abs_y = y + (mirrored_rel_y * img_height)
 
+            # Position numbering text at the top of the horizontal line
             c.setFont("Arial", font_size)
-            c.drawString(abs_x, abs_y, str(number))
+            c.drawString(abs_x + 2, abs_y - font_size / 2, str(number))
             number += step
             x += img_width + gap
 
