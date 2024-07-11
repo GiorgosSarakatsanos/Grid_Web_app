@@ -12,61 +12,66 @@
             <nav class="navbar">
                 <form method="POST" enctype="multipart/form-data">
                     {{ form.hidden_tag() }}
-                    <div class="container">
-                        <a href="/"><img class="logo-img" src="{{ url_for('static', filename='img/logo.png') }}" alt="Fix Store">Πλέγμα</a>
+                    <div class="wrapper">
+                        <div class="container">
+                            <a href="/"><img class="logo-img" src="{{ url_for('static', filename='img/logo.png') }}" alt="Fix Store">Πλέγμα</a>
+                        </div>
+                        <div class="container">
+                            <button class="button" type="button" onclick="document.getElementById('image').click()">
+                                <img src="{{ url_for('static', filename='icons/plus-icon.png') }}" alt="Upload" class="radio-icon">
+                                <span>Νέο</span>
+                            </button>
+                            <input type="file" id="image" name="image" accept="image/*" required style="display: none;">
+                        </div>
                     </div>
-                    <div class="container">
-                        <button class="button" type="button" onclick="document.getElementById('image').click()">
-                            <img src="{{ url_for('static', filename='icons/plus-icon.png') }}" alt="Upload" class="radio-icon">
-                            <span>Νέο</span>
-                        </button>
-                        <input type="file" id="image" name="image" accept="image/*" required style="display: none;">
+                    <div class="wrapper">
+                        <div class="container">
+                            <fieldset>
+                                <legend>Λειτουργία</legend>
+                                <label class="radio-container" for="mode_page">
+                                    <input type="radio" name="mode" value="Page" id="mode_page" required>
+                                    <img src="{{ url_for('static', filename='icons/one-page-icon.png') }}" alt="Page Icon" class="radio-icon">
+                                    <span>Απλή</span>
+                                </label>
+                                <label class="radio-container" for="mode_numbering">
+                                    <input type="radio" name="mode" value="Numbering" id="mode_numbering" required>
+                                    <img src="{{ url_for('static', filename='icons/multi-page-icon.png') }}" alt="Numbering Icon" class="radio-icon">
+                                    <span>Αρίθμηση</span>
+                                </label>
+                            </fieldset>
+                        </div>
+                        <div class="container">
+                            <fieldset>
+                                <legend>Διαστάσεις</legend>
+                                    <label for="paper_size">
+                                        <select name="paper_size" id="paper_size" required >
+                                            <option value="255x235">255x235</option>
+                                            <option value="255x210">255x210</option>
+                                            <option value="487x330">487x330</option>
+                                            <option value="350x330">350x330</option>
+                                            <option value="A3">A3</option>
+                                            <option value="A4">A4</option>
+                                            <option value="Custom">Προσαρμογή</option>
+                                        </select>
+                                        <img class="logo-img" src="{{ url_for('static', filename='icons/paper-type.png') }}" alt="Fix Store">
+                                        <span>Χαρτί</span>
+                                    </label>
+                                    <label for="img_size">
+                                    <select name="img_size" id="img_size" required >
+                                        <option value="Sticker">60x90</option>
+                                        <option value="Card">85x55</option>
+                                        <option value="Square">55x55</option>
+                                        <option value="Custom">Προσαρμογή</option>
+                                    </select>
+                                    <img class="logo-img" src="{{ url_for('static', filename='icons/image-size.png') }}" alt="Fix Store">
+                                    <span>Εικόνα</span>
+                                    </label>
+                                </fieldset>
+                        </div>
                     </div>
+
                     <div class="container">
-                        <fieldset>
-                            <legend>Λειτουργία</legend>
-                            <label class="radio-container" for="mode_page">
-                                <input type="radio" name="mode" value="Page" id="mode_page" required>
-                                <img src="{{ url_for('static', filename='icons/one-page-icon.png') }}" alt="Page Icon" class="radio-icon">
-                                <span>Απλή</span>
-                            </label>
-                            <label class="radio-container" for="mode_numbering">
-                                <input type="radio" name="mode" value="Numbering" id="mode_numbering" required>
-                                <img src="{{ url_for('static', filename='icons/multi-page-icon.png') }}" alt="Numbering Icon" class="radio-icon">
-                                <span>Αρίθμηση</span>
-                            </label>
-                        </fieldset>
-                    </div>
-                    <div class="container">
-                        <fieldset>
-                            <legend>Διαστάσεις</legend>
-                            <label>
-                                <img class="logo-img" src="{{ url_for('static', filename='icons/paper-type.png') }}" alt="Fix Store">
-                                <span>Χαρτί</span>
-                                <select name="paper_size" id="paper_size" required>
-                                    <option value="255x235">Σελίδα 1 (255x235)</option>
-                                    <option value="255x210">Σελίδα 2 (255x210)</option>
-                                    <option value="487x330">Σελίδα 3 (487x330)</option>
-                                    <option value="350x330">Σελίδα 4 (350x330)</option>
-                                    <option value="A3">A3 (420 x 297)</option>
-                                    <option value="A4">A4 (297 x 210)</option>
-                                    <option value="Custom">Προσαρμογή</option>
-                                </select>
-                            </label>
-                            <label>
-                                <img class="logo-img" src="{{ url_for('static', filename='icons/image-size.png') }}" alt="Fix Store">
-                                <span>Εικόνα</span>
-                                <select name="img_size" id="img_size" required>
-                                    <option value="Sticker">Ετικέτα 60x90</option>
-                                    <option value="Card">Κάρτα 85x55</option>
-                                    <option value="Square">Τετράγωνο 55x55</option>
-                                    <option value="Custom">Προσαρμογή</option>
-                                </select>
-                            </label>
-                        </fieldset>
-                    </div>
-                    <div class="container">
-                        <button type="submit" class="button">Δημιουργία PDF</button>
+                        <button type="submit" class="button">Εκτύπωση</button>
                     </div>
                 </form>
             </nav>

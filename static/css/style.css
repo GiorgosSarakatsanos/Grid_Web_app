@@ -8,6 +8,42 @@
 body {
     display: grid;
     height: 100vh;
+    overflow: hidden;
+}
+
+/* Ensure the top-container is full-width */
+.top-container {
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box; /* Ensure padding and border are included in the element's total width and height */
+}
+
+/* Ensure the navbar is a flex container */
+.navbar, form {
+    display: grid;
+    justify-content: space-between; /* Adjusted to ensure elements are spaced evenly */
+    align-items: center;
+    padding: 10px;
+    background-color: #f8f8f8;
+    border-bottom: 1px solid #ccc;
+    width: 100%; /* Ensure the navbar takes up the full width */
+    box-sizing: border-box; /* Ensure padding and border are included in the element's total width and height */
+}
+
+/* Style each container inside the navbar */
+.navbar .container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1em; /* Added gap for better spacing */
+}
+
+.wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1em;
 }
 
 .grid-container {
@@ -95,7 +131,7 @@ footer {
 
 .middle-row {
     display: grid;
-    grid-template-columns: 595px 1fr 350px;
+    grid-template-columns: 595px 1fr auto;
     grid-column: 1 / 4;
     background-color: white;
 }
@@ -137,6 +173,7 @@ footer {
 
 .field-group input[type="number"],
 .field-group input[type="checkbox"] {
+    text-align: right;
     width: calc(100% - 150px); /* Ensure input fields have the same width */
     padding: 5px;
     border: 1px solid #ccc;
@@ -145,7 +182,8 @@ footer {
 
 .field-group legend {
     font-weight: bold;
-    margin-bottom: 10px;
+    padding: 0 0.2em;
+    margin: 0 0.2em;
     font-size: 16px; /* Set a consistent font size */
     color: #333; /* Set a consistent font color */
     width: max-content; /* Set a consistent width for all legends */
@@ -157,18 +195,18 @@ footer {
     width: auto; /* Make checkbox width auto to fit its content */
 }
 
+.radio-icon, .logo-img {
+    width: 24px;
+    height: 24px;
+    margin-right: 0.2em;
+}
+
 .radio-container {
     display: flex;
     align-items: center;
-    margin-bottom: 12px;
     cursor: pointer;
-    font-size: 16px;
-}
-
-.radio-container img {
-    margin-right: 10px;
-    width: 25px;
-    height: 25px;
+    margin-right: 20px;
+    width: 200px;
 }
 
 input[type="radio"] {
@@ -183,13 +221,19 @@ input[type="radio"]:checked + img + span {
 }
 
 fieldset {
-    border: none;
-    margin: 10px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 0.5em;
+    margin: 10px;
+    font-size: x-small;
+    border-radius: 8px;
 }
 
-label {
-    display: flex;
-    align-items: center;
+label span select legend {
+    display: inline-block;
+    vertical-align: middle;
+    box-sizing: border-box;
 }
 
 #image-preview {
@@ -230,13 +274,6 @@ label {
     border: none;
 }
 
-legend {
-    font-size: 0.8rem;
-    font-weight: bold;
-    margin-bottom: 10px;
-}
-
 h2 {
-    font-size: 1.2rem;
-    margin-bottom: 10px;
+    font-size: x-small;
 }
