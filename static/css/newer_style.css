@@ -1,0 +1,50 @@
+/* Reset Styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    overflow: hidden;
+}
+
+
+header, footer {
+    grid-column: 1 / 4;
+    background-color: gray;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+}
+
+header {
+    background-color: gray;
+    justify-content: space-between;
+    width: 100%;
+}
+
+footer {
+    background-color: rgb(53, 53, 53);
+    color: white;
+    text-align: center;
+}
+
+
+.middle-row {
+    display: grid;
+    grid-template-columns: 595px 1fr auto;
+    grid-column: 1 / 4;
+    background-color: white;
+}
+
+#image-preview {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50px;
+}
+
+.zoom-button {
+    margin: 5px;
+}

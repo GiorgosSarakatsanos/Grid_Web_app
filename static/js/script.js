@@ -1,10 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const modeField = document.querySelector('#mode');
-    const numberingFields = document.querySelector('#numbering-fields');
+    const modeField = document.querySelectorAll('input[name="mode"]');
+    const numberingFields = document.querySelector('.field-group-numbering'); // Updated class for numbering options
     const paperSizeField = document.querySelector('#paper_size');
-    const toggleCustomSize = document.querySelector('#toggleCustomSize');
     const imgSizeField = document.querySelector('#img_size');
-    const toggleCustomImgSize = document.querySelector('#toggleCustomImgSize');
     const imageInput = document.getElementById('image');
     const imageCanvas = document.getElementById('image-canvas');
     const imageName = document.getElementById('image-name');
@@ -21,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let isDragging = false;
 
     function toggleFields() {
-        const mode = modeField.value;
+        const mode = document.querySelector('input[name="mode"]:checked').value;
         const paperSize = paperSizeField.value;
         const imgSize = imgSizeField.value;
 
@@ -32,15 +30,19 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (paperSize === 'Custom') {
-            toggleCustomSize.style.display = 'block';
+            document.getElementById('custom_paper_width').style.display = 'block';
+            document.getElementById('custom_paper_height').style.display = 'block';
         } else {
-            toggleCustomSize.style.display = 'none';
+            document.getElementById('custom_paper_width').style.display = 'none';
+            document.getElementById('custom_paper_height').style.display = 'none';
         }
 
         if (imgSize === 'Custom') {
-            toggleCustomImgSize.style.display = 'block';
+            document.getElementById('custom_image_width').style.display = 'block';
+            document.getElementById('custom_image_height').style.display = 'block';
         } else {
-            toggleCustomImgSize.style.display = 'none';
+            document.getElementById('custom_image_width').style.display = 'none';
+            document.getElementById('custom_image_height').style.display = 'none';
         }
     }
 
@@ -60,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
             reader.onload = (e) => {
                 img = new Image();
                 img.onload = () => {
-                    const containerWidth = 595;
+                    const containerWidth = 400;
                     const containerHeight = 600;
 
                     const widthScale = containerWidth / img.width;
@@ -82,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    modeField.addEventListener('change', toggleFields);
+    modeField.forEach(field => field.addEventListener('change', toggleFields));
     paperSizeField.addEventListener('change', toggleFields);
     imgSizeField.addEventListener('change', toggleFields);
 
@@ -131,9 +133,8 @@ document.addEventListener('DOMContentLoaded', () => {
         isDragging = false;
     });
 
-    // Function to handle image click and set numbering position
     window.setNumberingPosition = function(event) {
-        if (modeField.value !== 'Numbering') {
+        if (document.querySelector('input[name="mode"]:checked').value !== 'Numbering') {
             return; // Exit if the mode is not "Numbering"
         }
 
@@ -174,12 +175,13 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Add event listener to clear the mark when the mode changes from "Numbering" to another mode
-modeField.addEventListener('change', () => {
-    if (modeField.value !== 'Numbering') {
-        ctx.clearRect(0, 0, imageCanvas.width, imageCanvas.height);
-        drawImage(); // Redraw the image to clear the mark
-    }
-});
+    modeField.forEach(field => field.addEventListener('change', () => {
+        if (document.querySelector('input[name="mode"]:checked').value !== 'Numbering') {
+            ctx.clearRect(0, 0, imageCanvas.width, imageCanvas.height);
+            drawImage(); // Redraw the image to clear the mark
+        }
+    }));
+
     // Zoom in and zoom out button event listeners
     zoomInButton.addEventListener('click', (event) => {
         event.preventDefault();

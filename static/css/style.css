@@ -1,158 +1,69 @@
-/* Reset Styles */
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
 
-body {
+.grid-wrapper {
     display: grid;
-    height: 100vh;
-    overflow: hidden;
-}
-
-/* Ensure the top-container is full-width */
-.top-container {
+    height: 100%;
     width: 100%;
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box; /* Ensure padding and border are included in the element's total width and height */
-}
-
-/* Ensure the navbar is a flex container */
-.navbar, form {
-    display: grid;
-    justify-content: space-between; /* Adjusted to ensure elements are spaced evenly */
-    align-items: center;
-    padding: 10px;
-    background-color: #f8f8f8;
-    border-bottom: 1px solid #ccc;
-    width: 100%; /* Ensure the navbar takes up the full width */
-    box-sizing: border-box; /* Ensure padding and border are included in the element's total width and height */
-}
-
-/* Style each container inside the navbar */
-.navbar .container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 1em; /* Added gap for better spacing */
-}
-
-.wrapper {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 1em;
+    padding: 1em 1em 0 1em;
+    grid-template-rows:fit-content(100px) fit-content(125px) 1fr;
+    grid-template-columns: minmax(400px, 595px) 1fr fit-content(200px);
+    gap: 8px;
 }
 
 .grid-container {
-    display: grid;
-    grid-template-rows: auto 1fr auto;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 10px;
-    height: 100%;
-}
-
-header, footer {
-    grid-column: 1 / 4;
-    background-color: gray;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px;
-}
-
-header {
-    background-color: gray;
-    justify-content: space-between;
-    width: 100%;
-}
-
-footer {
-    background-color: rgb(53, 53, 53);
-    color: white;
-    text-align: center;
-}
-
-.navbar, form {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    justify-content: space-between;
-}
-
-.navbar a {
-    text-decoration: none;
-    color: black;
-    display: flex;
-    align-items: center;
-}
-
-.logo-img {
-    margin-right: 8px;
-    width: 25px;
-    height: 25px;
-}
-
-.button, .zoom-button {
-    align-items: center;
-    justify-content: center;
-    font-weight: normal;
-    font-size: 1rem;
-    padding: 0.5em 1em;
+    padding: 0.2em;
     border-radius: 8px;
-    border: none;
-    background-color: #007bff;
-    color: white;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.3s ease;
-}
-.zoom-button {
-    width: 50px;
-    height: 50px;
+    background-color: rgb(245, 245, 245);
 }
 
-.button img {
-    margin-right: 8px;
-    width: 20px;
-    height: 20px;
+.basic-settings {
+    grid-row: 2;
+    grid-column: 3;
+    display: flex;
+    align-content: center;
+    justify-content: space-between
 }
 
-.button:hover, .zoom-button:hover {
-    background-color: #0056b3;
-    transform: translateY(-2px);
+.basic-info {
+    display: flex;
+    align-content: center;
+    justify-content: left;
+    gap: 1em;
+    grid-row: 2;
+}
+.upload-container {
+    grid-row: 1;
+}
+.submit-container {
+    grid-row: 1;
+    grid-column: 3;
+    display: flex;
+    align-content: center;
+    justify-content: right;
+}
+.preview-window {
+    grid-row: 3;
+    grid-column: 1;
+    overflow: hidden;
 }
 
-.button:active, .zoom-button:active {
-    background-color: #004080;
-    transform: translateY(0);
+canvas {
+    padding: 0;
+    margin: 0;
 }
 
-.middle-row {
-    display: grid;
-    grid-template-columns: 595px 1fr auto;
-    grid-column: 1 / 4;
-    background-color: white;
+.pdf-preview {
+    grid-row: 1/4;
+    grid-column: 2;
 }
-
-.left-container {
-    background-color: rgb(182, 181, 181);
-    width: 595px;
+.properties {
+    grid-row: 3;
+    grid-column: 3;
 }
-
-.right-container {
-    background-color: rgb(233, 233, 233);
-}
-
-.properties-container {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-}
-
 .stacked-container {
     display: flex;
     flex-direction: column;
@@ -174,9 +85,7 @@ footer {
 .field-group input[type="number"],
 .field-group input[type="checkbox"] {
     text-align: right;
-    width: calc(100% - 150px); /* Ensure input fields have the same width */
     padding: 5px;
-    border: 1px solid #ccc;
     border-radius: 4px;
 }
 
@@ -195,7 +104,7 @@ footer {
     width: auto; /* Make checkbox width auto to fit its content */
 }
 
-.radio-icon, .logo-img {
+.radio-icon {
     width: 24px;
     height: 24px;
     margin-right: 0.2em;
@@ -206,7 +115,6 @@ footer {
     align-items: center;
     cursor: pointer;
     margin-right: 20px;
-    width: 200px;
 }
 
 input[type="radio"] {
@@ -236,44 +144,72 @@ label span select legend {
     box-sizing: border-box;
 }
 
-#image-preview {
+.navbar, form {
     display: flex;
-    justify-content: center;
     align-items: center;
-    height: 50px;
-}
-
-.zoom-button {
-    margin: 5px;
-}
-
-.stacked-container {
-    display: grid;
-    grid-row: 1 / 2;
-    grid-column: 1 / 2;
-}
-
-/* Responsive Styles */
-@media (max-width: 800px) {
-    .middle-row {
-        grid-template-columns: 1fr;
-    }
-
-    .properties-container {
-        display: none;
-    }
-
-    .left-container {
-        width: 100%;
-    }
-}
-
-.right-container iframe {
     width: 100%;
-    height: 100%;
-    border: none;
+    justify-content: space-between;
 }
 
-h2 {
-    font-size: x-small;
+.navbar a {
+    text-decoration: none;
+    color: black;
+    display: flex;
+    align-items: center;
+}
+
+.logo-img {
+    margin: 0 1em;
+    width: 25px;
+    height: 25px;
+}
+
+.button {
+    align-items: center;
+    justify-content: center;
+    font-weight: normal;
+    font-size: 1rem;
+    padding: 0.5em 1em;
+    border-radius: 8px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+.zoom-button {
+    margin-right: 5px;
+    font-weight: normal;
+    font-size: 1rem;
+    padding: 0.5em 1em;
+    border-radius: 8px;
+}
+
+.button img {
+    margin-right: 8px;
+    width: 20px;
+    height: 20px;
+}
+
+.button:hover:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+}
+
+.button:active:active {
+    background-color: #004080;
+    transform: translateY(0);
+}
+
+footer {
+    width: 100%;
+    height: 50px;
+    background-color: #333;
+    color: white;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1em;
+    gap: 1em;
 }
