@@ -22,3 +22,17 @@
     - Zoom button controls added to the image preview window
     - The green mark for numbering works only on numbering mode
     - If the user place a green mark and choose again page mode, it clears the mark (bug fixed)
+
+20240711
+    - Made the form inputs with legends on top and made them all to have same width
+    - Added icons on some of them
+    - Various ux changes
+
+20240712
+    - Refactor all the ux by make it in grid for simplified ux
+    - Refactor the stucture of the html and the position of a lot of items
+
+20240713
+    - Refine the ux
+    - Added the pdf preview window
+    - Make the settings static because previous was resetting after submit

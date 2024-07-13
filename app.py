@@ -1,4 +1,5 @@
-from flask import Flask, render_template, send_file, session, redirect, url_for
+from flask import Flask, render_template, send_file, session, redirect, url_for, request, jsonify
+from flask_wtf.csrf import CSRFProtect
 from forms import ImageForm
 from utils import generate_pdf  # Import generate_pdf
 from corners import generate_corner_lines
@@ -13,17 +14,17 @@ load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
+csrf = CSRFProtect(app)  # Initialize CSRF protection
 
 # Get environment variables
 app.config['DEBUG'] = os.environ['FLASK_DEBUG']
-
 app.config['SECRET_KEY'] = 'your_secret_key'
 app.config['UPLOAD_FOLDER'] = 'static/uploads/'
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
     form = ImageForm()
-    if form.validate_on_submit():
+    if request.method == 'POST' and form.validate_on_submit():
         image = form.image.data
         image_path = os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(image.filename))
         image.save(image_path)
@@ -65,10 +66,10 @@ def index():
         # Clean up temporary files
         os.remove(str(corner_lines_path))
         os.remove(str(grid_images_path))  # Remove the generated grid PDF
-        os.remove(str(image_path))  # Remove the generated grid PDF
+        os.remove(str(image_path))  # Remove the uploaded image
 
-         # Pass the merged_pdf_path to the template
-        return render_template('index.html', form=form, merged_pdf_path=merged_pdf_path)
+        # Return the path to the merged PDF in JSON response
+        return jsonify({'merged_pdf_path': merged_pdf_path})
 
     return render_template('index.html', form=form)
 
