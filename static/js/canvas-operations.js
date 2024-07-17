@@ -8,6 +8,8 @@ export function drawImage(ctx, img, originX, originY, scale) {
     ctx.restore();
 }
 
+import { state } from './shared-state.js'; // Ensure the shared state is imported
+
 export function setNumberingPosition(event, ctx, img, originX, originY, scale) {
     const rect = ctx.canvas.getBoundingClientRect();
     const x = (event.clientX - rect.left - originX) / scale;
@@ -17,23 +19,26 @@ export function setNumberingPosition(event, ctx, img, originX, originY, scale) {
     const relX = x / img.width;
     const relY = y / img.height;
 
-    document.getElementById('numbering_position_x').value = relX;
-    document.getElementById('numbering_position_y').value = relY;
+    document.getElementById('numbering_position_x').value = relX.toFixed(4); // More precise
+    document.getElementById('numbering_position_y').value = relY.toFixed(4); // More precise
+
+    // Redraw image and boxes first
+    drawImageWithBoxes(ctx, img, originX, originY, scale, state.boxes);
 
     // Draw green mark on the canvas
     const fontSize = parseFloat(document.querySelector('input[name="font_size"]').value) || 8;
     const verticalMarkLength = fontSize * 1.5; // Vertical mark length
     const horizontalMarkLength = verticalMarkLength * 2; // Horizontal mark length
 
-    drawImage(ctx, img, originX, originY, scale); // Redraw the image before drawing the mark
     const scaledX = relX * img.width * scale + originX;
     const scaledY = relY * img.height * scale + originY;
+
     ctx.strokeStyle = 'green';
     ctx.beginPath();
     ctx.moveTo(scaledX, scaledY - verticalMarkLength / 2);
     ctx.lineTo(scaledX, scaledY + verticalMarkLength / 2);
     ctx.stroke();
-    // Draw horizontal line
+
     ctx.beginPath();
     ctx.moveTo(scaledX, scaledY);
     ctx.lineTo(scaledX + horizontalMarkLength, scaledY);
@@ -44,6 +49,8 @@ export function setNumberingPosition(event, ctx, img, originX, originY, scale) {
     ctx.fillStyle = 'green';
     ctx.fillText('ΑΡΙΘΜΗΣΗ', scaledX + 2, scaledY - 2);
 }
+
+
 export function drawBox(ctx, box, originX, originY, scale) {
     const scaledX = box.x * scale + originX;
     const scaledY = box.y * scale + originY;

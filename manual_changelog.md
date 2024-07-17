@@ -49,3 +49,6 @@
     - Made the custom fieldgroups hidden when dont needed for simpler ux
     - Made some space to fields to be easier to scan by one sight
     - Draft redesign the color of the main buttons to separate them visually
+    - Seperate the event-handlers.js to smaller files for easier maintenance
+    - Created a button that adds white boxes in the uploaded image (for now is not written in pdf)
+    - Fixed the green mark and the white boxes to show together

@@ -24,6 +24,11 @@ export function setupBoxHandlers() {
     document.querySelectorAll('input[name="mode"]').forEach(field =>
         field.addEventListener('change', toggleFields)
     );
+
+    document.querySelectorAll('input[name="mode"]').forEach(field =>
+        field.addEventListener('change', toggleFields)
+    );
+
     document.getElementById('paper_size').addEventListener('change', toggleFields);
     document.getElementById('img_size').addEventListener('change', toggleFields);
 
