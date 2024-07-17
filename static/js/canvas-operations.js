@@ -44,3 +44,48 @@ export function setNumberingPosition(event, ctx, img, originX, originY, scale) {
     ctx.fillStyle = 'green';
     ctx.fillText('ΑΡΙΘΜΗΣΗ', scaledX + 2, scaledY - 2);
 }
+export function drawBox(ctx, box, originX, originY, scale) {
+    const scaledX = box.x * scale + originX;
+    const scaledY = box.y * scale + originY;
+    const scaledWidth = box.width * scale;
+    const scaledHeight = box.height * scale;
+
+    ctx.fillStyle = 'white';
+    ctx.fillRect(scaledX, scaledY, scaledWidth, scaledHeight);
+
+    ctx.strokeStyle = 'black';
+    ctx.setLineDash([5, 5]);
+    ctx.lineWidth = 1;
+    ctx.strokeRect(scaledX, scaledY, scaledWidth, scaledHeight);
+    ctx.setLineDash([]);
+
+    // Draw control handles
+    const handleSize = 10;
+
+    ctx.fillStyle = 'white';
+    ctx.strokeStyle = 'black';
+    ctx.lineWidth = 1;
+
+    // Top-left corner
+    ctx.fillRect(scaledX - handleSize / 2, scaledY - handleSize / 2, handleSize, handleSize);
+    ctx.strokeRect(scaledX - handleSize / 2, scaledY - handleSize / 2, handleSize, handleSize);
+
+    // Top-right corner
+    ctx.fillRect(scaledX + scaledWidth - handleSize / 2, scaledY - handleSize / 2, handleSize, handleSize);
+    ctx.strokeRect(scaledX + scaledWidth - handleSize / 2, scaledY - handleSize / 2, handleSize, handleSize);
+
+    // Bottom-left corner
+    ctx.fillRect(scaledX - handleSize / 2, scaledY + scaledHeight - handleSize / 2, handleSize, handleSize);
+    ctx.strokeRect(scaledX - handleSize / 2, scaledY + scaledHeight - handleSize / 2, handleSize, handleSize);
+
+    // Bottom-right corner
+    ctx.fillRect(scaledX + scaledWidth - handleSize / 2, scaledY + scaledHeight - handleSize / 2, handleSize, handleSize);
+    ctx.strokeRect(scaledX + scaledWidth - handleSize / 2, scaledY + scaledHeight - handleSize / 2, handleSize, handleSize);
+}
+
+export function drawImageWithBoxes(ctx, img, originX, originY, scale, boxes) {
+    drawImage(ctx, img, originX, originY, scale);
+    boxes.forEach(box => {
+        drawBox(ctx, box, originX, originY, scale);
+    });
+}
