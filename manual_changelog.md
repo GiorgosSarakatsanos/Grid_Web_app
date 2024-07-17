@@ -36,3 +36,16 @@
     - Refine the ux
     - Added the pdf preview window
     - Make the settings static because previous was resetting after submit
+    - Started to separate the javascript file to smaller files for better maintainability
+
+20240716
+    - Javascript files separation completed
+    - Moved the logo beside of upload button
+    - Moved the mode form beside in the basic action container for best groupping
+    - Group some same divs for easier style
+    - Group but separate buttons for diffent style
+    - Redesign the logo and button places
+    - Fixed the page size to be one full page
+    - Made the custom fieldgroups hidden when dont needed for simpler ux
+    - Made some space to fields to be easier to scan by one sight
+    - Draft redesign the color of the main buttons to separate them visually

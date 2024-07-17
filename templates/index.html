@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-<a href="/"><img class="logo-img" src="{{ url_for('static', filename='img/logo.png') }}" alt="Fix Store">Πλέγμα</a>
 <form id="upload-form" method="POST" enctype="multipart/form-data">
     {{ form.hidden_tag() }}
     {{ form.csrf_token }}
@@ -15,26 +14,17 @@
         <div class="grid-container upload-container">
             <header class="top-container">
                 <nav class="navbar">
-                    <button class="button" type="button" onclick="document.getElementById('image').click()">
-                        <img src="{{ url_for('static', filename='icons/plus-icon.png') }}" alt="Upload" class="radio-icon">
-                        <span>Νέο</span>
+                    <a href="/"><img class="logo-img" src="{{ url_for('static', filename='icons/logo-icon.png') }}" alt="Fix Store">Πλέγμα</a>
+                    <button class="button upload" type="button" onclick="document.getElementById('image').click()">
+                        <img src="{{ url_for('static', filename='icons/upload-icon.png') }}" alt="Upload" class="radio-icon"><span>Προσθήκη</span>
                         <input type="file" id="image" name="image" accept="image/*" required style="display: none;">
                     </button>
-                    <div class="inline-container">
-                        <span id="image-name"></span>
-                    </div>
+                    <span id="image-name"></span>
                 </nav>
             </header>
         </div>
         <div class="grid-container basic-info">
-            <fieldset>
-                <legend>Ζουμ</legend>
-                <button id="zoom-in" class="zoom-button" type="button">+</button>
-                <button id="zoom-out" class="zoom-button" type="button">-</button>
-            </fieldset>
-        </div>
-        <div class="grid-container basic-settings">
-            <fieldset>
+            <fieldset  class="field-group">
                 <legend>Λειτουργία</legend>
                 <label class="radio-container" for="mode_page">
                     <input type="radio" name="mode" value="Page" id="mode_page" required checked>
@@ -47,8 +37,15 @@
                     <span>Αρίθμηση</span>
                 </label>
             </fieldset>
-            <fieldset>
-                <legend>Διαστάσεις</legend>
+            <fieldset  class="field-group">
+                <legend>Ζουμ</legend>
+                <button id="zoom-in" class="button zoom_in" type="button">+</button>
+                <button id="zoom-out" class="button zoom_out" type="button">-</button>
+            </fieldset>
+        </div>
+        <div class="grid-container basic-settings">
+            <fieldset class="field-group">
+                <legend>Χαρτί / Εικόνα</legend>
                 <label for="paper_size">
                     <img class="logo-img" src="{{ url_for('static', filename='icons/paper-type.png') }}" alt="Fix Store">
                     <span>Χαρτί</span>
@@ -75,7 +72,7 @@
             </fieldset>
         </div>
         <div class="grid-container submit-container">
-            <button type="submit" class="button">Εκτύπωση</button>
+            <button type="submit" class="button run">Δημιουργία</button>
         </div>
         <div class="grid-container preview-window">
             <div id="image-preview">
@@ -88,9 +85,8 @@
             {% endif %}
         </div>
         <div class="grid-container properties">
-            <h2>Πίνακας ιδιοτήτων</h2>
-            <fieldset class="field-group">
-                <legend>Προσαρμογή διαστάσεων σελίδας</legend>
+            <fieldset class="field-group" id="custom_paper_settings" style="display: none;">
+                <legend>Διαστάσεις σελίδας</legend>
                 <label for="custom_paper_width">Πλάτος
                     <input type="number" id="custom_paper_width" name="custom_paper_width" style="display: none;">
                 </label>
@@ -98,10 +94,10 @@
                     <input type="number" id="custom_paper_height" name="custom_paper_height" style="display: none;">
                 </label>
             </fieldset>
-            <fieldset class="field-group">
-                <legend>Προσαρμογή διαστάσεων εικόνας</legend>
+            <fieldset class="field-group" id="custom_image_settings" style="display: none;">
+                <legend>Διαστάσεις εικόνας</legend>
                 <label for="custom_image_width">Πλάτος
-                    <input type="number" id="custom_image_width" name="custom_image_width" style="display: none;">
+                    <input type="number" id="custom_image_width"  name="custom_image_width" style="display: none;">
                 </label>
                 <label for="custom_image_height">Ύψος
                     <input type="number" id="custom_image_height" name="custom_image_height" style="display: none;">
@@ -121,8 +117,6 @@
                 <label for="end_number">Τελικός
                     <input type="number" id="end_number" name="end_number">
                 </label>
-            </fieldset>
-            <fieldset class="field-group">
                 <legend>Επιλογές γραμματοσειράς</legend>
                 <label for="font_size">Μέγεθος
                     <input type="number" id="font_size" name="font_size" value="8">
@@ -134,6 +128,6 @@
         </div>
     </div>
 </form>
-<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+<script type="module" src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>

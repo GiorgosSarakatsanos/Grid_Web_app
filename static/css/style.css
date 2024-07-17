@@ -6,18 +6,19 @@
 
 .grid-wrapper {
     display: grid;
-    height: 100%;
+    height: 98vh;
     width: 100%;
+    overflow: clip;
     padding: 1em 1em 0 1em;
     grid-template-rows:fit-content(100px) fit-content(125px) 1fr;
-    grid-template-columns: minmax(400px, 595px) 1fr fit-content(200px);
+    grid-template-columns: fit-content(100px) 1fr fit-content(200px);
     gap: 8px;
 }
 
 .grid-container {
     padding: 0.2em;
     border-radius: 8px;
-    background-color: rgb(245, 245, 245);
+    background-color: #f3f3f3;
 }
 
 .basic-settings {
@@ -36,7 +37,8 @@
     grid-row: 2;
 }
 .upload-container {
-    grid-row: 1;
+    display: flex;
+    justify-content: space-between;
 }
 .submit-container {
     grid-row: 1;
@@ -64,45 +66,7 @@ canvas {
     grid-row: 3;
     grid-column: 3;
 }
-.stacked-container {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
 
-.field-group {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.field-group label {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.field-group input[type="number"],
-.field-group input[type="checkbox"] {
-    text-align: right;
-    padding: 5px;
-    border-radius: 4px;
-}
-
-.field-group legend {
-    font-weight: bold;
-    padding: 0 0.2em;
-    margin: 0 0.2em;
-    font-size: 16px; /* Set a consistent font size */
-    color: #333; /* Set a consistent font color */
-    width: max-content; /* Set a consistent width for all legends */
-    display: inline-block; /* Make legend behave like a block element */
-}
-
-.field-group label input[type="checkbox"] {
-    margin-left: 0;
-    width: auto; /* Make checkbox width auto to fit its content */
-}
 
 .radio-icon {
     width: 24px;
@@ -117,6 +81,35 @@ canvas {
     margin-right: 20px;
 }
 
+.field-group {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5em;
+}
+
+fieldset {
+    display: flex;
+    flex-direction: column;
+    padding: 0.5em;
+    font-size: x-small;
+    border-radius: 8px;
+}
+
+label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    font-size: x-small;
+}
+
+input[type="number"],
+input[type="checkbox"] {
+    text-align: right;
+    padding: 5px;
+    border-radius: 4px;
+    width: 8em;
+}
 input[type="radio"] {
     position: absolute;
     opacity: 0;
@@ -128,26 +121,33 @@ input[type="radio"]:checked + img + span {
     text-decoration: underline;
 }
 
-fieldset {
+select {
+    padding: 5px;
+    border-radius: 4px;
+    width: 8em;
+}
+
+legend {
+    font-weight: bold;
+    padding: 0 0.2em;
+    margin: 0 0.2em;
+    font-size: 16px; /* Set a consistent font size */
+    color: #333; /* Set a consistent font color */
+    width: max-content; /* Set a consistent width for all legends */
+    display: inline-block; /* Make legend behave like a block element */
+}
+
+.navbar {
     display: flex;
-    flex-direction: column;
-    gap: 10px;
-    padding: 0.5em;
-    margin: 10px;
-    font-size: x-small;
-    border-radius: 8px;
+    align-items: center;
+    gap: 2em;
 }
 
-label span select legend {
-    display: inline-block;
-    vertical-align: middle;
-    box-sizing: border-box;
-}
-
-.navbar, form {
+form {
     display: flex;
     align-items: center;
     width: 100%;
+    gap: 1em;
     justify-content: space-between;
 }
 
@@ -159,12 +159,13 @@ label span select legend {
 }
 
 .logo-img {
-    margin: 0 1em;
+    margin: 0 0.2em;
     width: 25px;
     height: 25px;
 }
 
 .button {
+    display: flex;
     align-items: center;
     justify-content: center;
     font-weight: normal;
@@ -172,23 +173,35 @@ label span select legend {
     padding: 0.5em 1em;
     border-radius: 8px;
     border: none;
-    background-color: #007bff;
-    color: white;
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.3s ease;
 }
-.zoom-button {
-    margin-right: 5px;
-    font-weight: normal;
+
+.upload {
+    background-color: #3d88da;
+    color: white;
+}
+
+.run {
+    background-color: #00b351;
+    color: white;
+}
+
+.zoom_in, .zoom_out {
+    background-color: darkgray;
+    font-weight: bold;
     font-size: 1rem;
-    padding: 0.5em 1em;
+    padding: 0 0.2em;
     border-radius: 8px;
 }
 
+.zoom-button {
+    margin-right: 5px;
+}
+
 .button img {
-    margin-right: 8px;
-    width: 20px;
-    height: 20px;
+    width: 35px;
+    height: 35px;
 }
 
 .button:hover:hover {
@@ -213,7 +226,10 @@ footer {
     padding: 1em;
     gap: 1em;
 }
+
 iframe {
     width: 100%;
     height: 100%;
+    border-radius: 8px;
+    border: none;
 }
