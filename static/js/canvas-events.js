@@ -14,10 +14,11 @@ export function setupCanvasEvents() {
     const handleSize = 10;
     let isDrawing = false;
     let drawingBox = null;
+    let isZooming = false;
 
     imageCanvas.addEventListener('mousedown', (event) => {
-        startX = event.offsetX - state.originX;
-        startY = event.offsetY - state.originY;
+        startX = (event.offsetX - state.originX) / state.scale;
+        startY = (event.offsetY - state.originY) / state.scale;
 
         const imgWidth = state.img.width;
         const imgHeight = state.img.height;
@@ -33,23 +34,23 @@ export function setupCanvasEvents() {
             const bottomLeftHandle = { x: scaledX, y: scaledY + scaledHeight };
             const bottomRightHandle = { x: scaledX + scaledWidth, y: scaledY + scaledHeight };
 
-            if (isInsideHandle(startX, startY, topLeftHandle.x, topLeftHandle.y, handleSize)) {
+            if (isInsideHandle(event.offsetX, event.offsetY, topLeftHandle.x, topLeftHandle.y, handleSize)) {
                 selectedBox = box;
                 resizeHandle = 'topLeft';
                 isResizing = true;
-            } else if (isInsideHandle(startX, startY, topRightHandle.x, topRightHandle.y, handleSize)) {
+            } else if (isInsideHandle(event.offsetX, event.offsetY, topRightHandle.x, topRightHandle.y, handleSize)) {
                 selectedBox = box;
                 resizeHandle = 'topRight';
                 isResizing = true;
-            } else if (isInsideHandle(startX, startY, bottomLeftHandle.x, bottomLeftHandle.y, handleSize)) {
+            } else if (isInsideHandle(event.offsetX, event.offsetY, bottomLeftHandle.x, bottomLeftHandle.y, handleSize)) {
                 selectedBox = box;
                 resizeHandle = 'bottomLeft';
                 isResizing = true;
-            } else if (isInsideHandle(startX, startY, bottomRightHandle.x, bottomRightHandle.y, handleSize)) {
+            } else if (isInsideHandle(event.offsetX, event.offsetY, bottomRightHandle.x, bottomRightHandle.y, handleSize)) {
                 selectedBox = box;
                 resizeHandle = 'bottomRight';
                 isResizing = true;
-            } else if (startX >= scaledX && startX <= scaledX + scaledWidth && startY >= scaledY && startY <= scaledY + scaledHeight) {
+            } else if (event.offsetX >= scaledX && event.offsetX <= scaledX + scaledWidth && event.offsetY >= scaledY && event.offsetY <= scaledY + scaledHeight) {
                 selectedBox = box;
                 isDragging = true;
             }
@@ -58,32 +59,36 @@ export function setupCanvasEvents() {
         if (!isDrawing && !selectedBox && !isResizing) {
             isDrawing = true;
             drawingBox = {
-                x: (startX / state.scale) / imgWidth,
-                y: (startY / state.scale) / imgHeight,
+                x: startX / imgWidth,
+                y: startY / imgHeight,
                 width: 0,
                 height: 0
             };
         }
+
+        if (!isDragging && !isResizing && !isDrawing) {
+            isZooming = true;
+        }
     });
 
     imageCanvas.addEventListener('mousemove', (event) => {
-        const mouseX = event.offsetX;
-        const mouseY = event.offsetY;
+        const mouseX = (event.offsetX - state.originX) / state.scale;
+        const mouseY = (event.offsetY - state.originY) / state.scale;
 
         const imgWidth = state.img.width;
         const imgHeight = state.img.height;
 
         if (isDragging && selectedBox && !isResizing) {
-            const offsetX = (mouseX - startX) / state.scale;
-            const offsetY = (mouseY - startY) / state.scale;
-            selectedBox.x += offsetX / imgWidth;
-            selectedBox.y += offsetY / imgHeight;
+            const offsetX = (mouseX - startX) / imgWidth;
+            const offsetY = (mouseY - startY) / imgHeight;
+            selectedBox.x += offsetX;
+            selectedBox.y += offsetY;
             startX = mouseX;
             startY = mouseY;
             drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes);
         } else if (isResizing && selectedBox) {
-            const offsetX = (mouseX - state.originX) / state.scale;
-            const offsetY = (mouseY - state.originY) / state.scale;
+            const offsetX = mouseX;
+            const offsetY = mouseY;
             switch (resizeHandle) {
                 case 'topLeft':
                     selectedBox.width += selectedBox.x - offsetX / imgWidth;
@@ -109,11 +114,11 @@ export function setupCanvasEvents() {
             drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes);
         } else if (isDrawing) {
             const rect = imageCanvas.getBoundingClientRect();
-            const endX = event.clientX - rect.left;
-            const endY = event.clientY - rect.top;
+            const endX = (event.clientX - rect.left - state.originX) / state.scale;
+            const endY = (event.clientY - rect.top - state.originY) / state.scale;
 
-            drawingBox.width = (endX - startX) / state.scale / imgWidth;
-            drawingBox.height = (endY - startY) / state.scale / imgHeight;
+            drawingBox.width = (endX - startX) / imgWidth;
+            drawingBox.height = (endY - startY) / imgHeight;
 
             ctx.clearRect(0, 0, imageCanvas.width, imageCanvas.height);
             drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes);
@@ -122,12 +127,22 @@ export function setupCanvasEvents() {
             ctx.setLineDash([5, 5]);
             ctx.lineWidth = 1;
             ctx.strokeRect(
-                startX,
-                startY,
+                startX * state.scale + state.originX,
+                startY * state.scale + state.originY,
                 drawingBox.width * imgWidth * state.scale,
                 drawingBox.height * imgHeight * state.scale
             );
             ctx.setLineDash([]);
+        } else if (isZooming) {
+            const offsetX = (mouseX - startX) / state.scale;
+            const offsetY = (mouseY - startY) / state.scale;
+            const scaleRatio = offsetX > 0 ? 1.01 : 0.99;
+            state.scale *= scaleRatio;
+
+            state.originX -= (mouseX - state.originX) * (scaleRatio - 1);
+            state.originY -= (mouseY - state.originY) * (scaleRatio - 1);
+
+            drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes);
         } else {
             let cursorSet = false;
             state.boxes.forEach(box => {
@@ -141,16 +156,16 @@ export function setupCanvasEvents() {
                 const bottomLeftHandle = { x: scaledX, y: scaledY + scaledHeight };
                 const bottomRightHandle = { x: scaledX + scaledWidth, y: scaledY + scaledHeight };
 
-                if (isInsideHandle(mouseX, mouseY, topLeftHandle.x, topLeftHandle.y, handleSize)) {
+                if (isInsideHandle(event.offsetX, event.offsetY, topLeftHandle.x, topLeftHandle.y, handleSize)) {
                     changeCursor(imageCanvas, 'nw-resize');
                     cursorSet = true;
-                } else if (isInsideHandle(mouseX, mouseY, topRightHandle.x, topRightHandle.y, handleSize)) {
+                } else if (isInsideHandle(event.offsetX, event.offsetY, topRightHandle.x, topRightHandle.y, handleSize)) {
                     changeCursor(imageCanvas, 'ne-resize');
                     cursorSet = true;
-                } else if (isInsideHandle(mouseX, mouseY, bottomLeftHandle.x, bottomLeftHandle.y, handleSize)) {
+                } else if (isInsideHandle(event.offsetX, event.offsetY, bottomLeftHandle.x, bottomLeftHandle.y, handleSize)) {
                     changeCursor(imageCanvas, 'sw-resize');
                     cursorSet = true;
-                } else if (isInsideHandle(mouseX, mouseY, bottomRightHandle.x, bottomRightHandle.y, handleSize)) {
+                } else if (isInsideHandle(event.offsetX, event.offsetY, bottomRightHandle.x, bottomRightHandle.y, handleSize)) {
                     changeCursor(imageCanvas, 'se-resize');
                     cursorSet = true;
                 }
@@ -164,6 +179,7 @@ export function setupCanvasEvents() {
     imageCanvas.addEventListener('mouseup', (event) => {
         isDragging = false;
         isResizing = false;
+        isZooming = false;
         selectedBox = null;
         resizeHandle = null;
 
@@ -179,6 +195,7 @@ export function setupCanvasEvents() {
     imageCanvas.addEventListener('mouseout', () => {
         isDragging = false;
         isResizing = false;
+        isZooming = false;
         selectedBox = null;
         resizeHandle = null;
         isDrawing = false;
