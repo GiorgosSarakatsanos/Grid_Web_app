@@ -50,12 +50,11 @@ export function setNumberingPosition(event, ctx, img, originX, originY, scale) {
     ctx.fillText('ΑΡΙΘΜΗΣΗ', scaledX + 2, scaledY - 2);
 }
 
-
-export function drawBox(ctx, box, originX, originY, scale) {
-    const scaledX = box.x * scale + originX;
-    const scaledY = box.y * scale + originY;
-    const scaledWidth = box.width * scale;
-    const scaledHeight = box.height * scale;
+export function drawBox(ctx, box, originX, originY, imgWidth, imgHeight, scale) {
+    const scaledX = box.x * imgWidth * scale + originX;
+    const scaledY = box.y * imgHeight * scale + originY;
+    const scaledWidth = box.width * imgWidth * scale;
+    const scaledHeight = box.height * imgHeight * scale;
 
     ctx.fillStyle = 'white';
     ctx.fillRect(scaledX, scaledY, scaledWidth, scaledHeight);
@@ -93,6 +92,6 @@ export function drawBox(ctx, box, originX, originY, scale) {
 export function drawImageWithBoxes(ctx, img, originX, originY, scale, boxes) {
     drawImage(ctx, img, originX, originY, scale);
     boxes.forEach(box => {
-        drawBox(ctx, box, originX, originY, scale);
+        drawBox(ctx, box, originX, originY, img.width, img.height, scale);
     });
 }

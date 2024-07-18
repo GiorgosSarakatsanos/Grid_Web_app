@@ -3,5 +3,5 @@ export const state = {
     scale: 1,
     originX: 0,
     originY: 0,
-    boxes: []
+    boxes: [] // Each box will have { x: 0, y: 0, width: 0, height: 0 }
 };

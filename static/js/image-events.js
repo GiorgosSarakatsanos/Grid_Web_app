@@ -11,6 +11,10 @@ export function setupImageEvents() {
         if (file) {
             const reader = new FileReader();
             reader.onload = (e) => {
+                // Set the src of the image AFTER the reader has loaded the data
+                state.img.src = e.target.result;
+
+                // Now, add the onload event listener to state.img
                 state.img.onload = () => {
                     const containerWidth = 400;
                     const containerHeight = 600;
@@ -27,7 +31,6 @@ export function setupImageEvents() {
 
                     drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes);
                 };
-                state.img.src = e.target.result;
             };
             reader.readAsDataURL(file);
         }
