@@ -15,8 +15,71 @@ export function setupCanvasEvents() {
     let isDrawing = false;
     let drawingBox = null;
     let isZooming = false;
+    let isMovingImage = false;
+    let ctrlPressed = false;
+    let messageTimeout;
+
+    // Show message in the top-right corner of the image
+    function showMessage(text) {
+        ctx.save();
+        ctx.font = '14px Arial';
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.5)'; // Semi-transparent background
+        const textWidth = ctx.measureText(text).width;
+        const padding = 5;
+
+        // Calculate position in the top-right corner of the image
+        const mouseX = state.originX + padding * 2;
+        const mouseY = state.originY + padding * 8;
+
+        // Draw the background rectangle
+        ctx.fillRect(mouseX, mouseY - 12, textWidth + padding * 2, 24);
+
+        // Draw the message text with better contrast color
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillText(text, mouseX + padding, mouseY + 6);
+        ctx.restore();
+    }
+
+    // Hide the message
+    function hideMessage() {
+        drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes);
+    }
+
+    // Listen for keydown events
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Control' && !ctrlPressed) {
+            ctrlPressed = true;
+            imageCanvas.style.cursor = 'grab'; // Change cursor to hand
+
+            // Show message in the top-right corner of the image
+            showMessage('Μετακίνηση θέσης φωτογραφίας');
+
+            // Hide message after 1.25 seconds
+            if (messageTimeout) {
+                clearTimeout(messageTimeout);
+            }
+            messageTimeout = setTimeout(() => {
+                hideMessage();
+            }, 1250);
+        }
+    });
+
+    // Listen for keyup events
+    document.addEventListener('keyup', (event) => {
+        if (event.key === 'Control') {
+            ctrlPressed = false;
+            imageCanvas.style.cursor = 'default'; // Reset cursor
+        }
+    });
 
     imageCanvas.addEventListener('mousedown', (event) => {
+        if (ctrlPressed) {
+            isMovingImage = true;
+            startX = event.offsetX - state.originX;
+            startY = event.offsetY - state.originY;
+            return;
+        }
+
         startX = (event.offsetX - state.originX) / state.scale;
         startY = (event.offsetY - state.originY) / state.scale;
 
@@ -72,13 +135,17 @@ export function setupCanvasEvents() {
     });
 
     imageCanvas.addEventListener('mousemove', (event) => {
-        const mouseX = (event.offsetX - state.originX) / state.scale;
-        const mouseY = (event.offsetY - state.originY) / state.scale;
+        const mouseX = event.offsetX;
+        const mouseY = event.offsetY;
 
         const imgWidth = state.img.width;
         const imgHeight = state.img.height;
 
-        if (isDragging && selectedBox && !isResizing) {
+        if (isMovingImage) {
+            state.originX = event.offsetX - startX;
+            state.originY = event.offsetY - startY;
+            drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes);
+        } else if (isDragging && selectedBox && !isResizing) {
             const offsetX = (mouseX - startX) / imgWidth;
             const offsetY = (mouseY - startY) / imgHeight;
             selectedBox.x += offsetX;
@@ -87,8 +154,8 @@ export function setupCanvasEvents() {
             startY = mouseY;
             drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes);
         } else if (isResizing && selectedBox) {
-            const offsetX = mouseX;
-            const offsetY = mouseY;
+            const offsetX = (mouseX - state.originX) / state.scale;
+            const offsetY = (mouseY - state.originY) / state.scale;
             switch (resizeHandle) {
                 case 'topLeft':
                     selectedBox.width += selectedBox.x - offsetX / imgWidth;
@@ -180,6 +247,7 @@ export function setupCanvasEvents() {
         isDragging = false;
         isResizing = false;
         isZooming = false;
+        isMovingImage = false;
         selectedBox = null;
         resizeHandle = null;
 
@@ -196,6 +264,7 @@ export function setupCanvasEvents() {
         isDragging = false;
         isResizing = false;
         isZooming = false;
+        isMovingImage = false;
         selectedBox = null;
         resizeHandle = null;
         isDrawing = false;
