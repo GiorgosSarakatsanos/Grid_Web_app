@@ -39,7 +39,7 @@
             </fieldset>
             <fieldset class="field-group">
                 <input type="hidden" id="box_data" name="box_data" value="">
-                <button id="add-box" class="button add-box" type="button">Προσθήκη Κουτιού</button>
+                <button id="add-box" id="" class="button add-box" type="button">Προσθήκη Κουτιού</button>
             </fieldset>
             <fieldset  class="field-group">
                 <legend>Ζουμ</legend>
@@ -132,6 +132,12 @@
         </div>
     </div>
 </form>
+<div id="context-menu" class="context-menu">
+    <ul>
+        <li id="delete-box">Διαγραφή</li>
+        <li id="cancel-menu">Άκυρο</li>
+    </ul>
+</div>
 <script type="module" src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>

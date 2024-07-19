@@ -62,3 +62,6 @@ All notable changes to this project will be documented in this file.
     - Added a message on mouse that notifies the user for the zoom level
     - Now can move the image position when you press control in the keyboard and click and drag.
     - When you press control in the keyboard, a pop-up message in the mouse position shows and tell you that you can now drag and move the image
+
+20240717
+    - Now is not draw white boxes if not click the draw button first

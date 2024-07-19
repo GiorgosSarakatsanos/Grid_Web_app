@@ -1,5 +1,3 @@
-import { state } from './shared-state.js';
-
 export function drawImage(ctx, img, originX, originY, scale) {
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height); // Clear the canvas before new drawing
     ctx.save();
@@ -9,13 +7,59 @@ export function drawImage(ctx, img, originX, originY, scale) {
     ctx.restore();
 }
 
-export function drawBox(ctx, box, originX, originY, imgWidth, imgHeight, scale) {
-    const scaledX = box.x * imgWidth * scale + originX;
-    const scaledY = box.y * imgHeight * scale + originY;
-    const scaledWidth = box.width * imgWidth * scale;
-    const scaledHeight = box.height * imgHeight * scale;
+import { state } from './shared-state.js'; // Ensure the shared state is imported
 
-    ctx.fillStyle = 'white';
+export function setNumberingPosition(event, ctx, img, originX, originY, scale) {
+    const rect = ctx.canvas.getBoundingClientRect();
+    const x = (event.clientX - rect.left - originX) / scale;
+    const y = (event.clientY - rect.top - originY) / scale;
+
+    // Calculate relative position
+    const relX = x / img.width;
+    const relY = y / img.height;
+
+    document.getElementById('numbering_position_x').value = relX.toFixed(4); // More precise
+    document.getElementById('numbering_position_y').value = relY.toFixed(4); // More precise
+
+    // Redraw image and boxes first
+    drawImageWithBoxes(ctx, img, originX, originY, scale, state.boxes);
+
+    // Draw green mark on the canvas
+    const fontSize = parseFloat(document.querySelector('input[name="font_size"]').value) || 8;
+    const verticalMarkLength = fontSize * 1.5; // Vertical mark length
+    const horizontalMarkLength = verticalMarkLength * 2; // Horizontal mark length
+
+    const scaledX = relX * img.width * scale + originX;
+    const scaledY = relY * img.height * scale + originY;
+
+    ctx.strokeStyle = 'green';
+    ctx.beginPath();
+    ctx.moveTo(scaledX, scaledY - verticalMarkLength / 2);
+    ctx.lineTo(scaledX, scaledY + verticalMarkLength / 2);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(scaledX, scaledY);
+    ctx.lineTo(scaledX + horizontalMarkLength, scaledY);
+    ctx.stroke();
+
+    // Position numbering text at the top of the horizontal line with 1px padding
+    ctx.font = `${fontSize}px Arial`;
+    ctx.fillStyle = 'green';
+    ctx.fillText('ΑΡΙΘΜΗΣΗ', scaledX + 2, scaledY - 2);
+}
+
+export function drawBox(ctx, box, originX, originY, scale, highlight = false) {
+    const scaledX = box.x * state.img.width * scale + originX;
+    const scaledY = box.y * state.img.height * scale + originY;
+    const scaledWidth = box.width * state.img.width * scale;
+    const scaledHeight = box.height * state.img.height * scale;
+
+    if (highlight) {
+        ctx.fillStyle = 'rgba(255, 0, 0, 0.5)'; // Red semi-transparent
+    } else {
+        ctx.fillStyle = 'white';
+    }
     ctx.fillRect(scaledX, scaledY, scaledWidth, scaledHeight);
 
     ctx.strokeStyle = 'black';
@@ -48,9 +92,9 @@ export function drawBox(ctx, box, originX, originY, imgWidth, imgHeight, scale) 
     ctx.strokeRect(scaledX + scaledWidth - handleSize / 2, scaledY + scaledHeight - handleSize / 2, handleSize, handleSize);
 }
 
-export function drawImageWithBoxes(ctx, img, originX, originY, scale, boxes) {
+export function drawImageWithBoxes(ctx, img, originX, originY, scale, boxes, highlightBox = null) {
     drawImage(ctx, img, originX, originY, scale);
     boxes.forEach(box => {
-        drawBox(ctx, box, originX, originY, img.width, img.height, scale);
+        drawBox(ctx, box, originX, originY, scale, box === highlightBox);
     });
 }

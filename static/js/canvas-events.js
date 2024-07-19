@@ -1,4 +1,4 @@
-import { drawImageWithBoxes } from './canvas-operations.js';
+import { drawImageWithBoxes, drawBox } from './canvas-operations.js';
 import { isInsideHandle, changeCursor } from './resize-handlers.js';
 import { state } from './shared-state.js';
 
@@ -18,6 +18,12 @@ export function setupCanvasEvents() {
     let isMovingImage = false;
     let ctrlPressed = false;
     let messageTimeout;
+    let canDraw = false; // Flag to indicate if drawing is enabled
+
+    const contextMenu = document.getElementById('context-menu');
+    const deleteBoxOption = document.getElementById('delete-box');
+    const cancelMenuOption = document.getElementById('cancel-menu');
+    let hoveredBox = null;
 
     // Show message in the top-right corner of the image
     function showMessage(text) {
@@ -28,8 +34,8 @@ export function setupCanvasEvents() {
         const padding = 5;
 
         // Calculate position in the top-right corner of the image
-        const mouseX = state.originX + padding * 2;
-        const mouseY = state.originY + padding * 8;
+        const mouseX = state.originX + state.img.width * state.scale - textWidth - padding * 2;
+        const mouseY = state.originY + padding;
 
         // Draw the background rectangle
         ctx.fillRect(mouseX, mouseY - 12, textWidth + padding * 2, 24);
@@ -72,6 +78,12 @@ export function setupCanvasEvents() {
         }
     });
 
+    // Button to enable drawing mode
+    const drawButton = document.getElementById('add-box');
+    drawButton.addEventListener('click', () => {
+        canDraw = true;
+    });
+
     imageCanvas.addEventListener('mousedown', (event) => {
         if (ctrlPressed) {
             isMovingImage = true;
@@ -79,6 +91,8 @@ export function setupCanvasEvents() {
             startY = event.offsetY - state.originY;
             return;
         }
+
+        if (!canDraw) return; // Exit if drawing is not enabled
 
         startX = (event.offsetX - state.originX) / state.scale;
         startY = (event.offsetY - state.originY) / state.scale;
@@ -212,6 +226,7 @@ export function setupCanvasEvents() {
             drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes);
         } else {
             let cursorSet = false;
+            hoveredBox = null;
             state.boxes.forEach(box => {
                 const scaledX = box.x * imgWidth * state.scale + state.originX;
                 const scaledY = box.y * imgHeight * state.scale + state.originY;
@@ -234,6 +249,10 @@ export function setupCanvasEvents() {
                     cursorSet = true;
                 } else if (isInsideHandle(event.offsetX, event.offsetY, bottomRightHandle.x, bottomRightHandle.y, handleSize)) {
                     changeCursor(imageCanvas, 'se-resize');
+                    cursorSet = true;
+                } else if (event.offsetX >= scaledX && event.offsetX <= scaledX + scaledWidth && event.offsetY >= scaledY && event.offsetY <= scaledY + scaledHeight) {
+                    hoveredBox = box;
+                    changeCursor(imageCanvas, 'pointer');
                     cursorSet = true;
                 }
             });
@@ -270,5 +289,38 @@ export function setupCanvasEvents() {
         isDrawing = false;
         drawingBox = null;
         changeCursor(imageCanvas, 'default');
+    });
+
+    imageCanvas.addEventListener('contextmenu', (event) => {
+        event.preventDefault();
+
+        if (hoveredBox) {
+            const rect = imageCanvas.getBoundingClientRect();
+            contextMenu.style.left = `${event.clientX - rect.left}px`;
+            contextMenu.style.top = `${event.clientY - rect.top}px`;
+            contextMenu.style.display = 'block';
+            drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes, hoveredBox);
+        }
+    });
+
+    deleteBoxOption.addEventListener('click', () => {
+        if (hoveredBox) {
+            state.boxes = state.boxes.filter(box => box !== hoveredBox);
+            hoveredBox = null;
+            drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes);
+            contextMenu.style.display = 'none';
+        }
+    });
+
+    cancelMenuOption.addEventListener('click', () => {
+        contextMenu.style.display = 'none';
+        drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes); // Redraw to remove red highlight
+    });
+
+    document.addEventListener('click', (event) => {
+        if (!contextMenu.contains(event.target)) {
+            contextMenu.style.display = 'none';
+            drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes); // Redraw to remove red highlight
+        }
     });
 }
