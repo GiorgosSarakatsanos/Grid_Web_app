@@ -65,3 +65,4 @@ All notable changes to this project will be documented in this file.
 
 20240717
     - Now is not draw white boxes if not click the draw button first
+    - When a right click made in a white box position, this box is selected and highlighted in red and opens a context menu in mouse position with the options to delete the selected box or to cancel the context menu option

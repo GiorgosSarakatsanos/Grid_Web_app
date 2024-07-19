@@ -1,4 +1,4 @@
-import { drawImageWithBoxes, drawBox } from './canvas-operations.js';
+import { drawImageWithBoxes } from './canvas-operations.js';
 import { isInsideHandle, changeCursor } from './resize-handlers.js';
 import { state } from './shared-state.js';
 
@@ -24,6 +24,7 @@ export function setupCanvasEvents() {
     const deleteBoxOption = document.getElementById('delete-box');
     const cancelMenuOption = document.getElementById('cancel-menu');
     let hoveredBox = null;
+    let highlightedBox = null;
 
     // Show message in the top-right corner of the image
     function showMessage(text) {
@@ -295,18 +296,18 @@ export function setupCanvasEvents() {
         event.preventDefault();
 
         if (hoveredBox) {
-            const rect = imageCanvas.getBoundingClientRect();
-            contextMenu.style.left = `${event.clientX - rect.left}px`;
-            contextMenu.style.top = `${event.clientY - rect.top}px`;
+            highlightedBox = hoveredBox; // Set the highlighted box
+            contextMenu.style.left = `${event.clientX}px`; // Position context menu at the cursor position
+            contextMenu.style.top = `${event.clientY}px`;
             contextMenu.style.display = 'block';
-            drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes, hoveredBox);
+            drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes, highlightedBox);
         }
     });
 
     deleteBoxOption.addEventListener('click', () => {
-        if (hoveredBox) {
-            state.boxes = state.boxes.filter(box => box !== hoveredBox);
-            hoveredBox = null;
+        if (highlightedBox) {
+            state.boxes = state.boxes.filter(box => box !== highlightedBox);
+            highlightedBox = null;
             drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes);
             contextMenu.style.display = 'none';
         }
