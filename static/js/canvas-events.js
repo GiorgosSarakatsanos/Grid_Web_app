@@ -26,6 +26,44 @@ export function setupCanvasEvents() {
     let hoveredBox = null;
     let highlightedBox = null;
 
+    // Minimum box size
+    const minBoxSize = 20;
+
+    // Function to log the coordinates of all boxes
+    function logBoxCoordinates() {
+        console.clear();
+        console.log('Box Coordinates:');
+        state.boxes.forEach((box, index) => {
+            console.log(`Box ${index + 1}: x=${box.x}, y=${box.y}, width=${box.width}, height=${box.height}`);
+        });
+    }
+
+    // Function to show a temporary message in the top-left corner of the image
+    function showTemporaryMessage(text) {
+        ctx.save();
+        ctx.font = '14px Arial';
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.7)'; // Semi-transparent background
+        const textWidth = ctx.measureText(text).width;
+        const padding = 5;
+
+        // Calculate position in the top-left corner of the image
+        const mouseX = state.originX + padding;
+        const mouseY = state.originY + padding;
+
+        // Draw the background rectangle
+        ctx.fillRect(mouseX, mouseY, textWidth + padding * 2, 24);
+
+        // Draw the message text with better contrast color
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillText(text, mouseX + padding, mouseY + 18);
+        ctx.restore();
+
+        // Hide the message after 1 second
+        setTimeout(() => {
+            drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes);
+        }, 1000);
+    }
+
     // Show message in the top-right corner of the image
     function showMessage(text) {
         ctx.save();
@@ -168,6 +206,7 @@ export function setupCanvasEvents() {
             startX = mouseX;
             startY = mouseY;
             drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes);
+            logBoxCoordinates(); // Log box coordinates after moving
         } else if (isResizing && selectedBox) {
             const offsetX = (mouseX - state.originX) / state.scale;
             const offsetY = (mouseY - state.originY) / state.scale;
@@ -194,6 +233,7 @@ export function setupCanvasEvents() {
                     break;
             }
             drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes);
+            logBoxCoordinates(); // Log box coordinates after resizing
         } else if (isDrawing) {
             const rect = imageCanvas.getBoundingClientRect();
             const endX = (event.clientX - rect.left - state.originX) / state.scale;
@@ -272,7 +312,12 @@ export function setupCanvasEvents() {
         resizeHandle = null;
 
         if (isDrawing) {
-            state.boxes.push(drawingBox);
+            if (drawingBox.width * state.img.width * state.scale < minBoxSize || drawingBox.height * state.img.height * state.scale < minBoxSize) {
+                showTemporaryMessage('Πολύ μικρό μέγεθος κουτιού. Σχεδιάστε κάτι μεγαλύτερο.');
+            } else {
+                state.boxes.push(drawingBox);
+                logBoxCoordinates(); // Log box coordinates after drawing a new box
+            }
             isDrawing = false;
             drawingBox = null;
         }
@@ -310,6 +355,7 @@ export function setupCanvasEvents() {
             highlightedBox = null;
             drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes);
             contextMenu.style.display = 'none';
+            logBoxCoordinates(); // Log box coordinates after deleting a box
         }
     });
 
