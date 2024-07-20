@@ -1,0 +1,11 @@
+{
+    "name": "flask-web-app",
+    "version": "1.0.0",
+    "description": "A Flask web app with integrated JavaScript functionality",
+    "scripts": {
+      "test": "jest"
+    },
+    "devDependencies": {
+      "jest": "^27.0.0"
+    }
+  }

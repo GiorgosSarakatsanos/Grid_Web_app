@@ -1,7 +1,8 @@
+import logging
 from flask import Flask, render_template, send_file, session, redirect, url_for, request, jsonify
 from flask_wtf.csrf import CSRFProtect
 from forms import ImageForm
-from utils import generate_pdf  # Import generate_pdf
+from utils import generate_pdf
 from corners import generate_corner_lines
 from PyPDF2 import PdfReader, PdfWriter
 from werkzeug.utils import secure_filename
@@ -14,12 +15,20 @@ load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
-csrf = CSRFProtect(app)  # Initialize CSRF protection
+csrf = CSRFProtect(app)
 
 # Get environment variables
-app.config['DEBUG'] = os.environ['FLASK_DEBUG']
-app.config['SECRET_KEY'] = 'your_secret_key'
+app.config['DEBUG'] = os.environ['FLASK_DEBUG'] == 'True'
+app.config['SECRET_KEY'] = 'your secret key'
 app.config['UPLOAD_FOLDER'] = 'static/uploads/'
+
+# Configure logging
+logging.basicConfig(level=logging.DEBUG)
+handler = logging.FileHandler('flask_app.log')
+handler.setLevel(logging.DEBUG)
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+handler.setFormatter(formatter)
+app.logger.addHandler(handler)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():

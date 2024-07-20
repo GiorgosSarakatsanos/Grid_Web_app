@@ -67,3 +67,4 @@ All notable changes to this project will be documented in this file.
     - Now is not draw white boxes if not click the draw button first
     - When a right click made in a white box position, this box is selected and highlighted in red and opens a context menu in mouse position with the options to delete the selected box or to cancel the context menu option
     - Added a console output for boxes coordinates
+    - Limited how small a white box can be, refusing to draw it.
