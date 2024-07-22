@@ -57,14 +57,18 @@ All notable changes to this project will be documented in this file.
     - Created a button that adds white boxes in the uploaded image (for now is not written in pdf)
     - Fixed the green mark and the white boxes to show together
 
-20240716
+20240717
     - Rewrite the code for white boxes and now it works independet of zoom level or image position
     - Added a message on mouse that notifies the user for the zoom level
     - Now can move the image position when you press control in the keyboard and click and drag.
     - When you press control in the keyboard, a pop-up message in the mouse position shows and tell you that you can now drag and move the image
 
-20240717
+20240718
     - Now is not draw white boxes if not click the draw button first
     - When a right click made in a white box position, this box is selected and highlighted in red and opens a context menu in mouse position with the options to delete the selected box or to cancel the context menu option
     - Added a console output for boxes coordinates
     - Limited how small a white box can be, refusing to draw it.
+
+20240720
+    - Refactor the white box addition and bugs on its function
+    - Debugging for mouse position and click on several functions

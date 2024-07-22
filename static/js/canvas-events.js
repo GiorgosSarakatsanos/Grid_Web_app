@@ -16,6 +16,12 @@ export function setupCanvasEvents() {
     let isResizing = false;
     let resizeHandle = null;
     let canDraw = false;
+    let isSpacePressed = false;
+    let isMovingImage = false;
+    let moveStartX = 0;
+    let moveStartY = 0;
+    let dragOffsetX = 0;
+    let dragOffsetY = 0;
 
     const handleSize = 10;
     const minBoxSize = 20;
@@ -26,77 +32,80 @@ export function setupCanvasEvents() {
     let hoveredBox = null;
     let highlightedBox = null;
 
-    const drawButton = document.getElementById('add-box');
-    drawButton.addEventListener('click', () => {
-        console.debug('Draw button clicked');
-        canDraw = true;
-    });
-
     function handleMouseDown(event) {
         console.debug('Mouse down event:', event);
-        if (!canDraw) return;
+        if (isSpacePressed) {
+            isMovingImage = true;
+            moveStartX = event.clientX - state.originX;
+            moveStartY = event.clientY - state.originY;
+            imageCanvas.style.cursor = 'grabbing';
+        } else {
+            const imgWidth = state.img.width;
+            const imgHeight = state.img.height;
 
-        startX = (event.offsetX - state.originX) / state.scale;
-        startY = (event.offsetY - state.originY) / state.scale;
-        console.debug('Starting drawing at:', startX, startY);
+            state.boxes.forEach(box => {
+                const scaledX = box.x * imgWidth * state.scale + state.originX;
+                const scaledY = box.y * imgHeight * state.scale + state.originY;
+                const scaledWidth = box.width * imgWidth * state.scale;
+                const scaledHeight = box.height * imgHeight * state.scale;
 
-        const imgWidth = state.img.width;
-        const imgHeight = state.img.height;
+                const topLeftHandle = { x: scaledX, y: scaledY };
+                const topRightHandle = { x: scaledX + scaledWidth, y: scaledY };
+                const bottomLeftHandle = { x: scaledX, y: scaledY + scaledHeight };
+                const bottomRightHandle = { x: scaledX + scaledWidth, y: scaledY + scaledHeight };
 
-        state.boxes.forEach(box => {
-            const scaledX = box.x * imgWidth * state.scale + state.originX;
-            const scaledY = box.y * imgHeight * state.scale + state.originY;
-            const scaledWidth = box.width * imgWidth * state.scale;
-            const scaledHeight = box.height * imgHeight * state.scale;
+                if (isInsideHandle(event.offsetX, event.offsetY, topLeftHandle.x, topLeftHandle.y, handleSize)) {
+                    selectedBox = box;
+                    resizeHandle = 'topLeft';
+                    isResizing = true;
+                    console.debug('Resizing from top-left handle');
+                } else if (isInsideHandle(event.offsetX, event.offsetY, topRightHandle.x, topRightHandle.y, handleSize)) {
+                    selectedBox = box;
+                    resizeHandle = 'topRight';
+                    isResizing = true;
+                    console.debug('Resizing from top-right handle');
+                } else if (isInsideHandle(event.offsetX, event.offsetY, bottomLeftHandle.x, bottomLeftHandle.y, handleSize)) {
+                    selectedBox = box;
+                    resizeHandle = 'bottomLeft';
+                    isResizing = true;
+                    console.debug('Resizing from bottom-left handle');
+                } else if (isInsideHandle(event.offsetX, event.offsetY, bottomRightHandle.x, bottomRightHandle.y, handleSize)) {
+                    selectedBox = box;
+                    resizeHandle = 'bottomRight';
+                    isResizing = true;
+                    console.debug('Resizing from bottom-right handle');
+                } else if (event.offsetX >= scaledX && event.offsetX <= scaledX + scaledWidth && event.offsetY >= scaledY && event.offsetY <= scaledY + scaledHeight) {
+                    selectedBox = box;
+                    isDragging = true;
+                    dragOffsetX = (event.offsetX - scaledX) / state.scale;
+                    dragOffsetY = (event.offsetY - scaledY) / state.scale;
+                    console.debug('Dragging box:', selectedBox);
+                }
+            });
 
-            const topLeftHandle = { x: scaledX, y: scaledY };
-            const topRightHandle = { x: scaledX + scaledWidth, y: scaledY };
-            const bottomLeftHandle = { x: scaledX, y: scaledY + scaledHeight };
-            const bottomRightHandle = { x: scaledX + scaledWidth, y: scaledY + scaledHeight };
-
-            if (isInsideHandle(event.offsetX, event.offsetY, topLeftHandle.x, topLeftHandle.y, handleSize)) {
-                selectedBox = box;
-                resizeHandle = 'topLeft';
-                isResizing = true;
-                console.debug('Resizing from top-left handle');
-            } else if (isInsideHandle(event.offsetX, event.offsetY, topRightHandle.x, topRightHandle.y, handleSize)) {
-                selectedBox = box;
-                resizeHandle = 'topRight';
-                isResizing = true;
-                console.debug('Resizing from top-right handle');
-            } else if (isInsideHandle(event.offsetX, event.offsetY, bottomLeftHandle.x, bottomLeftHandle.y, handleSize)) {
-                selectedBox = box;
-                resizeHandle = 'bottomLeft';
-                isResizing = true;
-                console.debug('Resizing from bottom-left handle');
-            } else if (isInsideHandle(event.offsetX, event.offsetY, bottomRightHandle.x, bottomRightHandle.y, handleSize)) {
-                selectedBox = box;
-                resizeHandle = 'bottomRight';
-                isResizing = true;
-                console.debug('Resizing from bottom-right handle');
-            } else if (event.offsetX >= scaledX && event.offsetX <= scaledX + scaledWidth && event.offsetY >= scaledY && event.offsetY <= scaledY + scaledHeight) {
-                selectedBox = box;
-                isDragging = true;
-                console.debug('Dragging box:', selectedBox);
+            if (!isDrawing && !selectedBox && !isResizing) {
+                isDrawing = true;
+                startX = (event.offsetX - state.originX) / state.scale;
+                startY = (event.offsetY - state.originY) / state.scale;
+                drawingBox = {
+                    x: startX / imgWidth,
+                    y: startY / imgHeight,
+                    width: 0,
+                    height: 0
+                };
+                console.debug('Started drawing new box:', drawingBox);
             }
-        });
-
-        if (!isDrawing && !selectedBox && !isResizing) {
-            isDrawing = true;
-            drawingBox = {
-                x: startX / imgWidth,
-                y: startY / imgHeight,
-                width: 0,
-                height: 0
-            };
-            console.debug('Started drawing new box:', drawingBox);
         }
     }
 
     function handleMouseMove(event) {
         console.debug('Mouse move event:', event);
 
-        if (isDrawing) {
+        if (isMovingImage) {
+            state.originX = event.clientX - moveStartX;
+            state.originY = event.clientY - moveStartY;
+            drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes);
+        } else if (isDrawing) {
             const imgWidth = state.img.width;
             const imgHeight = state.img.height;
             const endX = (event.offsetX - state.originX) / state.scale;
@@ -120,45 +129,43 @@ export function setupCanvasEvents() {
             );
             ctx.setLineDash([]);
         } else if (isDragging && selectedBox) {
-            const mouseX = event.offsetX;
-            const mouseY = event.offsetY;
-            const offsetX = (mouseX - startX) / state.img.width;
-            const offsetY = (mouseY - startY) / state.img.height;
+            const mouseX = (event.offsetX - state.originX) / state.scale;
+            const mouseY = (event.offsetY - state.originY) / state.scale;
+            const imgWidth = state.img.width;
+            const imgHeight = state.img.height;
 
-            selectedBox.x += offsetX;
-            selectedBox.y += offsetY;
-
-            startX = mouseX;
-            startY = mouseY;
+            selectedBox.x = mouseX / imgWidth - dragOffsetX / imgWidth;
+            selectedBox.y = mouseY / imgHeight - dragOffsetY / imgHeight;
 
             ctx.clearRect(0, 0, imageCanvas.width, imageCanvas.height);
             drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes);
         } else if (isResizing && selectedBox) {
-            const mouseX = event.offsetX;
-            const mouseY = event.offsetY;
-            const offsetX = (mouseX - state.originX) / state.scale;
-            const offsetY = (mouseY - state.originY) / state.scale;
+            const mouseX = (event.offsetX - state.originX) / state.scale;
+            const mouseY = (event.offsetY - state.originY) / state.scale;
+
+            const imgWidth = state.img.width;
+            const imgHeight = state.img.height;
 
             switch (resizeHandle) {
                 case 'topLeft':
-                    selectedBox.width += selectedBox.x - offsetX / state.img.width;
-                    selectedBox.height += selectedBox.y - offsetY / state.img.height;
-                    selectedBox.x = offsetX / state.img.width;
-                    selectedBox.y = offsetY / state.img.height;
+                    selectedBox.width += selectedBox.x - mouseX / imgWidth;
+                    selectedBox.height += selectedBox.y - mouseY / imgHeight;
+                    selectedBox.x = mouseX / imgWidth;
+                    selectedBox.y = mouseY / imgHeight;
                     break;
                 case 'topRight':
-                    selectedBox.width = offsetX / state.img.width - selectedBox.x;
-                    selectedBox.height += selectedBox.y - offsetY / state.img.height;
-                    selectedBox.y = offsetY / state.img.height;
+                    selectedBox.width = mouseX / imgWidth - selectedBox.x;
+                    selectedBox.height += selectedBox.y - mouseY / imgHeight;
+                    selectedBox.y = mouseY / imgHeight;
                     break;
                 case 'bottomLeft':
-                    selectedBox.width += selectedBox.x - offsetX / state.img.width;
-                    selectedBox.x = offsetX / state.img.width;
-                    selectedBox.height = offsetY / state.img.height - selectedBox.y;
+                    selectedBox.width += selectedBox.x - mouseX / imgWidth;
+                    selectedBox.x = mouseX / imgWidth;
+                    selectedBox.height = mouseY / imgHeight - selectedBox.y;
                     break;
                 case 'bottomRight':
-                    selectedBox.width = offsetX / state.img.width - selectedBox.x;
-                    selectedBox.height = offsetY / state.img.height - selectedBox.y;
+                    selectedBox.width = mouseX / imgWidth - selectedBox.x;
+                    selectedBox.height = mouseY / imgHeight - selectedBox.y;
                     break;
             }
 
@@ -205,8 +212,18 @@ export function setupCanvasEvents() {
     function handleMouseUp(event) {
         console.debug('Mouse up event:', event);
 
+        if (isMovingImage) {
+            isMovingImage = false;
+            imageCanvas.style.cursor = 'grab';
+        } else if (isDragging) {
+            isDragging = false;
+            selectedBox = null;
+        }
+
         if (isDrawing) {
-            if (drawingBox.width * state.img.width * state.scale < minBoxSize || drawingBox.height * state.img.height * state.scale < minBoxSize) {
+            const imgWidth = state.img.width;
+            const imgHeight = state.img.height;
+            if (drawingBox.width * imgWidth < minBoxSize || drawingBox.height * imgHeight < minBoxSize) {
                 console.debug('Box too small, not adding to state');
             } else {
                 const boxExists = state.boxes.some(box =>
@@ -225,7 +242,6 @@ export function setupCanvasEvents() {
             drawingBox = null;
         }
 
-        isDragging = false;
         isResizing = false;
         resizeHandle = null;
         selectedBox = null;
@@ -283,6 +299,21 @@ export function setupCanvasEvents() {
             console.debug('Click outside context menu');
             contextMenu.style.display = 'none';
             drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes);
+        }
+    });
+
+    document.addEventListener('keydown', (event) => {
+        if (event.code === 'Space' && !isSpacePressed) {
+            isSpacePressed = true;
+            imageCanvas.style.cursor = 'grab';
+        }
+    });
+
+    document.addEventListener('keyup', (event) => {
+        if (event.code === 'Space' && isSpacePressed) {
+            isSpacePressed = false;
+            imageCanvas.style.cursor = 'default';
+            isMovingImage = false;
         }
     });
 }
