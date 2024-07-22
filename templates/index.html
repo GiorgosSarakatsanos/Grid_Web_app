@@ -83,6 +83,7 @@
                 <canvas id="image-canvas"></canvas>
             </div>
         </div>
+
         <div class="grid-container pdf-preview">
             {% if merged_pdf_path %}
             <iframe src="{{ url_for('download', filename=merged_pdf_path.split('/')[-1]) }}" frameborder="0"></iframe>
@@ -129,6 +130,17 @@
                     <input type="checkbox" id="reverse_order" name="reverse_order"> Αντιστροφή σειράς αρίθμησης
                 </label>
             </fieldset>
+            <div id="box-container" style="display: none;">
+                {{ form.boxes.label }}<br>
+                {% for box in form.boxes %}
+                    <div>
+                        {{ box.position_x.label }} {{ box.position_x }}<br>
+                        {{ box.position_y.label }} {{ box.position_y }}<br>
+                        {{ box.size_x.label }} {{ box.size_x }}<br>
+                        {{ box.size_y.label }} {{ box.size_y }}<br>
+                    </div>
+                {% endfor %}
+            </div>
         </div>
     </div>
 </form>
@@ -139,5 +151,61 @@
     </ul>
 </div>
 <script type="module" src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script>
+    // Example function to populate box fields dynamically
+    function populateBoxFields(boxData) {
+        const boxContainer = document.getElementById('box-container');
+        boxContainer.innerHTML = ''; // Clear existing boxes
+
+        boxData.forEach((box, index) => {
+            const boxDiv = document.createElement('div');
+
+            const positionXLabel = document.createElement('label');
+            positionXLabel.innerHTML = `Position X: `;
+            const positionXInput = document.createElement('input');
+            positionXInput.type = 'text';
+            positionXInput.name = `boxes-${index}-position_x`;
+            positionXInput.value = box.position_x;
+
+            const positionYLabel = document.createElement('label');
+            positionYLabel.innerHTML = `Position Y: `;
+            const positionYInput = document.createElement('input');
+            positionYInput.type = 'text';
+            positionYInput.name = `boxes-${index}-position_y`;
+            positionYInput.value = box.position_y;
+
+            const sizeXLabel = document.createElement('label');
+            sizeXLabel.innerHTML = `Size X: `;
+            const sizeXInput = document.createElement('input');
+            sizeXInput.type = 'text';
+            sizeXInput.name = `boxes-${index}-size_x`;
+            sizeXInput.value = box.size_x;
+
+            const sizeYLabel = document.createElement('label');
+            sizeYLabel.innerHTML = `Size Y: `;
+            const sizeYInput = document.createElement('input');
+            sizeYInput.type = 'text';
+            sizeYInput.name = `boxes-${index}-size_y`;
+            sizeYInput.value = box.size_y;
+
+            boxDiv.appendChild(positionXLabel);
+            boxDiv.appendChild(positionXInput);
+            boxDiv.appendChild(positionYLabel);
+            boxDiv.appendChild(positionYInput);
+            boxDiv.appendChild(sizeXLabel);
+            boxDiv.appendChild(sizeXInput);
+            boxDiv.appendChild(sizeYLabel);
+            boxDiv.appendChild(sizeYInput);
+
+            boxContainer.appendChild(boxDiv);
+        });
+    }
+
+    // Example box data to populate the form
+    const exampleBoxData = [
+        { position_x: 0.12, position_y: 0.19, size_x: 0.56, size_y: 0.08 }
+    ];
+    populateBoxFields(exampleBoxData);
+</script>
 </body>
 </html>

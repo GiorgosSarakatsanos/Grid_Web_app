@@ -147,6 +147,10 @@ export function setupCanvasEvents() {
 
             ctx.clearRect(0, 0, imageCanvas.width, imageCanvas.height);
             drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes);
+
+            // Log and send box data to Flask
+            logBoxSummary();
+
         } else if (isResizing && selectedBox) {
             const mouseX = (event.offsetX - state.originX) / state.scale;
             const mouseY = (event.offsetY - state.originY) / state.scale;
@@ -179,6 +183,10 @@ export function setupCanvasEvents() {
 
             ctx.clearRect(0, 0, imageCanvas.width, imageCanvas.height);
             drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes);
+
+            // Log and send box data to Flask
+            logBoxSummary();
+
         } else {
             let cursorSet = false;
             hoveredBox = null;
@@ -218,7 +226,7 @@ export function setupCanvasEvents() {
     }
 
     function handleMouseUp(event) {
-
+        console.log("Box summary:", state.boxes.map(box => `Position: (${box.x.toFixed(2)}, ${box.y.toFixed(2)}), Size: (${box.width.toFixed(2)} x ${box.height.toFixed(2)})`));
         if (isMovingImage) {
             isMovingImage = false;
             imageCanvas.style.cursor = 'grab';
@@ -230,6 +238,7 @@ export function setupCanvasEvents() {
         if (isDrawing) {
             const imgWidth = state.img.width;
             const imgHeight = state.img.height;
+
             if (drawingBox.width * imgWidth < minBoxSize || drawingBox.height * imgHeight < minBoxSize) {
                 console.debug('Box too small, not adding to state');
             } else {
@@ -254,6 +263,44 @@ export function setupCanvasEvents() {
         selectedBox = null;
 
         drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes);
+
+        // Log and send box data to Flask
+        logBoxSummary();
+
+        // Log and send box data to Flask
+        const boxData = state.boxes.map(box => ({
+            position_x: box.x.toFixed(2),
+            position_y: box.y.toFixed(2),
+            size_x: box.width.toFixed(2),
+            size_y: box.height.toFixed(2)
+        }));
+        console.log("Box summary:", boxData);
+        sendBoxDataToFlask(boxData);
+    }
+
+    function sendBoxDataToFlask(boxData) {
+        fetch('/update-boxes', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('input[name="csrf_token"]').value // Include CSRF token if needed
+            },
+            body: JSON.stringify({ boxes: boxData })
+        })
+        .then(response => response.json())
+        .then(data => console.log('Success:', data))
+        .catch(error => console.error('Error:', error));
+    }
+
+    function logBoxSummary() {
+        const boxData = state.boxes.map(box => ({
+            position_x: box.x.toFixed(2),
+            position_y: box.y.toFixed(2),
+            size_x: box.width.toFixed(2),
+            size_y: box.height.toFixed(2)
+        }));
+        console.log("Box summary:", boxData);
+        sendBoxDataToFlask(boxData);
     }
 
     function handleMouseOut() {
@@ -290,6 +337,8 @@ export function setupCanvasEvents() {
             state.boxes = state.boxes.filter(box => box !== highlightedBox);
             highlightedBox = null;
             drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes);
+            // Log and send box data to Flask
+            logBoxSummary();
             contextMenu.style.display = 'none';
         }
     });

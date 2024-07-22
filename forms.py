@@ -1,11 +1,17 @@
 from flask_wtf import FlaskForm
-from wtforms import FileField, SelectField, SubmitField, IntegerField, FloatField, BooleanField, HiddenField
+from wtforms import FileField, SelectField, SubmitField, IntegerField, FloatField, BooleanField, HiddenField, FieldList, FormField
 from wtforms.validators import DataRequired, NumberRange, Optional, ValidationError
 
 
 def validate_custom_dimensions(form, field):
     if form.paper_size.data == 'Custom' and not field.data:
         raise ValidationError('This field is required for custom paper sizes.')
+
+class BoxForm(FlaskForm):
+    position_x = FloatField('Position X', validators=[DataRequired()])
+    position_y = FloatField('Position Y', validators=[DataRequired()])
+    size_x = FloatField('Size X', validators=[DataRequired()])
+    size_y = FloatField('Size Y', validators=[DataRequired()])
 
 class ImageForm(FlaskForm):
     image = FileField('Upload Image', validators=[DataRequired()])
@@ -25,7 +31,6 @@ class ImageForm(FlaskForm):
     font_size = IntegerField('Font Size (px)', default=8, validators=[Optional(), NumberRange(min=0)])
 
     img_size = SelectField('Image Size', choices=[
-
         ('Sticker', 'Sticker (60mm x 90mm)'),
         ('Card', 'Card (85mm x 55mm)'),
         ('Square', 'Square (55mm x 55mm)'),
@@ -48,5 +53,7 @@ class ImageForm(FlaskForm):
     show_marks = BooleanField('Show Marks', default=False)
 
     reverse_order = BooleanField('Reverse Numbering Order')
+
+    boxes = FieldList(FormField(BoxForm), min_entries=1)
 
     submit = SubmitField('Create PDF')
