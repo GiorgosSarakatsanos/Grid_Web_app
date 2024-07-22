@@ -65,9 +65,15 @@ export function setupZoomEvents() {
         handleZoom(mouseX, mouseY, 0.9);
     });
 
+    // Capture the wheel event at the document level to manage default action
+    document.addEventListener('wheel', (event) => {
+        if (event.target === imageCanvas) {
+            event.preventDefault();
+        }
+    }, { passive: false });
+
     // Zoom with mouse wheel
     imageCanvas.addEventListener('wheel', (event) => {
-        event.preventDefault();
         const mouseX = event.offsetX;
         const mouseY = event.offsetY;
         const wheel = event.deltaY < 0 ? 1.1 : 0.9;

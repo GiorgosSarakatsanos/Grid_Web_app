@@ -32,14 +32,24 @@ export function setupCanvasEvents() {
     let hoveredBox = null;
     let highlightedBox = null;
 
+    const drawButton = document.getElementById('add-box');
+    drawButton.addEventListener('click', () => {
+        console.debug('Draw button clicked');
+        canDraw = !canDraw; // Toggle the drawing mode
+        if (canDraw) {
+            drawButton.style.backgroundColor = 'lightblue'; // Optional: Change button style to indicate active state
+        } else {
+            drawButton.style.backgroundColor = ''; // Reset button style
+        }
+    });
+
     function handleMouseDown(event) {
-        console.debug('Mouse down event:', event);
         if (isSpacePressed) {
             isMovingImage = true;
             moveStartX = event.clientX - state.originX;
             moveStartY = event.clientY - state.originY;
             imageCanvas.style.cursor = 'grabbing';
-        } else {
+        } else if (canDraw) {
             const imgWidth = state.img.width;
             const imgHeight = state.img.height;
 
@@ -99,7 +109,6 @@ export function setupCanvasEvents() {
     }
 
     function handleMouseMove(event) {
-        console.debug('Mouse move event:', event);
 
         if (isMovingImage) {
             state.originX = event.clientX - moveStartX;
@@ -113,7 +122,6 @@ export function setupCanvasEvents() {
 
             drawingBox.width = (endX - startX) / imgWidth;
             drawingBox.height = (endY - startY) / imgHeight;
-            console.debug('Drawing box dimensions:', drawingBox.width, drawingBox.height);
 
             ctx.clearRect(0, 0, imageCanvas.width, imageCanvas.height);
             drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes);
@@ -210,7 +218,6 @@ export function setupCanvasEvents() {
     }
 
     function handleMouseUp(event) {
-        console.debug('Mouse up event:', event);
 
         if (isMovingImage) {
             isMovingImage = false;
@@ -250,7 +257,6 @@ export function setupCanvasEvents() {
     }
 
     function handleMouseOut() {
-        console.debug('Mouse out event');
         isDrawing = false;
         drawingBox = null;
         isDragging = false;
@@ -296,7 +302,6 @@ export function setupCanvasEvents() {
 
     document.addEventListener('click', (event) => {
         if (!contextMenu.contains(event.target)) {
-            console.debug('Click outside context menu');
             contextMenu.style.display = 'none';
             drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes);
         }
@@ -306,6 +311,10 @@ export function setupCanvasEvents() {
         if (event.code === 'Space' && !isSpacePressed) {
             isSpacePressed = true;
             imageCanvas.style.cursor = 'grab';
+        } else if (event.code === 'Escape') {
+            console.debug('Escape key pressed');
+            canDraw = false;
+            drawButton.style.backgroundColor = ''; // Reset button style
         }
     });
 

@@ -72,3 +72,7 @@ All notable changes to this project will be documented in this file.
 20240720
     - Refactor the white box addition and bugs on its function
     - Debugging for mouse position and click on several functions
+
+20240722
+    - Refactor the image move and add boxes functions
+    - Now draws boxes only when select the button, and can exit drawing by esc

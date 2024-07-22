@@ -1,12 +1,10 @@
 // canvas-operations.js
 
 export function drawImageWithBoxes(ctx, img, originX, originY, scale, boxes, highlightedBox = null) {
-    console.debug('Drawing image with boxes:', { originX, originY, scale, boxes });
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     ctx.drawImage(img, originX, originY, img.width * scale, img.height * scale);
 
     boxes.forEach((box, index) => {
-        console.debug('Drawing box:', box, 'Index:', index);
         ctx.beginPath();
         ctx.rect(
             box.x * img.width * scale + originX,
