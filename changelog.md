@@ -75,4 +75,6 @@ All notable changes to this project will be documented in this file.
 
 20240722
     - Refactor the image move and add boxes functions
-    - Now draws boxes only when select the button, and can exit drawing by esc
+    - Now draws boxes only when select the button, and can exit drawing by esc button.
+    - In the print the boxes shown now, even if resize, move or delete them.
+    - Replaced the selection input for the page mode selection, with a single button to switch between mode_numbering and mode_page

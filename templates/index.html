@@ -24,20 +24,14 @@
             </header>
         </div>
         <div class="grid-container basic-info">
-            <fieldset  class="field-group">
+            <input type="radio" name="mode" value="Page" id="mode_page" required checked style="display: none;">
+            <input type="radio" name="mode" value="Numbering" id="mode_numbering" required style="display: none;">
+            <fieldset class="field-group">
                 <legend>Λειτουργία</legend>
-                <label class="radio-container" for="mode_page">
-                    <input type="radio" name="mode" value="Page" id="mode_page" required checked>
-                    <img src="{{ url_for('static', filename='icons/one-page-icon.png') }}" alt="Page Icon" class="radio-icon">
-                    <span>Απλή</span>
-                </label>
-                <label class="radio-container" for="mode_numbering">
-                    <input type="radio" name="mode" value="Numbering" id="mode_numbering" required>
-                    <img src="{{ url_for('static', filename='icons/multi-page-icon.png') }}" alt="Numbering Icon" class="radio-icon">
-                    <span>Αρίθμηση</span>
-                </label>
+                <button id="mode-switch" type="button" class="button" >Μία σελίδα</button>
             </fieldset>
             <fieldset class="field-group">
+                <legend>Επεξεργασία</legend>
                 <input type="hidden" id="box_data" name="box_data" value="">
                 <button id="add-box" id="" class="button add-box" type="button">Προσθήκη Κουτιού</button>
             </fieldset>

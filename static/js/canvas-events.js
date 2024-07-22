@@ -226,7 +226,6 @@ export function setupCanvasEvents() {
     }
 
     function handleMouseUp(event) {
-        console.log("Box summary:", state.boxes.map(box => `Position: (${box.x.toFixed(2)}, ${box.y.toFixed(2)}), Size: (${box.width.toFixed(2)} x ${box.height.toFixed(2)})`));
         if (isMovingImage) {
             isMovingImage = false;
             imageCanvas.style.cursor = 'grab';
@@ -278,6 +277,22 @@ export function setupCanvasEvents() {
         sendBoxDataToFlask(boxData);
     }
 
+    const modeSwitchButton = document.getElementById('mode-switch');
+    let isNumberingMode = false;
+
+    modeSwitchButton.addEventListener('click', () => {
+        isNumberingMode = !isNumberingMode;
+        if (isNumberingMode) {
+            modeSwitchButton.style.backgroundColor = 'lightblue';
+            modeSwitchButton.innerText = 'Mode Numbering';
+            state.mode = 'Numbering';
+        } else {
+            modeSwitchButton.style.backgroundColor = '';
+            modeSwitchButton.innerText = 'Mode Page';
+            state.mode = 'Page';
+        }
+    });
+
     function sendBoxDataToFlask(boxData) {
         fetch('/update-boxes', {
             method: 'POST',
@@ -299,7 +314,6 @@ export function setupCanvasEvents() {
             size_x: box.width.toFixed(2),
             size_y: box.height.toFixed(2)
         }));
-        console.log("Box summary:", boxData);
         sendBoxDataToFlask(boxData);
     }
 

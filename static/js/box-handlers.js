@@ -1,5 +1,4 @@
-import { drawImageWithBoxes } from './canvas-operations.js';
-import { setNumberingPosition } from './canvas-operations.js';
+import { drawImageWithBoxes, setNumberingPosition } from './canvas-operations.js';
 import { toggleFields } from './ui-controls.js'; // Import toggleFields
 import { state } from './shared-state.js';
 
@@ -25,12 +24,7 @@ export function setupBoxHandlers() {
         field.addEventListener('change', toggleFields)
     );
 
-    document.querySelectorAll('input[name="mode"]').forEach(field =>
-        field.addEventListener('change', toggleFields)
-    );
-
     document.getElementById('paper_size').addEventListener('change', toggleFields);
     document.getElementById('img_size').addEventListener('change', toggleFields);
 
-    toggleFields(); // Initial call to set correct visibility
 }
