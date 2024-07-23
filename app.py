@@ -1,13 +1,12 @@
-import logging
+import logging  # Import logging module
 from flask import Flask, render_template, send_file, request, jsonify, session
 from flask_wtf.csrf import CSRFProtect
 from forms import ImageForm
 from utils import generate_pdf
 from corners import generate_corner_lines
-from image_processing import draw_boxes_on_image  # Import the new function
+from image_processing import draw_boxes_on_image
 from PyPDF2 import PdfReader, PdfWriter
 from werkzeug.utils import secure_filename
-
 from dotenv import load_dotenv
 from flask_cors import CORS
 import os

@@ -34,6 +34,8 @@
                 <legend>Επεξεργασία</legend>
                 <input type="hidden" id="box_data" name="box_data" value="">
                 <button id="add-box" id="" class="button add-box" type="button">Προσθήκη Κουτιού</button>
+                <button id="set-numbering-position" type="button">Set Numbering Position</button>
+                <button id="add-text" type="button">Add Text</button>
             </fieldset>
             <fieldset  class="field-group">
                 <legend>Ζουμ</legend>
@@ -138,7 +140,14 @@
         </div>
     </div>
 </form>
-<div id="context-menu" class="context-menu">
+<!-- Context menu for text options -->
+<div id="text-context-menu" class="context-menu text">
+    <button id="move-text">Move</button>
+    <button id="rotate-text">Rotate</button>
+    <button id="confirm-text">Confirm</button>
+    <button id="cancel-text">Cancel</button>
+</div>
+<div id="context-menu" class="context-menu box">
     <ul>
         <li id="delete-box">Διαγραφή</li>
         <li id="cancel-menu">Άκυρο</li>

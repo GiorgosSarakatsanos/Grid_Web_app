@@ -1,28 +1,45 @@
+import { state } from './shared-state.js';
+
 // canvas-operations.js
 
 export function drawImageWithBoxes(ctx, img, originX, originY, scale, boxes, highlightedBox = null) {
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     ctx.drawImage(img, originX, originY, img.width * scale, img.height * scale);
 
-    boxes.forEach((box, index) => {
-        ctx.beginPath();
-        ctx.rect(
-            box.x * img.width * scale + originX,
-            box.y * img.height * scale + originY,
-            box.width * img.width * scale,
-            box.height * img.height * scale
-        );
-        ctx.fillStyle = highlightedBox === box ? 'rgba(255, 0, 0, 0.5)' : 'white';
-        ctx.fill();
-        ctx.lineWidth = 2;
-        ctx.strokeStyle = 'blue';
-        ctx.stroke();
-        ctx.closePath();
+    boxes.forEach(box => {
+        const x = box.x * img.width * scale + originX;
+        const y = box.y * img.height * scale + originY;
+        const width = box.width * img.width * scale;
+        const height = box.height * img.height * scale;
 
-        ctx.font = '12px Arial';
-        ctx.fillStyle = 'black';
-        ctx.fillText(`Box ${index + 1}`, box.x * img.width * scale + originX, box.y * img.height * scale + originY - 5);
+        ctx.fillStyle = 'white';
+        ctx.fillRect(x, y, width, height);
+
+        ctx.strokeStyle = box === highlightedBox ? 'red' : 'blue';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(x, y, width, height);
     });
+
+    if (state.numberingPosition) {
+        const numX = state.numberingPosition.x * img.width * scale + originX;
+        const numY = state.numberingPosition.y * img.height * scale + originY;
+
+        ctx.strokeStyle = 'green';
+        ctx.lineWidth = 2;
+
+        // Draw right part of cross
+        ctx.beginPath();
+        ctx.moveTo(numX, numY);
+        ctx.lineTo(numX, numY - 20);
+        ctx.moveTo(numX, numY);
+        ctx.lineTo(numX + 60, numY);
+        ctx.stroke();
+
+        // Write the message "ΘΕΣΗ ΑΡΙΘΜΗΣΗΣ"
+        ctx.font = '10px Arial';
+        ctx.fillStyle = 'green';
+        ctx.fillText("ΘΕΣΗ ΑΡΙΘΜΗΣΗΣ", numX + 3, numY - 5);
+    }
 }
 
 export function setNumberingPosition(ctx, img, originX, originY, scale, numberingPosition) {

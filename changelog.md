@@ -78,3 +78,5 @@ All notable changes to this project will be documented in this file.
     - Now draws boxes only when select the button, and can exit drawing by esc button.
     - In the print the boxes shown now, even if resize, move or delete them.
     - Replaced the selection input for the page mode selection, with a single button to switch between mode_numbering and mode_page
+    - Add legend for image edits
+    - Removed some console debugger messages
