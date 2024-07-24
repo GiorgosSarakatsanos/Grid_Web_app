@@ -1,7 +1,5 @@
 import { state } from './shared-state.js';
 
-// canvas-operations.js
-
 export function drawImageWithBoxes(ctx, img, originX, originY, scale, boxes, highlightedBox = null) {
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     ctx.drawImage(img, originX, originY, img.width * scale, img.height * scale);
@@ -32,13 +30,13 @@ export function drawImageWithBoxes(ctx, img, originX, originY, scale, boxes, hig
         ctx.moveTo(numX, numY);
         ctx.lineTo(numX, numY - 20);
         ctx.moveTo(numX, numY);
-        ctx.lineTo(numX + 60, numY);
+        ctx.lineTo(numX + 50, numY);
         ctx.stroke();
 
         // Write the message "ΘΕΣΗ ΑΡΙΘΜΗΣΗΣ"
-        ctx.font = '10px Arial';
+        ctx.font = '16px Arial';
         ctx.fillStyle = 'green';
-        ctx.fillText("ΘΕΣΗ ΑΡΙΘΜΗΣΗΣ", numX + 3, numY - 5);
+        ctx.fillText("ΘΕΣΗ ΑΡΙΘΜΗΣΗΣ", numX + 2, numY - 2);
     }
 }
 

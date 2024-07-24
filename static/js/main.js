@@ -3,6 +3,7 @@ import { setupEventHandlers } from './event-handlers.js';
 import { setupZoomEvents } from './zoom-events.js';
 import { state } from './shared-state.js';
 import { toggleFields } from './ui-controls.js';
+import { drawImageWithBoxes } from './canvas-operations.js';
 import './form-submission.js';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -13,6 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const modeSwitchButton = document.getElementById('mode-switch');
     const setNumberingPositionButton = document.getElementById('set-numbering-position');
     const imageCanvas = document.getElementById('image-canvas');
+    const ctx = imageCanvas.getContext('2d');
     let isNumberingMode = false;
     let isSettingNumberingPosition = false;
 
@@ -52,7 +54,8 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('numbering_position_x').value = x;
             document.getElementById('numbering_position_y').value = y;
             console.log(`Numbering position set at (${x}, ${y})`);
-            // Optionally, you can keep the button highlighted until ESC is pressed
+            // Draw the image with boxes and the numbering position
+            drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes);
         }
     });
 
