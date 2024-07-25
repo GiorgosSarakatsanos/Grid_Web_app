@@ -68,9 +68,11 @@ def generate_pdf_content(c, image_path, form, width, height, margins, gap, img_w
             abs_x = x + (rel_x * img_width)
             abs_y = y + (mirrored_rel_y * img_height)
 
+
             # Position numbering text at the top of the horizontal line
             c.setFont("Arial", font_size)
-            c.drawString(abs_x + 2, abs_y - font_size / 2, str(number))
+            c.drawString(abs_x, abs_y, str(number))  # Adjusted position
+
             number += step
             x += img_width + gap
 

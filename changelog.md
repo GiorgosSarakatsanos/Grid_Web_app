@@ -80,3 +80,16 @@ All notable changes to this project will be documented in this file.
     - Replaced the selection input for the page mode selection, with a single button to switch between mode_numbering and mode_page
     - Add legend for image edits
     - Removed some console debugger messages
+
+20240723
+    - Refactor the green mark position and how it works with the addition of boxes
+
+20240724
+    - Added a button to add green mark position. When add a green mark, the page mode is automaticly switch to numbering mode.
+    - If esc key hitted, then dont switch the mode to page. User have to change it
+    - Added a button to add text
+    - When clicks to add text, open a context menu with the options of move, rotate, resize, confim, cancel
+
+20240725
+    - When the display is less than 715px make the grid change positions for an easier to view ux
+    - Fixed the set position to be exactly where it setted indepented of font size

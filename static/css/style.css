@@ -258,3 +258,36 @@ iframe {
 .context-menu ul li:hover {
     background-color: #f0f0f0;
 }
+
+@media screen and (max-width: 945px) {
+
+    .submit-container {
+        grid-row: 1;
+        grid-column: 3;
+        display: flex;
+        align-content: center;
+        justify-content: right;
+    }
+    .basic-settings {
+        grid-row: 1;
+        grid-column: 2;
+        display: flex;
+        align-content: center;
+        justify-content: space-between
+    }
+    .preview-window {
+        grid-row: 3;
+        grid-column: 1;
+        overflow: hidden;
+    }
+
+
+    .pdf-preview {
+        grid-row: 3;
+        grid-column: 2/4;
+    }
+    .properties {
+        grid-row: 2;
+        grid-column: 2/4;
+    }
+}

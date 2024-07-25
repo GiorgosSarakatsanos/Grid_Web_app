@@ -33,18 +33,37 @@ export function drawImageWithBoxes(ctx, img, originX, originY, scale, boxes, hig
         ctx.lineTo(numX + 50, numY);
         ctx.stroke();
 
-        // Write the message "ΘΕΣΗ ΑΡΙΘΜΗΣΗΣ"
+        // Set the font for the text
         ctx.font = '16px Arial';
         ctx.fillStyle = 'green';
-        ctx.fillText("ΘΕΣΗ ΑΡΙΘΜΗΣΗΣ", numX + 2, numY - 2);
+
+        // Measure the text width
+        const text = "ΘΕΣΗ ΑΡΙΘΜΗΣΗΣ";
+        const textWidth = ctx.measureText(text).width;
+
+        // Calculate the position for the text
+        const textX = numX + 2;
+        const textY = numY - 2;
+
+        // Draw the text
+        ctx.fillText(text, textX, textY);
     }
 }
 
 export function setNumberingPosition(ctx, img, originX, originY, scale, numberingPosition) {
     console.debug('Setting numbering position:', { originX, originY, scale, numberingPosition });
-    ctx.font = '20px Arial';
+
+    const fontSize = 20; // Define the font size
+    ctx.font = `${fontSize}px Arial`;
     ctx.fillStyle = 'red';
+
+    const text = '1';
     const x = numberingPosition.x * img.width * scale + originX;
     const y = numberingPosition.y * img.height * scale + originY;
-    ctx.fillText('1', x, y);
+
+    const textMetrics = ctx.measureText(text);
+    const textWidth = textMetrics.width;
+    const textHeight = fontSize; // Approximation since canvas doesn't provide text height
+
+    ctx.fillText(text, textX, textY);
 }
