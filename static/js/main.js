@@ -1,15 +1,24 @@
+// main.js
+
 import { setupCanvasEvents } from './canvas-events.js';
 import { setupEventHandlers } from './event-handlers.js';
 import { setupZoomEvents } from './zoom-events.js';
 import { state } from './shared-state.js';
 import { toggleFields } from './ui-controls.js';
 import { drawImageWithBoxes } from './canvas-operations.js';
+import { populateBoxFields } from './box-handlers.js';
 import './form-submission.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     setupCanvasEvents();  // Initialize canvas events
     setupEventHandlers(); // Initialize other event handlers
     setupZoomEvents();    // Initialize zoom events
+
+    // Example box data to populate the form
+    const exampleBoxData = [
+        { position_x: 0.12, position_y: 0.19, size_x: 0.56, size_y: 0.08 }
+    ];
+    populateBoxFields(exampleBoxData);
 
     const modeSwitchButton = document.getElementById('mode-switch');
     const setNumberingPositionButton = document.getElementById('set-numbering-position');

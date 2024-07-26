@@ -1,30 +1,51 @@
-import { drawImageWithBoxes, setNumberingPosition } from './canvas-operations.js';
-import { toggleFields } from './ui-controls.js'; // Import toggleFields
+// box-handlers.js
+
 import { state } from './shared-state.js';
 
-export function setupBoxHandlers() {
-    const imageCanvas = document.getElementById('image-canvas');
-    const ctx = imageCanvas.getContext('2d');
+export function populateBoxFields(boxData) {
+    const boxContainer = document.getElementById('box-container');
+    boxContainer.innerHTML = ''; // Clear existing boxes
 
-    document.getElementById('add-box').addEventListener('click', () => {
-        const box = { x: 50, y: 50, width: 100, height: 100 };
-        state.boxes.push(box);
-        drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes);
+    boxData.forEach((box, index) => {
+        const boxDiv = document.createElement('div');
+
+        const positionXLabel = document.createElement('label');
+        positionXLabel.innerHTML = `Position X: `;
+        const positionXInput = document.createElement('input');
+        positionXInput.type = 'text';
+        positionXInput.name = `boxes-${index}-position_x`;
+        positionXInput.value = box.position_x;
+
+        const positionYLabel = document.createElement('label');
+        positionYLabel.innerHTML = `Position Y: `;
+        const positionYInput = document.createElement('input');
+        positionYInput.type = 'text';
+        positionYInput.name = `boxes-${index}-position_y`;
+        positionYInput.value = box.position_y;
+
+        const sizeXLabel = document.createElement('label');
+        sizeXLabel.innerHTML = `Size X: `;
+        const sizeXInput = document.createElement('input');
+        sizeXInput.type = 'text';
+        sizeXInput.name = `boxes-${index}-size_x`;
+        sizeXInput.value = box.size_x;
+
+        const sizeYLabel = document.createElement('label');
+        sizeYLabel.innerHTML = `Size Y: `;
+        const sizeYInput = document.createElement('input');
+        sizeYInput.type = 'text';
+        sizeYInput.name = `boxes-${index}-size_y`;
+        sizeYInput.value = box.size_y;
+
+        boxDiv.appendChild(positionXLabel);
+        boxDiv.appendChild(positionXInput);
+        boxDiv.appendChild(positionYLabel);
+        boxDiv.appendChild(positionYInput);
+        boxDiv.appendChild(sizeXLabel);
+        boxDiv.appendChild(sizeXInput);
+        boxDiv.appendChild(sizeYLabel);
+        boxDiv.appendChild(sizeYInput);
+
+        boxContainer.appendChild(boxDiv);
     });
-
-    window.setNumberingPosition = function(event) {
-        if (document.querySelector('input[name="mode"]:checked').value !== 'Numbering') {
-            return; // Exit if the mode is not "Numbering"
-        }
-
-        setNumberingPosition(event, ctx, state.img, state.originX, state.originY, state.scale);
-    };
-
-    document.querySelectorAll('input[name="mode"]').forEach(field =>
-        field.addEventListener('change', toggleFields)
-    );
-
-    document.getElementById('paper_size').addEventListener('change', toggleFields);
-    document.getElementById('img_size').addEventListener('change', toggleFields);
-
 }
