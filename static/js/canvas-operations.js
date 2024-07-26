@@ -1,6 +1,7 @@
+// canvas-operations.js
 import { state } from './shared-state.js';
 
-export function drawImageWithBoxes(ctx, img, originX, originY, scale, boxes, highlightedBox = null) {
+export function drawImageWithBoxes(ctx, img, originX, originY, scale, boxes, texts = [], highlightedBox = null, highlightedText = null) {
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     ctx.drawImage(img, originX, originY, img.width * scale, img.height * scale);
 
@@ -16,6 +17,21 @@ export function drawImageWithBoxes(ctx, img, originX, originY, scale, boxes, hig
         ctx.strokeStyle = box === highlightedBox ? 'red' : 'blue';
         ctx.lineWidth = 2;
         ctx.strokeRect(x, y, width, height);
+    });
+
+    texts.forEach(text => {
+        const x = text.x * img.width * scale + originX;
+        const y = text.y * img.height * scale + originY;
+
+        ctx.font = `${text.fontSize}px Arial`;
+        ctx.fillStyle = 'black';
+        ctx.fillText(text.content, x, y);
+
+        if (text === highlightedText) {
+            ctx.strokeStyle = 'red';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(x, y - text.fontSize, ctx.measureText(text.content).width, text.fontSize);
+        }
     });
 
     if (state.numberingPosition) {
@@ -48,22 +64,4 @@ export function drawImageWithBoxes(ctx, img, originX, originY, scale, boxes, hig
         // Draw the text
         ctx.fillText(text, textX, textY);
     }
-}
-
-export function setNumberingPosition(ctx, img, originX, originY, scale, numberingPosition) {
-    console.debug('Setting numbering position:', { originX, originY, scale, numberingPosition });
-
-    const fontSize = 20; // Define the font size
-    ctx.font = `${fontSize}px Arial`;
-    ctx.fillStyle = 'red';
-
-    const text = '1';
-    const x = numberingPosition.x * img.width * scale + originX;
-    const y = numberingPosition.y * img.height * scale + originY;
-
-    const textMetrics = ctx.measureText(text);
-    const textWidth = textMetrics.width;
-    const textHeight = fontSize; // Approximation since canvas doesn't provide text height
-
-    ctx.fillText(text, textX, textY);
 }

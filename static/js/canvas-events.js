@@ -1,3 +1,4 @@
+// canvas-events.js
 import { drawImageWithBoxes } from './canvas-operations.js';
 import { isInsideHandle, changeCursor } from './resize-handlers.js';
 import { state } from './shared-state.js';
@@ -8,12 +9,14 @@ export function setupCanvasEvents() {
     let startX = 0;
     let startY = 0;
     let selectedBox = null;
+    let selectedText = null;
     let isDrawing = false;
     let drawingBox = null;
     let isDragging = false;
     let isResizing = false;
     let resizeHandle = null;
     let canDraw = false;
+    let canAddText = false; // Declare canAddText here
     let isSpacePressed = false;
     let isMovingImage = false;
     let moveStartX = 0;
@@ -28,16 +31,36 @@ export function setupCanvasEvents() {
     const deleteBoxOption = document.getElementById('delete-box');
     const cancelMenuOption = document.getElementById('cancel-menu');
     let hoveredBox = null;
+    let hoveredText = null;
     let highlightedBox = null;
+    let highlightedText = null;
 
     const drawButton = document.getElementById('add-box');
+    const addTextButton = document.getElementById('add-text');
     drawButton.addEventListener('click', () => {
-        console.debug('Draw button clicked');
         canDraw = !canDraw; // Toggle the drawing mode
         if (canDraw) {
             drawButton.style.backgroundColor = 'lightblue'; // Optional: Change button style to indicate active state
         } else {
             drawButton.style.backgroundColor = ''; // Reset button style
+        }
+    });
+
+    addTextButton.addEventListener('click', () => {
+        canAddText = !canAddText; // Toggle the text adding mode
+        if (canAddText) {
+            addTextButton.style.backgroundColor = 'lightblue'; // Optional: Change button style to indicate active state
+        } else {
+            addTextButton.style.backgroundColor = ''; // Reset button style
+        }
+    });
+
+    addTextButton.addEventListener('click', () => {
+        canAddText = !canAddText;
+        if (canAddText) {
+            addTextButton.style.backgroundColor = 'lightblue';
+        } else {
+            addTextButton.style.backgroundColor = '';
         }
     });
 
@@ -91,7 +114,35 @@ export function setupCanvasEvents() {
                 }
             });
 
-            if (!isDrawing && !selectedBox && !isResizing) {
+            state.texts.forEach(text => {
+                const x = text.x * imgWidth * state.scale + state.originX;
+                const y = text.y * imgHeight * state.scale + state.originY;
+                const textWidth = ctx.measureText(text.content).width;
+                const textHeight = text.fontSize;
+
+                const topLeftHandle = { x: x, y: y - textHeight };
+                const bottomRightHandle = { x: x + textWidth, y: y };
+
+                if (isInsideHandle(event.offsetX, event.offsetY, topLeftHandle.x, topLeftHandle.y, handleSize)) {
+                    selectedText = text;
+                    resizeHandle = 'topLeft';
+                    isResizing = true;
+                    console.debug('Resizing text from top-left handle');
+                } else if (isInsideHandle(event.offsetX, event.offsetY, bottomRightHandle.x, bottomRightHandle.y, handleSize)) {
+                    selectedText = text;
+                    resizeHandle = 'bottomRight';
+                    isResizing = true;
+                    console.debug('Resizing text from bottom-right handle');
+                } else if (event.offsetX >= topLeftHandle.x && event.offsetX <= bottomRightHandle.x && event.offsetY >= topLeftHandle.y && event.offsetY <= bottomRightHandle.y) {
+                    selectedText = text;
+                    isDragging = true;
+                    dragOffsetX = (event.offsetX - x) / state.scale;
+                    dragOffsetY = (event.offsetY - y) / state.scale;
+                    console.debug('Dragging text:', selectedText);
+                }
+            });
+
+            if (!isDrawing && !selectedBox && !isResizing && !selectedText) {
                 isDrawing = true;
                 startX = (event.offsetX - state.originX) / state.scale;
                 startY = (event.offsetY - state.originY) / state.scale;
@@ -107,11 +158,10 @@ export function setupCanvasEvents() {
     }
 
     function handleMouseMove(event) {
-
         if (isMovingImage) {
             state.originX = event.clientX - moveStartX;
             state.originY = event.clientY - moveStartY;
-            drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes);
+            drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes, state.texts);
         } else if (isDrawing) {
             const imgWidth = state.img.width;
             const imgHeight = state.img.height;
@@ -122,7 +172,7 @@ export function setupCanvasEvents() {
             drawingBox.height = (endY - startY) / imgHeight;
 
             ctx.clearRect(0, 0, imageCanvas.width, imageCanvas.height);
-            drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes);
+            drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes, state.texts);
 
             ctx.fillStyle = 'white';
             ctx.fillRect(
@@ -152,11 +202,24 @@ export function setupCanvasEvents() {
             selectedBox.y = mouseY / imgHeight - dragOffsetY / imgHeight;
 
             ctx.clearRect(0, 0, imageCanvas.width, imageCanvas.height);
-            drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes);
+            drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes, state.texts);
 
             // Log and send box data to Flask
             logBoxSummary();
+        } else if (isDragging && selectedText) {
+            const mouseX = (event.offsetX - state.originX) / state.scale;
+            const mouseY = (event.offsetY - state.originY) / state.scale;
+            const imgWidth = state.img.width;
+            const imgHeight = state.img.height;
 
+            selectedText.x = mouseX / imgWidth - dragOffsetX / imgWidth;
+            selectedText.y = mouseY / imgHeight - dragOffsetY / imgHeight;
+
+            ctx.clearRect(0, 0, imageCanvas.width, imageCanvas.height);
+            drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes, state.texts);
+
+            // Log and send text data to Flask
+            logTextSummary();
         } else if (isResizing && selectedBox) {
             const mouseX = (event.offsetX - state.originX) / state.scale;
             const mouseY = (event.offsetY - state.originY) / state.scale;
@@ -188,14 +251,36 @@ export function setupCanvasEvents() {
             }
 
             ctx.clearRect(0, 0, imageCanvas.width, imageCanvas.height);
-            drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes);
+            drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes, state.texts);
 
             // Log and send box data to Flask
             logBoxSummary();
+        } else if (isResizing && selectedText) {
+            const mouseX = (event.offsetX - state.originX) / state.scale;
+            const mouseY = (event.offsetY - state.originY) / state.scale;
+            const imgWidth = state.img.width;
+            const imgHeight = state.img.height;
 
+            switch (resizeHandle) {
+                case 'topLeft':
+                    selectedText.fontSize += selectedText.y - mouseY / imgHeight;
+                    selectedText.y = mouseY / imgHeight;
+                    break;
+                case 'bottomRight':
+                    selectedText.fontSize = mouseY / imgHeight - selectedText.y;
+                    break;
+            }
+
+            ctx.clearRect(0, 0, imageCanvas.width, imageCanvas.height);
+            drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes, state.texts);
+
+            // Log and send text data to Flask
+            logTextSummary();
         } else {
             let cursorSet = false;
             hoveredBox = null;
+            hoveredText = null;
+
             state.boxes.forEach(box => {
                 const scaledX = box.x * state.img.width * state.scale + state.originX;
                 const scaledY = box.y * state.img.height * state.scale + state.originY;
@@ -225,6 +310,29 @@ export function setupCanvasEvents() {
                     cursorSet = true;
                 }
             });
+
+            state.texts.forEach(text => {
+                const x = text.x * state.img.width * state.scale + state.originX;
+                const y = text.y * state.img.height * state.scale + state.originY;
+                const textWidth = ctx.measureText(text.content).width;
+                const textHeight = text.fontSize;
+
+                const topLeftHandle = { x: x, y: y - textHeight };
+                const bottomRightHandle = { x: x + textWidth, y: y };
+
+                if (isInsideHandle(event.offsetX, event.offsetY, topLeftHandle.x, topLeftHandle.y, handleSize)) {
+                    changeCursor(imageCanvas, 'nw-resize');
+                    cursorSet = true;
+                } else if (isInsideHandle(event.offsetX, event.offsetY, bottomRightHandle.x, bottomRightHandle.y, handleSize)) {
+                    changeCursor(imageCanvas, 'se-resize');
+                    cursorSet = true;
+                } else if (event.offsetX >= topLeftHandle.x && event.offsetX <= bottomRightHandle.x && event.offsetY >= topLeftHandle.y && event.offsetY <= bottomRightHandle.y) {
+                    hoveredText = text;
+                    changeCursor(imageCanvas, 'pointer');
+                    cursorSet = true;
+                }
+            });
+
             if (!cursorSet) {
                 changeCursor(imageCanvas, 'default');
             }
@@ -238,6 +346,7 @@ export function setupCanvasEvents() {
         } else if (isDragging) {
             isDragging = false;
             selectedBox = null;
+            selectedText = null;
         }
 
         if (isDrawing) {
@@ -266,11 +375,13 @@ export function setupCanvasEvents() {
         isResizing = false;
         resizeHandle = null;
         selectedBox = null;
+        selectedText = null;
 
-        drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes);
+        drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes, state.texts);
 
         // Log and send box data to Flask
         logBoxSummary();
+        logTextSummary();
 
         // Log and send box data to Flask
         const boxData = state.boxes.map(box => ({
@@ -313,6 +424,20 @@ export function setupCanvasEvents() {
         .catch(error => console.error('Error:', error));
     }
 
+    function sendTextDataToFlask(textData) {
+        fetch('/update-texts', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('input[name="csrf_token"]').value // Include CSRF token if needed
+            },
+            body: JSON.stringify({ texts: textData })
+        })
+        .then(response => response.json())
+        .then(data => console.log('Success:', data))
+        .catch(error => console.error('Error:', error));
+    }
+
     function logBoxSummary() {
         const boxData = state.boxes.map(box => ({
             position_x: box.x.toFixed(2),
@@ -323,6 +448,16 @@ export function setupCanvasEvents() {
         sendBoxDataToFlask(boxData);
     }
 
+    function logTextSummary() {
+        const textData = state.texts.map(text => ({
+            position_x: text.x.toFixed(2),
+            position_y: text.y.toFixed(2),
+            content: text.content,
+            font_size: text.fontSize
+        }));
+        sendTextDataToFlask(textData);
+    }
+
     function handleMouseOut() {
         isDrawing = false;
         drawingBox = null;
@@ -330,6 +465,7 @@ export function setupCanvasEvents() {
         isResizing = false;
         resizeHandle = null;
         selectedBox = null;
+        selectedText = null;
         changeCursor(imageCanvas, 'default');
     }
 
@@ -341,7 +477,13 @@ export function setupCanvasEvents() {
             contextMenu.style.left = `${event.clientX}px`;
             contextMenu.style.top = `${event.clientY}px`;
             contextMenu.style.display = 'block';
-            drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes, highlightedBox);
+            drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes, state.texts, highlightedBox);
+        } else if (hoveredText) {
+            highlightedText = hoveredText;
+            contextMenu.style.left = `${event.clientX}px`;
+            contextMenu.style.top = `${event.clientY}px`;
+            contextMenu.style.display = 'block';
+            drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes, state.texts, null, highlightedText);
         }
     }
 
@@ -356,9 +498,16 @@ export function setupCanvasEvents() {
         if (highlightedBox) {
             state.boxes = state.boxes.filter(box => box !== highlightedBox);
             highlightedBox = null;
-            drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes);
+            drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes, state.texts);
             // Log and send box data to Flask
             logBoxSummary();
+            contextMenu.style.display = 'none';
+        } else if (highlightedText) {
+            state.texts = state.texts.filter(text => text !== highlightedText);
+            highlightedText = null;
+            drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes, state.texts);
+            // Log and send text data to Flask
+            logTextSummary();
             contextMenu.style.display = 'none';
         }
     });
@@ -366,13 +515,13 @@ export function setupCanvasEvents() {
     cancelMenuOption.addEventListener('click', () => {
         console.debug('Cancel menu option clicked');
         contextMenu.style.display = 'none';
-        drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes);
+        drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes, state.texts);
     });
 
     document.addEventListener('click', (event) => {
         if (!contextMenu.contains(event.target)) {
             contextMenu.style.display = 'none';
-            drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes);
+            drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes, state.texts);
         }
     });
 
@@ -384,6 +533,8 @@ export function setupCanvasEvents() {
             console.debug('Escape key pressed');
             canDraw = false;
             drawButton.style.backgroundColor = ''; // Reset button style
+            canAddText = false;
+            addTextButton.style.backgroundColor = ''; // Reset button style
         }
     });
 

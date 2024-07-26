@@ -1,5 +1,4 @@
 // main.js
-
 import { setupCanvasEvents } from './canvas-events.js';
 import { setupEventHandlers } from './event-handlers.js';
 import { setupZoomEvents } from './zoom-events.js';
@@ -22,10 +21,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const modeSwitchButton = document.getElementById('mode-switch');
     const setNumberingPositionButton = document.getElementById('set-numbering-position');
+    const addTextButton = document.getElementById('add-text');
     const imageCanvas = document.getElementById('image-canvas');
     const ctx = imageCanvas.getContext('2d');
     let isNumberingMode = false;
     let isSettingNumberingPosition = false;
+    let canAddText = false;
 
     modeSwitchButton.addEventListener('click', () => {
         isNumberingMode = !isNumberingMode;
@@ -43,6 +44,15 @@ document.addEventListener('DOMContentLoaded', () => {
             setNumberingPositionButton.style.backgroundColor = 'lightblue';
         } else {
             setNumberingPositionButton.style.backgroundColor = '';
+        }
+    });
+
+    addTextButton.addEventListener('click', () => {
+        canAddText = !canAddText;
+        if (canAddText) {
+            addTextButton.style.backgroundColor = 'lightblue';
+        } else {
+            addTextButton.style.backgroundColor = '';
         }
     });
 
@@ -64,7 +74,15 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('numbering_position_y').value = y;
             console.log(`Numbering position set at (${x}, ${y})`);
             // Draw the image with boxes and the numbering position
-            drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes);
+            drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes, state.texts);
+        } else if (canAddText) {
+            const rect = imageCanvas.getBoundingClientRect();
+            const x = (event.clientX - rect.left - state.originX) / (state.img.width * state.scale);
+            const y = (event.clientY - rect.top - state.originY) / (state.img.height * state.scale);
+            const newText = { x, y, content: 'New Text', fontSize: 16 };
+            state.texts.push(newText);
+            drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes, state.texts);
+            console.log('Text added:', newText);
         }
     });
 
