@@ -1,7 +1,7 @@
 import logging  # Import logging module
 from flask import Flask, render_template, send_file, request, jsonify, session
 from flask_wtf.csrf import CSRFProtect
-from forms import ImageForm
+from forms import ImageForm, TextDataForm
 from utils import generate_pdf
 from corners import generate_corner_lines
 from image_processing import draw_boxes_on_image
@@ -26,10 +26,14 @@ def update_boxes():
 
 @app.route('/update-texts', methods=['POST'])
 def update_texts():
-    data = request.json
-    # Process the text data
-    print(data)
-    return jsonify(success=True)
+    try:
+        text_data = request.json.get('texts')
+        print('Received text data:', text_data)  # Debug log
+        # Process the text data here...
+        return jsonify({"status": "success", "message": "Text data received!"}), 200
+    except Exception as e:
+        print('Error:', str(e))
+        return jsonify({"status": "error", "message": str(e)}), 400
 
 # Get environment variables
 app.config['DEBUG'] = os.environ['FLASK_DEBUG'] == 'True'

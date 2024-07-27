@@ -13,6 +13,9 @@ class BoxForm(FlaskForm):
     size_x = FloatField('Size X', validators=[DataRequired()])
     size_y = FloatField('Size Y', validators=[DataRequired()])
 
+class TextDataForm(FlaskForm):
+    text_data = HiddenField('TextData', validators=[DataRequired()])
+
 class ImageForm(FlaskForm):
     image = FileField('Upload Image', validators=[DataRequired()])
 

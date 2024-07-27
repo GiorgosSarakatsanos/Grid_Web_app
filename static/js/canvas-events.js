@@ -27,6 +27,7 @@ export function setupCanvasEvents() {
     let newText = null;
     let initialMouseX = 0;
     let initialMouseY = 0;
+    let textAdded = false; // Add this flag
 
     const handleSize = 10;
     const minBoxSize = 20;
@@ -114,7 +115,9 @@ export function setupCanvasEvents() {
                 y: 0,
                 rotation: rotation
             };
+            console.log('New text object created:', newText); // Debug log
             canAddText = true;
+            textAdded = false; // Reset the flag
             textPositionMessage.style.display = 'block';
         }
         const textInputContainer = document.getElementById('add-text-input-container');
@@ -127,17 +130,6 @@ export function setupCanvasEvents() {
             moveStartX = event.clientX - state.originX;
             moveStartY = event.clientY - state.originY;
             imageCanvas.style.cursor = 'grabbing';
-        } else if (canAddText) {
-            const imgWidth = state.img.width;
-            const imgHeight = state.img.height;
-            newText.x = (event.offsetX - state.originX) / (imgWidth * state.scale);
-            newText.y = (event.offsetY - state.originY) / (imgHeight * state.scale);
-            state.texts.push(newText);
-            newText = null;
-            canAddText = false;
-            textPositionMessage.style.display = 'none';
-            drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes, state.texts);
-            logTextSummary();
         } else if (canSetNumbering) {
             const imgWidth = state.img.width;
             const imgHeight = state.img.height;
@@ -430,6 +422,20 @@ export function setupCanvasEvents() {
             drawingBox = null;
         }
 
+        // Add the text addition code here
+        if (canAddText && !textAdded) { // Check if text has not been added
+            const imgWidth = state.img.width;
+            const imgHeight = state.img.height;
+            newText.x = (event.offsetX - state.originX) / (imgWidth * state.scale);
+            newText.y = (event.offsetY - state.originY) / (imgHeight * state.scale);
+            state.texts.push(newText);
+            console.log('Text added to state:', newText); // Debug log
+            newText = null; // Clear newText after adding
+            canAddText = false; // Reset flag
+            textAdded = true; // Set the flag to true after adding
+            textPositionMessage.style.display = 'none';
+        }
+
         isResizing = false;
         resizeHandle = null;
         selectedBox = null;
@@ -441,15 +447,8 @@ export function setupCanvasEvents() {
         logBoxSummary();
         logTextSummary();
 
-        // Log and send box data to Flask
-        const boxData = state.boxes.map(box => ({
-            position_x: box.x.toFixed(2),
-            position_y: box.y.toFixed(2),
-            size_x: box.width.toFixed(2),
-            size_y: box.height.toFixed(2)
-        }));
-        console.log("Box summary:", boxData);
-        sendBoxDataToFlask(boxData);
+        // Log summary of all text data and update hidden input
+        logTextDataSummary();
     }
 
     const modeSwitchButton = document.getElementById('mode-switch');
@@ -492,7 +491,13 @@ export function setupCanvasEvents() {
             body: JSON.stringify({ texts: textData })
         })
         .then(response => response.json())
-        .then(data => console.log('Success:', data))
+        .then(data => {
+            if (data.status === "success") {
+                console.log('Success:', data.message);
+            } else {
+                console.error('Error:', data.message);
+            }
+        })
         .catch(error => console.error('Error:', error));
     }
 
@@ -515,6 +520,32 @@ export function setupCanvasEvents() {
             rotation: text.rotation // Add rotation to the summary
         }));
         sendTextDataToFlask(textData);
+    }
+
+    function logTextDataSummary() {
+        console.log('Text Data Summary:');
+        const textDataArray = state.texts.map((text, index) => ({
+            content: text.content,
+            font_size: text.fontSize,
+            x: text.x.toFixed(2),
+            y: text.y.toFixed(2),
+            rotation: text.rotation
+        }));
+
+        textDataArray.forEach((text, index) => {
+            console.log(`Text ${index + 1}:`);
+            console.log(`  Content: ${text.content}`);
+            console.log(`  Font Size: ${text.font_size}`);
+            console.log(`  X: ${text.x}`);
+            console.log(`  Y: ${text.y}`);
+            console.log(`  Rotation: ${text.rotation}`);
+        });
+
+        const textDataJSON = JSON.stringify(textDataArray);
+        document.getElementById('text-data').value = textDataJSON;
+
+        // Automatically submit the form
+        document.getElementById('text-data-form').submit();
     }
 
     function handleMouseOut() {
