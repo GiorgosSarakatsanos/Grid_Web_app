@@ -27,11 +27,13 @@ export function drawImageWithBoxes(ctx, img, originX, originY, scale, boxes, tex
         ctx.fillStyle = 'black';
         ctx.fillText(text.content, x, y);
 
-        if (text === highlightedText) {
-            ctx.strokeStyle = 'red';
-            ctx.lineWidth = 2;
-            ctx.strokeRect(x, y - text.fontSize, ctx.measureText(text.content).width, text.fontSize);
-        }
+        const textWidth = ctx.measureText(text.content).width;
+        const textHeight = text.fontSize;
+        const padding = 5; // Fixed padding around the text
+
+        ctx.strokeStyle = text === highlightedText ? 'red' : 'blue';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(x - padding, y - textHeight - padding, textWidth + 2 * padding, textHeight + 2 * padding);
     });
 
     if (state.numberingPosition) {

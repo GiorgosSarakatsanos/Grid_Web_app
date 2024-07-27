@@ -102,3 +102,6 @@ All notable changes to this project will be documented in this file.
     - In a text input, the user can add what wants to add in canvas.
     - When user submit the text, a message warns to set the text position and when clicks on canvas set it (bug: adds it to the canvas double)
     - Right click now just open context menu. Previous worked as left mouse and could make draws or move.
+    - When user resize the text, changes the font size by 1.
+    - Now a border aroung text, inform the user there the corners is.
+    - Toggle between edit button (buggy the draw box yet, but close to fixed)

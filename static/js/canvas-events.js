@@ -17,6 +17,7 @@ export function setupCanvasEvents() {
     let resizeHandle = null;
     let canDraw = false;
     let canAddText = false;
+    let canSetNumbering = false;
     let isSpacePressed = false;
     let isMovingImage = false;
     let moveStartX = 0;
@@ -24,7 +25,8 @@ export function setupCanvasEvents() {
     let dragOffsetX = 0;
     let dragOffsetY = 0;
     let newText = null;
-    let isPositioningText = false;
+    let initialMouseX = 0;
+    let initialMouseY = 0;
 
     const handleSize = 10;
     const minBoxSize = 20;
@@ -39,8 +41,9 @@ export function setupCanvasEvents() {
 
     const drawButton = document.getElementById('add-box');
     const addTextButton = document.getElementById('add-text');
-    const submitTextButton = document.getElementById('submit-text'); // Assuming a button element with id 'submit-text'
-    const textInput = document.getElementById('text-content'); // Assuming an input element with id 'text-content'
+    const numberingPositionButton = document.getElementById('set-numbering-position');
+    const submitTextButton = document.getElementById('submit-text');
+    const textInput = document.getElementById('text-content');
     const textPositionMessage = document.createElement('div');
     textPositionMessage.textContent = "Τοποθετήστε το κείμενο στην εικόνα";
     textPositionMessage.style.position = 'absolute';
@@ -51,18 +54,46 @@ export function setupCanvasEvents() {
     textPositionMessage.style.display = 'none';
     document.body.appendChild(textPositionMessage);
 
+    const toggleButtons = [drawButton, addTextButton, numberingPositionButton];
+
+    function toggleButton(button) {
+        toggleButtons.forEach(btn => {
+            if (btn !== button) {
+                btn.disabled = !btn.disabled;
+            }
+        });
+        button.classList.toggle('active');
+    }
+
     drawButton.addEventListener('click', () => {
         canDraw = !canDraw; // Toggle the drawing mode
         if (canDraw) {
-            drawButton.style.backgroundColor = 'lightblue'; // Optional: Change button style to indicate active state
+            toggleButton(drawButton);
         } else {
-            drawButton.style.backgroundColor = ''; // Reset button style
+            drawButton.classList.remove('active');
         }
     });
 
     addTextButton.addEventListener('click', () => {
-        const textInputContainer = document.getElementById('add-text-input-container');
-        textInputContainer.style.display = 'block';
+        canAddText = !canAddText; // Toggle the add text mode
+        if (canAddText) {
+            toggleButton(addTextButton);
+            const textInputContainer = document.getElementById('add-text-input-container');
+            textInputContainer.style.display = 'block';
+        } else {
+            addTextButton.classList.remove('active');
+            const textInputContainer = document.getElementById('add-text-input-container');
+            textInputContainer.style.display = 'none';
+        }
+    });
+
+    numberingPositionButton.addEventListener('click', () => {
+        canSetNumbering = !canSetNumbering; // Toggle the numbering position mode
+        if (canSetNumbering) {
+            toggleButton(numberingPositionButton);
+        } else {
+            numberingPositionButton.classList.remove('active');
+        }
     });
 
     submitTextButton.addEventListener('click', () => {
@@ -82,9 +113,6 @@ export function setupCanvasEvents() {
     });
 
     function handleMouseDown(event) {
-        if (event.button === 2) return; // Ignore right-clicks for dragging/resizing
-        if (event.button !== 0) return; // Only respond to left-clicks
-
         if (isSpacePressed) {
             isMovingImage = true;
             moveStartX = event.clientX - state.originX;
@@ -101,6 +129,15 @@ export function setupCanvasEvents() {
             textPositionMessage.style.display = 'none';
             drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes, state.texts);
             logTextSummary();
+        } else if (canSetNumbering) {
+            const imgWidth = state.img.width;
+            const imgHeight = state.img.height;
+            state.numberingPosition = {
+                x: (event.offsetX - state.originX) / (imgWidth * state.scale),
+                y: (event.offsetY - state.originY) / (imgHeight * state.scale)
+            };
+            canSetNumbering = false;
+            drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes, state.texts);
         } else {
             state.boxes.forEach(box => {
                 const imgWidth = state.img.width;
@@ -114,7 +151,7 @@ export function setupCanvasEvents() {
                 const topLeftHandle = { x: scaledX, y: scaledY };
                 const topRightHandle = { x: scaledX + scaledWidth, y: scaledY };
                 const bottomLeftHandle = { x: scaledX, y: scaledY + scaledHeight };
-                const bottomRightHandle = { x: scaledX + scaledWidth, y: scaledHeight };
+                const bottomRightHandle = { x: scaledX + scaledWidth, y: scaledY + scaledHeight };
 
                 if (isInsideHandle(event.offsetX, event.offsetY, topLeftHandle.x, topLeftHandle.y, handleSize)) {
                     selectedBox = box;
@@ -151,8 +188,9 @@ export function setupCanvasEvents() {
 
                 const x = text.x * imgWidth * state.scale + state.originX;
                 const y = text.y * imgHeight * state.scale + state.originY;
+                ctx.font = `${text.fontSize}px Arial`; // Set the font size for accurate measurement
                 const textWidth = ctx.measureText(text.content).width;
-                const textHeight = text.fontSize;
+                const textHeight = text.fontSize; // Approximate height with font size
 
                 const topLeftHandle = { x: x, y: y - textHeight };
                 const bottomRightHandle = { x: x + textWidth, y: y };
@@ -163,10 +201,17 @@ export function setupCanvasEvents() {
                     dragOffsetX = (event.offsetX - x) / state.scale;
                     dragOffsetY = (event.offsetY - y) / state.scale;
                     console.debug('Dragging text:', selectedText);
+                } else if (isInsideHandle(event.offsetX, event.offsetY, bottomRightHandle.x, bottomRightHandle.y, handleSize)) {
+                    selectedText = text;
+                    resizeHandle = 'bottomRight';
+                    isResizing = true;
+                    console.debug('Resizing text from bottom-right handle');
+                    initialMouseX = event.offsetX;
+                    initialMouseY = event.offsetY;
                 }
             });
 
-            if (isDragging) return;
+            if (isDragging || isResizing) return;
 
             if (canDraw) {
                 const imgWidth = state.img.width;
@@ -251,55 +296,22 @@ export function setupCanvasEvents() {
 
             // Log and send text data to Flask
             logTextSummary();
-        } else if (isResizing && selectedBox) {
-            const mouseX = (event.offsetX - state.originX) / state.scale;
-            const mouseY = (event.offsetY - state.originY) / state.scale;
-
-            const imgWidth = state.img.width;
-            const imgHeight = state.img.height;
-
-            switch (resizeHandle) {
-                case 'topLeft':
-                    selectedBox.width += selectedBox.x - mouseX / imgWidth;
-                    selectedBox.height += selectedBox.y - mouseY / imgHeight;
-                    selectedBox.x = mouseX / imgWidth;
-                    selectedBox.y = mouseY / imgHeight;
-                    break;
-                case 'topRight':
-                    selectedBox.width = mouseX / imgWidth - selectedBox.x;
-                    selectedBox.height += selectedBox.y - mouseY / imgHeight;
-                    selectedBox.y = mouseY / imgHeight;
-                    break;
-                case 'bottomLeft':
-                    selectedBox.width += selectedBox.x - mouseX / imgWidth;
-                    selectedBox.x = mouseX / imgWidth;
-                    selectedBox.height = mouseY / imgHeight - selectedBox.y;
-                    break;
-                case 'bottomRight':
-                    selectedBox.width = mouseX / imgWidth - selectedBox.x;
-                    selectedBox.height = mouseY / imgHeight - selectedBox.y;
-                    break;
-            }
-
-            ctx.clearRect(0, 0, imageCanvas.width, imageCanvas.height);
-            drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes, state.texts);
-
-            // Log and send box data to Flask
-            logBoxSummary();
         } else if (isResizing && selectedText) {
-            const mouseX = (event.offsetX - state.originX) / state.scale;
-            const mouseY = (event.offsetY - state.originY) / state.scale;
-            const imgWidth = state.img.width;
-            const imgHeight = state.img.height;
+            const mouseX = event.offsetX;
+            const mouseY = event.offsetY;
 
-            switch (resizeHandle) {
-                case 'topLeft':
-                    selectedText.fontSize += selectedText.y - mouseY / imgHeight;
-                    selectedText.y = mouseY / imgHeight;
-                    break;
-                case 'bottomRight':
-                    selectedText.fontSize = mouseY / imgHeight - selectedText.y;
-                    break;
+            const deltaX = mouseX - initialMouseX;
+            const deltaY = mouseY - initialMouseY;
+
+            if (Math.abs(deltaX) > 10 || Math.abs(deltaY) > 10) {
+                if (deltaY > 0) {
+                    selectedText.fontSize += 1;
+                } else if (deltaY < 0) {
+                    selectedText.fontSize -= 1;
+                }
+
+                initialMouseX = mouseX;
+                initialMouseY = mouseY;
             }
 
             ctx.clearRect(0, 0, imageCanvas.width, imageCanvas.height);
@@ -345,8 +357,9 @@ export function setupCanvasEvents() {
             state.texts.forEach(text => {
                 const x = text.x * state.img.width * state.scale + state.originX;
                 const y = text.y * state.img.height * state.scale + state.originY;
+                ctx.font = `${text.fontSize}px Arial`; // Set the font size for accurate measurement
                 const textWidth = ctx.measureText(text.content).width;
-                const textHeight = text.fontSize;
+                const textHeight = text.fontSize; // Approximate height with font size
 
                 const topLeftHandle = { x: x, y: y - textHeight };
                 const bottomRightHandle = { x: x + textWidth, y: y };
@@ -568,9 +581,11 @@ export function setupCanvasEvents() {
         } else if (event.code === 'Escape') {
             console.debug('Escape key pressed');
             canDraw = false;
-            drawButton.style.backgroundColor = ''; // Reset button style
+            drawButton.classList.remove('active'); // Reset button style
             canAddText = false;
-            addTextButton.style.backgroundColor = ''; // Reset button style
+            addTextButton.classList.remove('active'); // Reset button style
+            canSetNumbering = false;
+            numberingPositionButton.classList.remove('active'); // Reset button style
             textPositionMessage.style.display = 'none';
         }
     });

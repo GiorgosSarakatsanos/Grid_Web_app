@@ -22,44 +22,83 @@ document.addEventListener('DOMContentLoaded', () => {
     const modeSwitchButton = document.getElementById('mode-switch');
     const setNumberingPositionButton = document.getElementById('set-numbering-position');
     const addTextButton = document.getElementById('add-text');
+    const drawBoxButton = document.getElementById('add-box');
     const imageCanvas = document.getElementById('image-canvas');
     const ctx = imageCanvas.getContext('2d');
     let isNumberingMode = false;
     let isSettingNumberingPosition = false;
     let canAddText = false;
+    let canDrawBox = false;
+
+    const buttons = [modeSwitchButton, setNumberingPositionButton, addTextButton, drawBoxButton];
+
+    function activateButton(button) {
+        buttons.forEach(btn => {
+            if (btn === button) {
+                btn.classList.add('active');
+                btn.disabled = false;
+            } else {
+                btn.classList.remove('active');
+                btn.disabled = true;
+            }
+        });
+    }
+
+    function deactivateAllButtons() {
+        buttons.forEach(btn => {
+            btn.classList.remove('active');
+            btn.disabled = false;
+        });
+    }
+
+    drawBoxButton.addEventListener('click', () => {
+        canDrawBox = !canDrawBox; // Toggle the drawing mode
+        if (canDrawBox) {
+            activateButton(drawBoxButton);
+        } else {
+            deactivateAllButtons();
+        }
+    });
+
+    addTextButton.addEventListener('click', () => {
+        canAddText = !canAddText; // Toggle the add text mode
+        if (canAddText) {
+            activateButton(addTextButton);
+            const textInputContainer = document.getElementById('add-text-input-container');
+            textInputContainer.style.display = 'block';
+        } else {
+            deactivateAllButtons();
+            const textInputContainer = document.getElementById('add-text-input-container');
+            textInputContainer.style.display = 'none';
+        }
+    });
+
+    setNumberingPositionButton.addEventListener('click', () => {
+        isSettingNumberingPosition = !isSettingNumberingPosition; // Toggle the numbering position mode
+        if (isSettingNumberingPosition) {
+            activateButton(setNumberingPositionButton);
+        } else {
+            deactivateAllButtons();
+        }
+    });
 
     modeSwitchButton.addEventListener('click', () => {
         isNumberingMode = !isNumberingMode;
         if (isNumberingMode) {
             switchToNumberingMode();
+            activateButton(modeSwitchButton);
         } else {
             switchToPageMode();
-        }
-    });
-
-    setNumberingPositionButton.addEventListener('click', () => {
-        isSettingNumberingPosition = !isSettingNumberingPosition;
-        if (isSettingNumberingPosition) {
-            switchToNumberingMode();
-            setNumberingPositionButton.style.backgroundColor = 'lightblue';
-        } else {
-            setNumberingPositionButton.style.backgroundColor = '';
-        }
-    });
-
-    addTextButton.addEventListener('click', () => {
-        canAddText = !canAddText;
-        if (canAddText) {
-            addTextButton.style.backgroundColor = 'lightblue';
-        } else {
-            addTextButton.style.backgroundColor = '';
+            deactivateAllButtons();
         }
     });
 
     document.addEventListener('keydown', (event) => {
         if (event.key === 'Escape') {
             isSettingNumberingPosition = false;
-            setNumberingPositionButton.style.backgroundColor = '';
+            canAddText = false;
+            canDrawBox = false;
+            deactivateAllButtons();
             switchToPageMode();
         }
     });
