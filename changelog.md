@@ -93,3 +93,12 @@ All notable changes to this project will be documented in this file.
 20240725
     - When the display is less than 715px make the grid change positions for an easier to view ux
     - Fixed the set position to be exactly where it setted indepented of font size
+
+20240726
+    - Make a button to add text in canvas
+    - Make the buttons, add text, add box and set numbering position to toggle between them
+
+20240727
+    - In a text input, the user can add what wants to add in canvas.
+    - When user submit the text, a message warns to set the text position and when clicks on canvas set it (bug: adds it to the canvas double)
+    - Right click now just open context menu. Previous worked as left mouse and could make draws or move.

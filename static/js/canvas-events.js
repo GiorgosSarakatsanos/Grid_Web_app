@@ -1,4 +1,4 @@
-// canvas-events.js
+// Import necessary functions and state
 import { drawImageWithBoxes } from './canvas-operations.js';
 import { isInsideHandle, changeCursor } from './resize-handlers.js';
 import { state } from './shared-state.js';
@@ -16,13 +16,15 @@ export function setupCanvasEvents() {
     let isResizing = false;
     let resizeHandle = null;
     let canDraw = false;
-    let canAddText = false; // Declare canAddText here
+    let canAddText = false;
     let isSpacePressed = false;
     let isMovingImage = false;
     let moveStartX = 0;
     let moveStartY = 0;
     let dragOffsetX = 0;
     let dragOffsetY = 0;
+    let newText = null;
+    let isPositioningText = false;
 
     const handleSize = 10;
     const minBoxSize = 20;
@@ -37,6 +39,18 @@ export function setupCanvasEvents() {
 
     const drawButton = document.getElementById('add-box');
     const addTextButton = document.getElementById('add-text');
+    const submitTextButton = document.getElementById('submit-text'); // Assuming a button element with id 'submit-text'
+    const textInput = document.getElementById('text-content'); // Assuming an input element with id 'text-content'
+    const textPositionMessage = document.createElement('div');
+    textPositionMessage.textContent = "Τοποθετήστε το κείμενο στην εικόνα";
+    textPositionMessage.style.position = 'absolute';
+    textPositionMessage.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+    textPositionMessage.style.color = 'white';
+    textPositionMessage.style.padding = '5px';
+    textPositionMessage.style.borderRadius = '3px';
+    textPositionMessage.style.display = 'none';
+    document.body.appendChild(textPositionMessage);
+
     drawButton.addEventListener('click', () => {
         canDraw = !canDraw; // Toggle the drawing mode
         if (canDraw) {
@@ -47,34 +61,51 @@ export function setupCanvasEvents() {
     });
 
     addTextButton.addEventListener('click', () => {
-        canAddText = !canAddText; // Toggle the text adding mode
-        if (canAddText) {
-            addTextButton.style.backgroundColor = 'lightblue'; // Optional: Change button style to indicate active state
-        } else {
-            addTextButton.style.backgroundColor = ''; // Reset button style
-        }
+        const textInputContainer = document.getElementById('add-text-input-container');
+        textInputContainer.style.display = 'block';
     });
 
-    addTextButton.addEventListener('click', () => {
-        canAddText = !canAddText;
-        if (canAddText) {
-            addTextButton.style.backgroundColor = 'lightblue';
-        } else {
-            addTextButton.style.backgroundColor = '';
+    submitTextButton.addEventListener('click', () => {
+        const textContent = textInput.value.trim();
+        if (textContent) {
+            newText = {
+                content: textContent,
+                fontSize: 16,
+                x: 0,
+                y: 0
+            };
+            canAddText = true;
+            textPositionMessage.style.display = 'block';
         }
+        const textInputContainer = document.getElementById('add-text-input-container');
+        textInputContainer.style.display = 'none';
     });
 
     function handleMouseDown(event) {
+        if (event.button === 2) return; // Ignore right-clicks for dragging/resizing
+        if (event.button !== 0) return; // Only respond to left-clicks
+
         if (isSpacePressed) {
             isMovingImage = true;
             moveStartX = event.clientX - state.originX;
             moveStartY = event.clientY - state.originY;
             imageCanvas.style.cursor = 'grabbing';
-        } else if (canDraw) {
+        } else if (canAddText) {
             const imgWidth = state.img.width;
             const imgHeight = state.img.height;
-
+            newText.x = (event.offsetX - state.originX) / (imgWidth * state.scale);
+            newText.y = (event.offsetY - state.originY) / (imgHeight * state.scale);
+            state.texts.push(newText);
+            newText = null;
+            canAddText = false;
+            textPositionMessage.style.display = 'none';
+            drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes, state.texts);
+            logTextSummary();
+        } else {
             state.boxes.forEach(box => {
+                const imgWidth = state.img.width;
+                const imgHeight = state.img.height;
+
                 const scaledX = box.x * imgWidth * state.scale + state.originX;
                 const scaledY = box.y * imgHeight * state.scale + state.originY;
                 const scaledWidth = box.width * imgWidth * state.scale;
@@ -83,7 +114,7 @@ export function setupCanvasEvents() {
                 const topLeftHandle = { x: scaledX, y: scaledY };
                 const topRightHandle = { x: scaledX + scaledWidth, y: scaledY };
                 const bottomLeftHandle = { x: scaledX, y: scaledY + scaledHeight };
-                const bottomRightHandle = { x: scaledX + scaledWidth, y: scaledY + scaledHeight };
+                const bottomRightHandle = { x: scaledX + scaledWidth, y: scaledHeight };
 
                 if (isInsideHandle(event.offsetX, event.offsetY, topLeftHandle.x, topLeftHandle.y, handleSize)) {
                     selectedBox = box;
@@ -115,6 +146,9 @@ export function setupCanvasEvents() {
             });
 
             state.texts.forEach(text => {
+                const imgWidth = state.img.width;
+                const imgHeight = state.img.height;
+
                 const x = text.x * imgWidth * state.scale + state.originX;
                 const y = text.y * imgHeight * state.scale + state.originY;
                 const textWidth = ctx.measureText(text.content).width;
@@ -123,17 +157,7 @@ export function setupCanvasEvents() {
                 const topLeftHandle = { x: x, y: y - textHeight };
                 const bottomRightHandle = { x: x + textWidth, y: y };
 
-                if (isInsideHandle(event.offsetX, event.offsetY, topLeftHandle.x, topLeftHandle.y, handleSize)) {
-                    selectedText = text;
-                    resizeHandle = 'topLeft';
-                    isResizing = true;
-                    console.debug('Resizing text from top-left handle');
-                } else if (isInsideHandle(event.offsetX, event.offsetY, bottomRightHandle.x, bottomRightHandle.y, handleSize)) {
-                    selectedText = text;
-                    resizeHandle = 'bottomRight';
-                    isResizing = true;
-                    console.debug('Resizing text from bottom-right handle');
-                } else if (event.offsetX >= topLeftHandle.x && event.offsetX <= bottomRightHandle.x && event.offsetY >= topLeftHandle.y && event.offsetY <= bottomRightHandle.y) {
+                if (event.offsetX >= topLeftHandle.x && event.offsetX <= bottomRightHandle.x && event.offsetY >= topLeftHandle.y && event.offsetY <= bottomRightHandle.y) {
                     selectedText = text;
                     isDragging = true;
                     dragOffsetX = (event.offsetX - x) / state.scale;
@@ -142,17 +166,24 @@ export function setupCanvasEvents() {
                 }
             });
 
-            if (!isDrawing && !selectedBox && !isResizing && !selectedText) {
-                isDrawing = true;
-                startX = (event.offsetX - state.originX) / state.scale;
-                startY = (event.offsetY - state.originY) / state.scale;
-                drawingBox = {
-                    x: startX / imgWidth,
-                    y: startY / imgHeight,
-                    width: 0,
-                    height: 0
-                };
-                console.debug('Started drawing new box:', drawingBox);
+            if (isDragging) return;
+
+            if (canDraw) {
+                const imgWidth = state.img.width;
+                const imgHeight = state.img.height;
+
+                if (!isDrawing && !selectedBox && !isResizing && !selectedText) {
+                    isDrawing = true;
+                    startX = (event.offsetX - state.originX) / state.scale;
+                    startY = (event.offsetY - state.originY) / state.scale;
+                    drawingBox = {
+                        x: startX / imgWidth,
+                        y: startY / imgHeight,
+                        width: 0,
+                        height: 0
+                    };
+                    console.debug('Started drawing new box:', drawingBox);
+                }
             }
         }
     }
@@ -335,6 +366,11 @@ export function setupCanvasEvents() {
 
             if (!cursorSet) {
                 changeCursor(imageCanvas, 'default');
+            }
+
+            if (canAddText) {
+                textPositionMessage.style.left = `${event.pageX + 10}px`;
+                textPositionMessage.style.top = `${event.pageY + 10}px`;
             }
         }
     }
@@ -535,6 +571,7 @@ export function setupCanvasEvents() {
             drawButton.style.backgroundColor = ''; // Reset button style
             canAddText = false;
             addTextButton.style.backgroundColor = ''; // Reset button style
+            textPositionMessage.style.display = 'none';
         }
     });
 

@@ -24,6 +24,13 @@ def update_boxes():
     session['box_data'] = box_data  # Store box data in session
     return jsonify(success=True)
 
+@app.route('/update-texts', methods=['POST'])
+def update_texts():
+    data = request.json
+    # Process the text data
+    print(data)
+    return jsonify(success=True)
+
 # Get environment variables
 app.config['DEBUG'] = os.environ['FLASK_DEBUG'] == 'True'
 app.config['SECRET_KEY'] = 'your secret key'

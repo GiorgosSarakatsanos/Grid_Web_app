@@ -1,0 +1,8 @@
+2024-07-27 11:21:31,573 - app - DEBUG - Form data received:
+2024-07-27 11:21:36,106 - app - DEBUG - Form data received:
+2024-07-27 11:21:36,106 - app - DEBUG - Form validation failed
+2024-07-27 11:21:36,106 - app - DEBUG - {'texts': [{'content': ['This field is required.'], 'position_x': ['This field is required.'], 'position_y': ['This field is required.'], 'font_size': ['This field is required.']}]}
+2024-07-27 11:23:08,072 - app - DEBUG - Form data received:
+2024-07-27 11:23:11,752 - app - DEBUG - Form data received:
+2024-07-27 11:23:11,752 - app - DEBUG - Form validation failed
+2024-07-27 11:23:11,752 - app - DEBUG - {'texts': [{'content': ['This field is required.'], 'position_x': ['This field is required.'], 'position_y': ['This field is required.'], 'font_size': ['This field is required.']}]}

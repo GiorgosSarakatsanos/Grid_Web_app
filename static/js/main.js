@@ -79,10 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const rect = imageCanvas.getBoundingClientRect();
             const x = (event.clientX - rect.left - state.originX) / (state.img.width * state.scale);
             const y = (event.clientY - rect.top - state.originY) / (state.img.height * state.scale);
-            const newText = { x, y, content: 'New Text', fontSize: 16 };
-            state.texts.push(newText);
             drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes, state.texts);
-            console.log('Text added:', newText);
         }
     });
 
