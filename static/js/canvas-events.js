@@ -44,6 +44,7 @@ export function setupCanvasEvents() {
     const numberingPositionButton = document.getElementById('set-numbering-position');
     const submitTextButton = document.getElementById('submit-text');
     const textInput = document.getElementById('text-content');
+    const rotationInput = document.getElementById('text-rotation');
     const textPositionMessage = document.createElement('div');
     textPositionMessage.textContent = "Τοποθετήστε το κείμενο στην εικόνα";
     textPositionMessage.style.position = 'absolute';
@@ -96,14 +97,17 @@ export function setupCanvasEvents() {
         }
     });
 
-    submitTextButton.addEventListener('click', () => {
+    submitTextButton.addEventListener('click', (event) => {
+        event.preventDefault(); // Prevent form submission
         const textContent = textInput.value.trim();
+        const rotation = parseInt(rotationInput.value, 10);
         if (textContent) {
             newText = {
                 content: textContent,
                 fontSize: 16,
                 x: 0,
-                y: 0
+                y: 0,
+                rotation: rotation
             };
             canAddText = true;
             textPositionMessage.style.display = 'block';
@@ -502,7 +506,8 @@ export function setupCanvasEvents() {
             position_x: text.x.toFixed(2),
             position_y: text.y.toFixed(2),
             content: text.content,
-            font_size: text.fontSize
+            font_size: text.fontSize,
+            rotation: text.rotation // Add rotation to the summary
         }));
         sendTextDataToFlask(textData);
     }

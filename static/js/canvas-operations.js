@@ -23,9 +23,12 @@ export function drawImageWithBoxes(ctx, img, originX, originY, scale, boxes, tex
         const x = text.x * img.width * scale + originX;
         const y = text.y * img.height * scale + originY;
 
+        ctx.save(); // Save the current context state
+        ctx.translate(x, y); // Move to the text position
+        ctx.rotate(text.rotation * Math.PI / 180); // Apply rotation
         ctx.font = `${text.fontSize}px Arial`;
         ctx.fillStyle = 'black';
-        ctx.fillText(text.content, x, y);
+        ctx.fillText(text.content, 0, 0); // Draw text at the origin
 
         const textWidth = ctx.measureText(text.content).width;
         const textHeight = text.fontSize;
@@ -33,7 +36,9 @@ export function drawImageWithBoxes(ctx, img, originX, originY, scale, boxes, tex
 
         ctx.strokeStyle = text === highlightedText ? 'red' : 'blue';
         ctx.lineWidth = 2;
-        ctx.strokeRect(x - padding, y - textHeight - padding, textWidth + 2 * padding, textHeight + 2 * padding);
+        ctx.strokeRect(-padding, -textHeight - padding, textWidth + 2 * padding, textHeight + 2 * padding);
+
+        ctx.restore(); // Restore the original context state
     });
 
     if (state.numberingPosition) {

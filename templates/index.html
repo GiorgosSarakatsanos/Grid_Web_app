@@ -41,17 +41,15 @@
                 <div>
                     <button id="add-text" type="button">Add Text</button>
                 </div>
-                <div id="add-text-input-container" style="display: none;">
-                    <label for="text-content">Text:</label>
-                    <input type="text" id="text-content" name="text-content" />
-                    <button type="button" id="submit-text">Submit</button>
-                    <label for="rotation-angle">Rotation Angle:</label>
-                    <select id="rotation-angle">
+                <div id="add-text-input-container" style="display:none;">
+                    <input type="text" id="text-content" placeholder="Enter text">
+                    <select id="text-rotation">
                         <option value="0">0°</option>
                         <option value="90">+90°</option>
                         <option value="-90">-90°</option>
                     </select>
-                </div >
+                    <button id="submit-text">Submit</button>
+                </div>
             </fieldset>
             <fieldset  class="field-group">
                 <legend>Ζουμ</legend>
