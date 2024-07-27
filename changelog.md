@@ -105,3 +105,6 @@ All notable changes to this project will be documented in this file.
     - When user resize the text, changes the font size by 1.
     - Now a border aroung text, inform the user there the corners is.
     - Toggle between edit button (buggy the draw box yet, but close to fixed)
+    - Added an input selection to make text rotated before submitted ranging from -90 to +90 degrees with the default 0.
+    - Added an input list that controls the font size before submitted in canvas
+    

@@ -45,6 +45,7 @@ export function setupCanvasEvents() {
     const submitTextButton = document.getElementById('submit-text');
     const textInput = document.getElementById('text-content');
     const rotationInput = document.getElementById('text-rotation');
+    const fontSizeInput = document.getElementById('text-font-size');
     const textPositionMessage = document.createElement('div');
     textPositionMessage.textContent = "Τοποθετήστε το κείμενο στην εικόνα";
     textPositionMessage.style.position = 'absolute';
@@ -54,6 +55,9 @@ export function setupCanvasEvents() {
     textPositionMessage.style.borderRadius = '3px';
     textPositionMessage.style.display = 'none';
     document.body.appendChild(textPositionMessage);
+
+    // Set default font size to 12
+    fontSizeInput.value = "12";
 
     const toggleButtons = [drawButton, addTextButton, numberingPositionButton];
 
@@ -101,10 +105,11 @@ export function setupCanvasEvents() {
         event.preventDefault(); // Prevent form submission
         const textContent = textInput.value.trim();
         const rotation = parseInt(rotationInput.value, 10);
+        const fontSize = parseInt(fontSizeInput.value, 10); // Get font size
         if (textContent) {
             newText = {
                 content: textContent,
-                fontSize: 16,
+                fontSize: fontSize, // Set font size
                 x: 0,
                 y: 0,
                 rotation: rotation
