@@ -1,4 +1,5 @@
-import logging  # Import logging module
+# app.py
+import logging
 from flask import Flask, render_template, send_file, request, jsonify, session
 from flask_wtf.csrf import CSRFProtect
 from forms import ImageForm, TextDataForm
@@ -29,21 +30,14 @@ def update_boxes():
 
 @app.route('/update-texts', methods=['POST'])
 def update_texts():
-    try:
-        data = request.get_json()
-        if not data or 'texts' not in data:
-            raise ValueError("No text data received!")
+    text_data = request.get_json().get('texts', [])
+    if not text_data:
+        return jsonify({"status": "error", "message": "No text data received!"}), 400
 
-        text_data = data['texts']
-        print('Received text data:', text_data)  # Debug log
+    print("Received text data:", text_data)
+    session['text_data'] = text_data  # Store text data in session
+    return jsonify(success=True)
 
-        # Process the text data here...
-        return jsonify({"status": "success", "message": "Text data received!"}), 200
-    except Exception as e:
-        print('Error:', str(e))
-        return jsonify({"status": "error", "message": str(e)}), 400
-
-# Get environment variables
 app.config['DEBUG'] = os.environ['FLASK_DEBUG'] == 'True'
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'your secret key')
 app.config['UPLOAD_FOLDER'] = 'static/uploads/'
@@ -74,10 +68,10 @@ def index():
             print("No text data found in session.")
 
         for idx, box in enumerate(boxes):
-            print(f"Box {idx + 1}: Position X = {box['position_x']}, Position Y = {box['position_y']}, Size X = {box['size_x']}, Size Y = {box['size_y']}")
+            print(f"Box {idx + 1}: Position X = {box['x']}, Position Y = {box['y']}, Width = {box['width']}, Height = {box['height']}")
 
         for idx, text in enumerate(texts):
-            print(f"Text {idx + 1}: Content = {text['content']}, Font Size = {text['font_size']}, X = {text['x']}, Y = {text['y']}, Rotation = {text['rotation']}")
+            print(f"Text {idx + 1}: Content = {text['content']}, Font Size = {text['fontSize']}, X = {text['x']}, Y = {text['y']}, Rotation = {text['rotation']}")
 
         # Extract relative numbering position ONLY if mode is 'Numbering'
         if form.mode.data == 'Numbering':
