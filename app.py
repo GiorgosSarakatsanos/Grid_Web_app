@@ -4,7 +4,7 @@ from flask_wtf.csrf import CSRFProtect
 from forms import ImageForm, TextDataForm
 from utils import generate_pdf
 from corners import generate_corner_lines
-from image_processing import draw_boxes_on_image
+from image_processing import process_image_with_texts
 from PyPDF2 import PdfReader, PdfWriter
 from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
@@ -20,6 +20,9 @@ csrf = CSRFProtect(app)
 @app.route('/update-boxes', methods=['POST'])
 def update_boxes():
     box_data = request.get_json().get('boxes', [])
+    if not box_data:
+        return jsonify({"status": "error", "message": "No box data received!"}), 400
+
     print("Received box data:", box_data)
     session['box_data'] = box_data  # Store box data in session
     return jsonify(success=True)
@@ -27,8 +30,13 @@ def update_boxes():
 @app.route('/update-texts', methods=['POST'])
 def update_texts():
     try:
-        text_data = request.json.get('texts')
+        data = request.get_json()
+        if not data or 'texts' not in data:
+            raise ValueError("No text data received!")
+
+        text_data = data['texts']
         print('Received text data:', text_data)  # Debug log
+
         # Process the text data here...
         return jsonify({"status": "success", "message": "Text data received!"}), 200
     except Exception as e:
@@ -37,7 +45,7 @@ def update_texts():
 
 # Get environment variables
 app.config['DEBUG'] = os.environ['FLASK_DEBUG'] == 'True'
-app.config['SECRET_KEY'] = 'your secret key'
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'your secret key')
 app.config['UPLOAD_FOLDER'] = 'static/uploads/'
 
 # Configure logging
@@ -51,17 +59,25 @@ app.logger.addHandler(handler)
 @app.route('/', methods=['GET', 'POST'])
 def index():
     form = ImageForm()
-    # Handle form submission
-    print("Form data received:")
     if request.method == 'POST' and form.validate_on_submit():
         image = form.image.data
         image_path = os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(image.filename))
         image.save(image_path)
 
-        # Retrieve the box data from session
+        # Retrieve the box data and text data from session
         boxes = session.get('box_data', [])
+        texts = session.get('text_data', [])
+
+        if not boxes:
+            print("No box data found in session.")
+        if not texts:
+            print("No text data found in session.")
+
         for idx, box in enumerate(boxes):
             print(f"Box {idx + 1}: Position X = {box['position_x']}, Position Y = {box['position_y']}, Size X = {box['size_x']}, Size Y = {box['size_y']}")
+
+        for idx, text in enumerate(texts):
+            print(f"Text {idx + 1}: Content = {text['content']}, Font Size = {text['font_size']}, X = {text['x']}, Y = {text['y']}, Rotation = {text['rotation']}")
 
         # Extract relative numbering position ONLY if mode is 'Numbering'
         if form.mode.data == 'Numbering':
@@ -71,9 +87,9 @@ def index():
             rel_x = 0.0  # Default to 0.0 if not in Numbering mode
             rel_y = 0.0
 
-        # Draw boxes on image
+        # Draw boxes and texts on image
         boxed_image_path = os.path.splitext(image_path)[0] + '_boxed.png'
-        draw_boxes_on_image(image_path, boxes, boxed_image_path)
+        process_image_with_texts(image_path, boxes, texts, boxed_image_path)
 
         # Generate PDF with the boxed image
         grid_images_path = generate_pdf(boxed_image_path, form, rel_x, rel_y)
@@ -107,8 +123,9 @@ def index():
         os.remove(str(image_path))  # Remove the uploaded image
         os.remove(str(boxed_image_path))  # Remove the boxed image
 
-        # Clear the session box data after processing
+        # Clear the session data after processing
         session.pop('box_data', None)
+        session.pop('text_data', None)
 
         # Return the path to the merged PDF in JSON response
         return jsonify({'merged_pdf_path': merged_pdf_path})

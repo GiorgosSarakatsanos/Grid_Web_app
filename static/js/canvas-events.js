@@ -1,7 +1,8 @@
-// Import necessary functions and state
+// canvas-events.js
 import { drawImageWithBoxes } from './canvas-operations.js';
-import { isInsideHandle, changeCursor } from './resize-handlers.js';
+import { isInsideHandle, changeCursor } from './utils.js';
 import { state } from './shared-state.js';
+import { logBoxSummary, logTextSummary, debugLog, errorLog } from './debug-logger.js';
 
 export function setupCanvasEvents() {
     const imageCanvas = document.getElementById('image-canvas');
@@ -27,7 +28,7 @@ export function setupCanvasEvents() {
     let newText = null;
     let initialMouseX = 0;
     let initialMouseY = 0;
-    let textAdded = false; // Add this flag
+    let textAdded = false;
 
     const handleSize = 10;
     const minBoxSize = 20;
@@ -57,7 +58,6 @@ export function setupCanvasEvents() {
     textPositionMessage.style.display = 'none';
     document.body.appendChild(textPositionMessage);
 
-    // Set default font size to 12
     fontSizeInput.value = "12";
 
     const toggleButtons = [drawButton, addTextButton, numberingPositionButton];
@@ -72,7 +72,7 @@ export function setupCanvasEvents() {
     }
 
     drawButton.addEventListener('click', () => {
-        canDraw = !canDraw; // Toggle the drawing mode
+        canDraw = !canDraw;
         if (canDraw) {
             toggleButton(drawButton);
         } else {
@@ -81,7 +81,7 @@ export function setupCanvasEvents() {
     });
 
     addTextButton.addEventListener('click', () => {
-        canAddText = !canAddText; // Toggle the add text mode
+        canAddText = !canAddText;
         if (canAddText) {
             toggleButton(addTextButton);
             const textInputContainer = document.getElementById('add-text-input-container');
@@ -94,7 +94,7 @@ export function setupCanvasEvents() {
     });
 
     numberingPositionButton.addEventListener('click', () => {
-        canSetNumbering = !canSetNumbering; // Toggle the numbering position mode
+        canSetNumbering = !canSetNumbering;
         if (canSetNumbering) {
             toggleButton(numberingPositionButton);
         } else {
@@ -103,21 +103,21 @@ export function setupCanvasEvents() {
     });
 
     submitTextButton.addEventListener('click', (event) => {
-        event.preventDefault(); // Prevent form submission
+        event.preventDefault();
         const textContent = textInput.value.trim();
         const rotation = parseInt(rotationInput.value, 10);
-        const fontSize = parseInt(fontSizeInput.value, 10); // Get font size
+        const fontSize = parseInt(fontSizeInput.value, 10);
         if (textContent) {
             newText = {
                 content: textContent,
-                fontSize: fontSize, // Set font size
+                fontSize: fontSize,
                 x: 0,
                 y: 0,
                 rotation: rotation
             };
-            console.log('New text object created:', newText); // Debug log
+            debugLog('New text object created:', newText);
             canAddText = true;
-            textAdded = false; // Reset the flag
+            textAdded = false;
             textPositionMessage.style.display = 'block';
         }
         const textInputContainer = document.getElementById('add-text-input-container');
@@ -158,28 +158,28 @@ export function setupCanvasEvents() {
                     selectedBox = box;
                     resizeHandle = 'topLeft';
                     isResizing = true;
-                    console.debug('Resizing from top-left handle');
+                    debugLog('Resizing from top-left handle');
                 } else if (isInsideHandle(event.offsetX, event.offsetY, topRightHandle.x, topRightHandle.y, handleSize)) {
                     selectedBox = box;
                     resizeHandle = 'topRight';
                     isResizing = true;
-                    console.debug('Resizing from top-right handle');
+                    debugLog('Resizing from top-right handle');
                 } else if (isInsideHandle(event.offsetX, event.offsetY, bottomLeftHandle.x, bottomLeftHandle.y, handleSize)) {
                     selectedBox = box;
                     resizeHandle = 'bottomLeft';
                     isResizing = true;
-                    console.debug('Resizing from bottom-left handle');
+                    debugLog('Resizing from bottom-left handle');
                 } else if (isInsideHandle(event.offsetX, event.offsetY, bottomRightHandle.x, bottomRightHandle.y, handleSize)) {
                     selectedBox = box;
                     resizeHandle = 'bottomRight';
                     isResizing = true;
-                    console.debug('Resizing from bottom-right handle');
+                    debugLog('Resizing from bottom-right handle');
                 } else if (event.offsetX >= scaledX && event.offsetX <= scaledX + scaledWidth && event.offsetY >= scaledY && event.offsetY <= scaledY + scaledHeight) {
                     selectedBox = box;
                     isDragging = true;
                     dragOffsetX = (event.offsetX - scaledX) / state.scale;
                     dragOffsetY = (event.offsetY - scaledY) / state.scale;
-                    console.debug('Dragging box:', selectedBox);
+                    debugLog('Dragging box:', selectedBox);
                 }
             });
 
@@ -189,9 +189,9 @@ export function setupCanvasEvents() {
 
                 const x = text.x * imgWidth * state.scale + state.originX;
                 const y = text.y * imgHeight * state.scale + state.originY;
-                ctx.font = `${text.fontSize}px Arial`; // Set the font size for accurate measurement
+                ctx.font = `${text.fontSize}px Arial`;
                 const textWidth = ctx.measureText(text.content).width;
-                const textHeight = text.fontSize; // Approximate height with font size
+                const textHeight = text.fontSize;
 
                 const topLeftHandle = { x: x, y: y - textHeight };
                 const bottomRightHandle = { x: x + textWidth, y: y };
@@ -201,12 +201,12 @@ export function setupCanvasEvents() {
                     isDragging = true;
                     dragOffsetX = (event.offsetX - x) / state.scale;
                     dragOffsetY = (event.offsetY - y) / state.scale;
-                    console.debug('Dragging text:', selectedText);
+                    debugLog('Dragging text:', selectedText);
                 } else if (isInsideHandle(event.offsetX, event.offsetY, bottomRightHandle.x, bottomRightHandle.y, handleSize)) {
                     selectedText = text;
                     resizeHandle = 'bottomRight';
                     isResizing = true;
-                    console.debug('Resizing text from bottom-right handle');
+                    debugLog('Resizing text from bottom-right handle');
                     initialMouseX = event.offsetX;
                     initialMouseY = event.offsetY;
                 }
@@ -228,7 +228,7 @@ export function setupCanvasEvents() {
                         width: 0,
                         height: 0
                     };
-                    console.debug('Started drawing new box:', drawingBox);
+                    debugLog('Started drawing new box:', drawingBox);
                 }
             }
         }
@@ -281,8 +281,7 @@ export function setupCanvasEvents() {
             ctx.clearRect(0, 0, imageCanvas.width, imageCanvas.height);
             drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes, state.texts);
 
-            // Log and send box data to Flask
-            logBoxSummary();
+            logBoxSummary(state.boxes);
         } else if (isDragging && selectedText) {
             const mouseX = (event.offsetX - state.originX) / state.scale;
             const mouseY = (event.offsetY - state.originY) / state.scale;
@@ -295,8 +294,7 @@ export function setupCanvasEvents() {
             ctx.clearRect(0, 0, imageCanvas.width, imageCanvas.height);
             drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes, state.texts);
 
-            // Log and send text data to Flask
-            logTextSummary();
+            logTextSummary(state.texts);
         } else if (isResizing && selectedText) {
             const mouseX = event.offsetX;
             const mouseY = event.offsetY;
@@ -318,8 +316,7 @@ export function setupCanvasEvents() {
             ctx.clearRect(0, 0, imageCanvas.width, imageCanvas.height);
             drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes, state.texts);
 
-            // Log and send text data to Flask
-            logTextSummary();
+            logTextSummary(state.texts);
         } else {
             let cursorSet = false;
             hoveredBox = null;
@@ -358,9 +355,9 @@ export function setupCanvasEvents() {
             state.texts.forEach(text => {
                 const x = text.x * state.img.width * state.scale + state.originX;
                 const y = text.y * state.img.height * state.scale + state.originY;
-                ctx.font = `${text.fontSize}px Arial`; // Set the font size for accurate measurement
+                ctx.font = `${text.fontSize}px Arial`;
                 const textWidth = ctx.measureText(text.content).width;
-                const textHeight = text.fontSize; // Approximate height with font size
+                const textHeight = text.fontSize;
 
                 const topLeftHandle = { x: x, y: y - textHeight };
                 const bottomRightHandle = { x: x + textWidth, y: y };
@@ -404,7 +401,7 @@ export function setupCanvasEvents() {
             const imgHeight = state.img.height;
 
             if (drawingBox.width * imgWidth < minBoxSize || drawingBox.height * imgHeight < minBoxSize) {
-                console.debug('Box too small, not adding to state');
+                debugLog('Box too small, not adding to state');
             } else {
                 const boxExists = state.boxes.some(box =>
                     box.x === drawingBox.x &&
@@ -413,26 +410,25 @@ export function setupCanvasEvents() {
                     box.height === drawingBox.height
                 );
 
-                if (!boxExists) {  // Ensure the box is not added twice
+                if (!boxExists) {
                     state.boxes.push(drawingBox);
-                    console.debug('Box added to state:', drawingBox);
+                    debugLog('Box added to state:', drawingBox);
                 }
             }
             isDrawing = false;
             drawingBox = null;
         }
 
-        // Add the text addition code here
-        if (canAddText && !textAdded) { // Check if text has not been added
+        if (canAddText && !textAdded && newText) {
             const imgWidth = state.img.width;
             const imgHeight = state.img.height;
             newText.x = (event.offsetX - state.originX) / (imgWidth * state.scale);
             newText.y = (event.offsetY - state.originY) / (imgHeight * state.scale);
             state.texts.push(newText);
-            console.log('Text added to state:', newText); // Debug log
-            newText = null; // Clear newText after adding
-            canAddText = false; // Reset flag
-            textAdded = true; // Set the flag to true after adding
+            debugLog('Text added to state:', newText);
+            newText = null;
+            canAddText = false;
+            textAdded = true;
             textPositionMessage.style.display = 'none';
         }
 
@@ -443,109 +439,8 @@ export function setupCanvasEvents() {
 
         drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes, state.texts);
 
-        // Log and send box data to Flask
-        logBoxSummary();
-        logTextSummary();
-
-        // Log summary of all text data and update hidden input
-        logTextDataSummary();
-    }
-
-    const modeSwitchButton = document.getElementById('mode-switch');
-    let isNumberingMode = false;
-
-    modeSwitchButton.addEventListener('click', () => {
-        isNumberingMode = !isNumberingMode;
-        if (isNumberingMode) {
-            modeSwitchButton.style.backgroundColor = 'lightblue';
-            modeSwitchButton.innerText = 'Mode Numbering';
-            state.mode = 'Numbering';
-        } else {
-            modeSwitchButton.style.backgroundColor = '';
-            modeSwitchButton.innerText = 'Mode Page';
-            state.mode = 'Page';
-        }
-    });
-
-    function sendBoxDataToFlask(boxData) {
-        fetch('/update-boxes', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': document.querySelector('input[name="csrf_token"]').value // Include CSRF token if needed
-            },
-            body: JSON.stringify({ boxes: boxData })
-        })
-        .then(response => response.json())
-        .then(data => console.log('Success:', data))
-        .catch(error => console.error('Error:', error));
-    }
-
-    function sendTextDataToFlask(textData) {
-        fetch('/update-texts', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': document.querySelector('input[name="csrf_token"]').value // Include CSRF token if needed
-            },
-            body: JSON.stringify({ texts: textData })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === "success") {
-                console.log('Success:', data.message);
-            } else {
-                console.error('Error:', data.message);
-            }
-        })
-        .catch(error => console.error('Error:', error));
-    }
-
-    function logBoxSummary() {
-        const boxData = state.boxes.map(box => ({
-            position_x: box.x.toFixed(2),
-            position_y: box.y.toFixed(2),
-            size_x: box.width.toFixed(2),
-            size_y: box.height.toFixed(2)
-        }));
-        sendBoxDataToFlask(boxData);
-    }
-
-    function logTextSummary() {
-        const textData = state.texts.map(text => ({
-            position_x: text.x.toFixed(2),
-            position_y: text.y.toFixed(2),
-            content: text.content,
-            font_size: text.fontSize,
-            rotation: text.rotation // Add rotation to the summary
-        }));
-        sendTextDataToFlask(textData);
-    }
-
-    function logTextDataSummary() {
-        console.log('Text Data Summary:');
-        const textDataArray = state.texts.map((text, index) => ({
-            content: text.content,
-            font_size: text.fontSize,
-            x: text.x.toFixed(2),
-            y: text.y.toFixed(2),
-            rotation: text.rotation
-        }));
-
-        textDataArray.forEach((text, index) => {
-            console.log(`Text ${index + 1}:`);
-            console.log(`  Content: ${text.content}`);
-            console.log(`  Font Size: ${text.font_size}`);
-            console.log(`  X: ${text.x}`);
-            console.log(`  Y: ${text.y}`);
-            console.log(`  Rotation: ${text.rotation}`);
-        });
-
-        const textDataJSON = JSON.stringify(textDataArray);
-        document.getElementById('text-data').value = textDataJSON;
-
-        // Automatically submit the form
-        document.getElementById('text-data-form').submit();
+        logBoxSummary(state.boxes);
+        logTextSummary(state.texts);
     }
 
     function handleMouseOut() {
@@ -560,7 +455,7 @@ export function setupCanvasEvents() {
     }
 
     function handleContextMenu(event) {
-        console.debug('Context menu event:', event);
+        debugLog('Context menu event:', event);
         event.preventDefault();
         if (hoveredBox) {
             highlightedBox = hoveredBox;
@@ -584,26 +479,24 @@ export function setupCanvasEvents() {
     imageCanvas.addEventListener('contextmenu', handleContextMenu);
 
     deleteBoxOption.addEventListener('click', () => {
-        console.debug('Delete box option clicked');
+        debugLog('Delete box option clicked');
         if (highlightedBox) {
             state.boxes = state.boxes.filter(box => box !== highlightedBox);
             highlightedBox = null;
             drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes, state.texts);
-            // Log and send box data to Flask
-            logBoxSummary();
+            logBoxSummary(state.boxes);
             contextMenu.style.display = 'none';
         } else if (highlightedText) {
             state.texts = state.texts.filter(text => text !== highlightedText);
             highlightedText = null;
             drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes, state.texts);
-            // Log and send text data to Flask
-            logTextSummary();
+            logTextSummary(state.texts);
             contextMenu.style.display = 'none';
         }
     });
 
     cancelMenuOption.addEventListener('click', () => {
-        console.debug('Cancel menu option clicked');
+        debugLog('Cancel menu option clicked');
         contextMenu.style.display = 'none';
         drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes, state.texts);
     });
@@ -620,13 +513,13 @@ export function setupCanvasEvents() {
             isSpacePressed = true;
             imageCanvas.style.cursor = 'grab';
         } else if (event.code === 'Escape') {
-            console.debug('Escape key pressed');
+            debugLog('Escape key pressed');
             canDraw = false;
-            drawButton.classList.remove('active'); // Reset button style
+            drawButton.classList.remove('active');
             canAddText = false;
-            addTextButton.classList.remove('active'); // Reset button style
+            addTextButton.classList.remove('active');
             canSetNumbering = false;
-            numberingPositionButton.classList.remove('active'); // Reset button style
+            numberingPositionButton.classList.remove('active');
             textPositionMessage.style.display = 'none';
         }
     });
@@ -639,3 +532,7 @@ export function setupCanvasEvents() {
         }
     });
 }
+
+document.addEventListener('DOMContentLoaded', (event) => {
+    setupCanvasEvents();
+});

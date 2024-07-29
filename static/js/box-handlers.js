@@ -3,8 +3,6 @@
 import { state } from './shared-state.js';
 
 export function populateBoxFields(boxData) {
-    const boxContainer = document.getElementById('box-container');
-    boxContainer.innerHTML = ''; // Clear existing boxes
 
     boxData.forEach((box, index) => {
         const boxDiv = document.createElement('div');
@@ -36,16 +34,5 @@ export function populateBoxFields(boxData) {
         sizeYInput.type = 'text';
         sizeYInput.name = `boxes-${index}-size_y`;
         sizeYInput.value = box.size_y;
-
-        boxDiv.appendChild(positionXLabel);
-        boxDiv.appendChild(positionXInput);
-        boxDiv.appendChild(positionYLabel);
-        boxDiv.appendChild(positionYInput);
-        boxDiv.appendChild(sizeXLabel);
-        boxDiv.appendChild(sizeXInput);
-        boxDiv.appendChild(sizeYLabel);
-        boxDiv.appendChild(sizeYInput);
-
-        boxContainer.appendChild(boxDiv);
     });
 }

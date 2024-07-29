@@ -1,33 +1,38 @@
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFont
 
-def draw_boxes_on_image(image_path, boxes, output_path):
-    # Open the image file
-    with Image.open(image_path) as img:
-        draw = ImageDraw.Draw(img)
+def process_image_with_texts(image_path, boxes, texts, output_path):
+    image = Image.open(image_path).convert('RGBA')
+    draw = ImageDraw.Draw(image)
 
-        # Get image dimensions
-        img_width, img_height = img.size
+    # Draw boxes
+    for box in boxes:
+        left = box['position_x'] * image.width
+        top = box['position_y'] * image.height
+        right = left + (box['size_x'] * image.width)
+        bottom = top + (box['size_y'] * image.height)
+        draw.rectangle([left, top, right, bottom], outline='red', width=3)
 
-        print(f"Image dimensions: width={img_width}, height={img_height}")
+    # Draw texts
+    for text in texts:
+        x = text['x'] * image.width
+        y = text['y'] * image.height
+        content = text['content']
+        font_size = text['font_size']
+        rotation = text['rotation']
+        font = ImageFont.truetype("arial.ttf", font_size)
 
-        for index, box in enumerate(boxes):  # Iterate over each box in the list
-            # Convert position and size to float
-            position_x = float(box['position_x'])
-            position_y = float(box['position_y'])
-            size_x = float(box['size_x'])
-            size_y = float(box['size_y'])
+        # Rotate and draw the text
+        text_image = Image.new('RGBA', image.size, (255, 255, 255, 0))
+        text_draw = ImageDraw.Draw(text_image)
+        text_draw.text((x, y), content, font=font, fill='black')
+        if rotation != 0:
+            rotated_text_image = text_image.rotate(rotation, resample=Image.Resampling.BICUBIC, center=(x, y))
+            image = Image.alpha_composite(image, rotated_text_image)
+        else:
+            image = Image.alpha_composite(image, text_image)
 
-            # Calculate box coordinates
-            x = position_x * img_width
-            y = position_y * img_height
-            width = size_x * img_width
-            height = size_y * img_height
+    image = image.convert('RGB')  # Convert back to RGB mode before saving
+    image.save(output_path)
 
-            print(f"Box {index + 1}: x={x}, y={y}, width={width}, height={height}")
-
-            # Draw the filled rectangle (box)
-            draw.rectangle([x, y, x + width, y + height], fill="white")
-        # Save the modified image
-        img.save(output_path)
-
-    return output_path
+# Example usage
+# process_image_with_texts('input_image.jpg', boxes, texts, 'output_image.jpg')

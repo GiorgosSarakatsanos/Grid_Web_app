@@ -14,9 +14,11 @@ class BoxForm(FlaskForm):
     size_y = FloatField('Size Y', validators=[DataRequired()])
 
 class TextDataForm(FlaskForm):
+    csrf_token = HiddenField()
     text_data = HiddenField('TextData', validators=[DataRequired()])
 
 class ImageForm(FlaskForm):
+    csrf_token = HiddenField()
     image = FileField('Upload Image', validators=[DataRequired()])
 
     paper_size = SelectField('Paper Size', choices=[

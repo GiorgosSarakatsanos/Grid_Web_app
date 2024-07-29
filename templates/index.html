@@ -10,6 +10,7 @@
 <form id="upload-form" method="POST" enctype="multipart/form-data">
     {{ form.hidden_tag() }}
     {{ form.csrf_token }}
+    <input type="hidden" id="csrf_token" name="csrf_token" value="{{ csrf_token() }}">
     <div class="grid-wrapper">
         <div class="grid-container upload-container">
             <header class="top-container">
@@ -33,7 +34,7 @@
             <fieldset class="field-group">
                 <legend>Επεξεργασία</legend>
                 <input type="hidden" id="box_data" name="box_data" value="">
-                <button id="add-box" id="" class="button add-box" type="button">Προσθήκη Κουτιού</button>
+                <button id="add-box" class="button add-box" type="button">Προσθήκη Κουτιού</button>
                 <button id="set-numbering-position" type="button">Set Numbering Position</button>
             </fieldset>
             <fieldset class="field-group" >
@@ -156,38 +157,27 @@
                     <input type="checkbox" id="reverse_order" name="reverse_order"> Αντιστροφή σειράς αρίθμησης
                 </label>
             </fieldset>
-            <div id="box-container" style="display: none;">
-                {{ form.boxes.label }}<br>
-                {% for box in form.boxes %}
-                    <div>
-                        {{ box.position_x.label }} {{ box.position_x }}<br>
-                        {{ box.position_y.label }} {{ box.position_y }}<br>
-                        {{ box.size_x.label }} {{ box.size_x }}<br>
-                        {{ box.size_y.label }} {{ box.size_y }}<br>
-                    </div>
-                {% endfor %}
-            </div>
-            <form id="text-data-form" method="post">
-                <!-- Other form fields -->
-                <input type="hidden" id="text-data" name="text_data">
-                <button type="submit" id="submit-text-data">Submit Text Data</button>
-            </form>
         </div>
     </div>
 </form>
-<!-- Context menu for text options -->
-<div id="text-context-menu" class="context-menu text">
-    <button id="move-text">Move</button>
-    <button id="rotate-text">Rotate</button>
-    <button id="confirm-text">Confirm</button>
-    <button id="cancel-text">Cancel</button>
-</div>
+
+<!-- Form for submitting box data -->
+<form id="box-data-form" method="post" action="/update-boxes" style="display: none;">
+    <input type="hidden" id="box-data" name="box_data">
+</form>
+
+<!-- Form for submitting text data -->
+<form id="text-data-form" method="post" action="/update-texts" style="display: none;">
+    <input type="hidden" id="text-data" name="text_data">
+</form>
+
 <div id="context-menu" class="context-menu box">
     <ul>
         <li id="delete-box">Διαγραφή</li>
         <li id="cancel-menu">Άκυρο</li>
     </ul>
 </div>
+
 <script type="module" src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>

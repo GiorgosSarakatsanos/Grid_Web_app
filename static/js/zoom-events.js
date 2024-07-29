@@ -1,3 +1,4 @@
+// zoom-events.js
 import { drawImageWithBoxes } from './canvas-operations.js';
 import { state } from './shared-state.js';
 
