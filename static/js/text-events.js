@@ -3,6 +3,7 @@ import { drawImageWithBoxes } from './canvas-operations.js';
 import { isInsideHandle, changeCursor } from './utils.js';
 import { state } from './shared-state.js';
 import { logTextSummary, debugLog } from './debug-logger.js';
+import { debounce } from './debounce.js';
 
 let selectedText = null;
 let isDragging = false;
@@ -17,7 +18,7 @@ let textAdded = false;
 let hoveredText = null; // Added variable
 const handleSize = 10;
 
-function sendDataToServer() {
+const sendDataToServer = () => {
     const data = {
         boxes: state.boxes,
         texts: state.texts
@@ -40,7 +41,9 @@ function sendDataToServer() {
     .catch((error) => {
         console.error('Error:', error);
     });
-}
+};
+
+const debouncedSendDataToServer = debounce(sendDataToServer, 500);
 
 export function setupTextEvents(ctx, imageCanvas) {
     const addTextButton = document.getElementById('add-text');
@@ -156,7 +159,7 @@ export function setupTextEvents(ctx, imageCanvas) {
             drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes, state.texts);
 
             logTextSummary(state.texts);
-            sendDataToServer(); // Send data to the server after updating texts
+            debouncedSendDataToServer(); // Use debounced version
         } else if (isResizing && selectedText) {
             const mouseX = event.offsetX;
             const mouseY = event.offsetY;

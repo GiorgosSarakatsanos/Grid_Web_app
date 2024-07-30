@@ -18,6 +18,15 @@ app = Flask(__name__)
 CORS(app)
 csrf = CSRFProtect(app)
 
+@app.route('/submit-data', methods=['POST'])
+def submit_data():
+    data = request.get_json()
+    if not data:
+        return jsonify({'error': 'No data provided'}), 400
+    # Process the data as needed
+    print(data)  # For debugging
+    return jsonify({'message': 'Data received successfully'}), 200
+
 @app.route('/update-boxes', methods=['POST'])
 def update_boxes():
     box_data = request.get_json().get('boxes', [])

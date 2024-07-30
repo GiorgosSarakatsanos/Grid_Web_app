@@ -3,6 +3,7 @@ import { drawImageWithBoxes } from './canvas-operations.js';
 import { isInsideHandle, changeCursor } from './resize-handlers.js'; // Import from resize-handlers.js
 import { state } from './shared-state.js';
 import { logBoxSummary, debugLog } from './debug-logger.js';
+import { debounce } from './debounce.js';
 
 let startX = 0;
 let startY = 0;
@@ -17,7 +18,7 @@ let dragOffsetY = 0;
 const handleSize = 10;
 const minBoxSize = 20;
 
-function sendDataToServer() {
+const sendDataToServer = () => {
     const data = {
         boxes: state.boxes,
         texts: state.texts
@@ -40,7 +41,10 @@ function sendDataToServer() {
     .catch((error) => {
         console.error('Error:', error);
     });
-}
+};
+
+// Create a debounced version of sendDataToServer
+const debouncedSendDataToServer = debounce(sendDataToServer, 500);
 
 export function setupBoxEvents(ctx, imageCanvas) {
     const drawButton = document.getElementById('add-box');
@@ -166,6 +170,7 @@ export function setupBoxEvents(ctx, imageCanvas) {
             drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes);
 
             logBoxSummary(state.boxes);
+            debouncedSendDataToServer();
         } else if (isResizing && selectedBox) {
             const imgWidth = state.img.width;
             const imgHeight = state.img.height;
@@ -268,7 +273,7 @@ export function setupBoxEvents(ctx, imageCanvas) {
         drawImageWithBoxes(ctx, state.img, state.originX, state.originY, state.scale, state.boxes);
 
         logBoxSummary(state.boxes);
-        sendDataToServer(); // Send data to the server after updating boxes
+        debouncedSendDataToServer(); // Use debounced version
     }
 
     function handleMouseOut() {

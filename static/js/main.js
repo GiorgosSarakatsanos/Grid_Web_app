@@ -11,8 +11,14 @@ import { toggleFields } from './ui-controls.js';
 import { drawImageWithBoxes } from './canvas-operations.js';
 import { populateBoxFields } from './box-handlers.js';
 import './form-submission.js';
+let canvasEventsSetup = false;
 
 document.addEventListener('DOMContentLoaded', () => {
+    if (!canvasEventsSetup) {
+        setupCanvasEvents();
+        canvasEventsSetup = true;
+    }
+
     const imageCanvas = document.getElementById('image-canvas');
     const ctx = imageCanvas.getContext('2d');
 
