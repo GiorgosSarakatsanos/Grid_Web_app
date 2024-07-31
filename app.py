@@ -2,50 +2,56 @@
 import logging
 from flask import Flask, render_template, send_file, request, jsonify, session
 from flask_wtf.csrf import CSRFProtect
-from forms import ImageForm, TextDataForm
+from forms import ImageForm, DataForm
 from utils import generate_pdf
 from corners import generate_corner_lines
-from image_processing import process_image_with_texts
+from image_processing import process_image
 from PyPDF2 import PdfReader, PdfWriter
 from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
 from flask_cors import CORS
 import os
+import json
 
 load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
 csrf = CSRFProtect(app)
+app.config['SECRET_KEY'] = 'your_secret_key'
 
 @app.route('/submit-data', methods=['POST'])
 def submit_data():
-    data = request.get_json()
-    if not data:
-        return jsonify({'error': 'No data provided'}), 400
-    # Process the data as needed
-    print(data)  # For debugging
-    return jsonify({'message': 'Data received successfully'}), 200
+    print("Request received")
+    try:
+        # Extract form data
+        box_data = request.form.get('box_data')
+        text_data = request.form.get('text_data')
+        print("Form data received: box_data:", box_data, "text_data:", text_data)
 
-@app.route('/update-boxes', methods=['POST'])
-def update_boxes():
-    box_data = request.get_json().get('boxes', [])
-    if not box_data:
-        return jsonify({"status": "error", "message": "No box data received!"}), 400
+        # Convert the received JSON strings back to Python lists
+        boxes = json.loads(box_data) if box_data else []
+        texts = json.loads(text_data) if text_data else []
+        print("Parsed data: boxes:", boxes, "texts:", texts)
 
-    print("Received box data:", box_data)
-    session['box_data'] = box_data  # Store box data in session
-    return jsonify(success=True)
+        # Log detailed data for debugging
+        print("Received box data:", json.dumps(boxes, indent=4))
+        print("Received text data:", json.dumps(texts, indent=4))
 
-@app.route('/update-texts', methods=['POST'])
-def update_texts():
-    text_data = request.get_json().get('texts', [])
-    if not text_data:
-        return jsonify({"status": "error", "message": "No text data received!"}), 400
+        response = {
+            'status': 'success',
+            'message': 'Data received successfully',
+        }
+        return jsonify(response), 200
 
-    print("Received text data:", text_data)
-    session['text_data'] = text_data  # Store text data in session
-    return jsonify(success=True)
+    except Exception as e:
+        print("Error processing data:", str(e))
+        response = {
+            'status': 'error',
+            'message': 'Failed to process data'
+        }
+        return jsonify(response), 400
+
 
 app.config['DEBUG'] = os.environ['FLASK_DEBUG'] == 'True'
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'your secret key')
@@ -92,7 +98,7 @@ def index():
 
         # Draw boxes and texts on image
         boxed_image_path = os.path.splitext(image_path)[0] + '_boxed.png'
-        process_image_with_texts(image_path, boxes, texts, boxed_image_path)
+        process_image(image_path, boxes, texts, boxed_image_path)
 
         # Generate PDF with the boxed image
         grid_images_path = generate_pdf(boxed_image_path, form, rel_x, rel_y)

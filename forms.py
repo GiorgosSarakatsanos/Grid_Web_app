@@ -7,15 +7,10 @@ def validate_custom_dimensions(form, field):
     if form.paper_size.data == 'Custom' and not field.data:
         raise ValidationError('This field is required for custom paper sizes.')
 
-class BoxForm(FlaskForm):
-    position_x = FloatField('Position X', validators=[DataRequired()])
-    position_y = FloatField('Position Y', validators=[DataRequired()])
-    size_x = FloatField('Size X', validators=[DataRequired()])
-    size_y = FloatField('Size Y', validators=[DataRequired()])
-
-class TextDataForm(FlaskForm):
-    csrf_token = HiddenField()
-    text_data = HiddenField('TextData', validators=[DataRequired()])
+class DataForm(FlaskForm):
+    csrf_token = HiddenField('CSRF Token', validators=[DataRequired()])
+    box_data = HiddenField('Box Data', validators=[DataRequired()])
+    text_data = HiddenField('Text Data', validators=[DataRequired()])
 
 class ImageForm(FlaskForm):
     csrf_token = HiddenField()
@@ -58,7 +53,5 @@ class ImageForm(FlaskForm):
     show_marks = BooleanField('Show Marks', default=False)
 
     reverse_order = BooleanField('Reverse Numbering Order')
-
-    boxes = FieldList(FormField(BoxForm), min_entries=1)
 
     submit = SubmitField('Create PDF')

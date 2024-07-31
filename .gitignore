@@ -40,3 +40,4 @@ new_index.html
 new_index.html
 static/css/new_style
 .gitignore
+node_modules

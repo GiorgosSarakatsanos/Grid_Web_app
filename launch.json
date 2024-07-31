@@ -3,7 +3,7 @@
     "configurations": [
       {
         "name": "Python: Flask",
-        "type": "debugpy",
+        "type": "python",
         "request": "launch",
         "module": "flask",
         "env": {
@@ -22,7 +22,7 @@
         "type": "chrome",
         "request": "launch",
         "name": "Debug with Chrome",
-        "url": "http://localhost:5000",
+        "url": "http://127.0.0.1:5000",
         "webRoot": "${workspaceFolder}",
         "sourceMaps": true,
         "trace": true

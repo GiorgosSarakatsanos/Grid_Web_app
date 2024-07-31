@@ -1,11 +1,18 @@
 {
-    "name": "flask-web-app",
-    "version": "1.0.0",
-    "description": "A Flask web app with integrated JavaScript functionality",
-    "scripts": {
-      "test": "jest"
-    },
-    "devDependencies": {
-      "jest": "^27.0.0"
-    }
+  "name": "flask-js-debug",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "webpack serve --config webpack.dev.js --open",
+    "build": "webpack --config webpack.prod.js",
+    "debug": "node --inspect-brk=0.0.0.0:9229 server.js"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.0.0",
+    "@babel/preset-env": "^7.0.0",
+    "babel-loader": "^8.0.0",
+    "webpack": "^5.93.0",
+    "webpack-cli": "^4.10.0",
+    "webpack-dev-server": "^4.15.2",
+    "webpack-merge": "^5.0.0"
   }
+}

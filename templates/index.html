@@ -8,9 +8,8 @@
     <meta name="csrf-token" content="{{ csrf_token() }}"> <!-- Add CSRF token meta tag -->
 </head>
 <body>
-<form id="upload-form" method="POST" enctype="multipart/form-data">
-    {{ form.hidden_tag() }}
-    {{ form.csrf_token }}
+    <form id="upload-form" method="POST" action="/submit-data" enctype="multipart/form-data"> <!-- Ensure action URL matches Flask route -->
+        <input type="hidden" id="csrf_token" name="csrf_token" value="{{ csrf_token() }}">
     <input type="hidden" id="csrf_token" name="csrf_token" value="{{ csrf_token() }}">
     <div class="grid-wrapper">
         <div class="grid-container upload-container">
@@ -35,6 +34,7 @@
             <fieldset class="field-group">
                 <legend>Επεξεργασία</legend>
                 <input type="hidden" id="box_data" name="box_data" value="">
+                <input type="hidden" id="text_data" name="text_data" value="">
                 <button id="add-box" class="button add-box" type="button">Προσθήκη Κουτιού</button>
                 <button id="set-numbering-position" type="button">Set Numbering Position</button>
             </fieldset>
