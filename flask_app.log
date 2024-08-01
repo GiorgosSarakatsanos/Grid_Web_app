@@ -13,3 +13,91 @@
 2024-07-30 16:45:06,899 - app - ERROR - Form validation failed: {'boxes': [{'position_x': ['This field is required.'], 'position_y': ['This field is required.'], 'size_x': ['This field is required.'], 'size_y': ['This field is required.']}]}
 2024-07-30 16:45:20,156 - app - ERROR - Form validation failed: {'boxes': [{'position_x': ['This field is required.'], 'position_y': ['This field is required.'], 'size_x': ['This field is required.'], 'size_y': ['This field is required.']}]}
 2024-07-30 16:46:03,570 - app - ERROR - Form validation failed: {'boxes': [{'position_x': ['This field is required.'], 'position_y': ['This field is required.'], 'size_x': ['This field is required.'], 'size_y': ['This field is required.']}]}
+2024-08-01 14:54:01,637 - app - INFO - Image 60x90_card.png uploaded successfully
+2024-08-01 15:08:55,607 - app - INFO - Image 60x90_card.png uploaded successfully
+2024-08-01 15:08:55,607 - app - INFO - No box data found.
+2024-08-01 15:08:55,607 - app - INFO - No text data found.
+2024-08-01 15:09:47,635 - app - INFO - Image 60x90_card.png uploaded successfully
+2024-08-01 15:09:47,635 - app - INFO - No box data found.
+2024-08-01 15:09:47,636 - app - INFO - No text data found.
+2024-08-01 15:10:36,742 - app - INFO - Image 60x90_card.png uploaded successfully
+2024-08-01 15:10:36,742 - app - INFO - No box data found.
+2024-08-01 15:10:36,742 - app - INFO - No text data found.
+2024-08-01 15:25:52,436 - app - INFO - Image 60x90_card.png uploaded successfully
+2024-08-01 15:25:52,436 - app - INFO - No box data found.
+2024-08-01 15:25:52,436 - app - INFO - No text data found.
+2024-08-01 15:34:41,943 - app - INFO - Image 60x90_card.png uploaded successfully
+2024-08-01 15:34:41,943 - app - INFO - No box data found.
+2024-08-01 15:34:41,943 - app - INFO - No text data found.
+2024-08-01 15:34:55,927 - app - INFO - Image 60x90_card.png uploaded successfully
+2024-08-01 15:34:55,927 - app - INFO - No box data found.
+2024-08-01 15:34:55,927 - app - INFO - No text data found.
+2024-08-01 15:35:18,330 - app - INFO - Image 60x90_card.png uploaded successfully
+2024-08-01 15:35:18,330 - app - INFO - No box data found.
+2024-08-01 15:35:18,330 - app - INFO - No text data found.
+2024-08-01 15:36:11,906 - app - INFO - Image 60x90_card.png uploaded successfully
+2024-08-01 15:36:11,906 - app - INFO - Box data received:
+2024-08-01 15:36:11,906 - app - INFO - Text data received:
+2024-08-01 15:36:11,906 - app - INFO - No box data found.
+2024-08-01 15:36:11,906 - app - INFO - No text data found.
+2024-08-01 17:33:48,914 - app - INFO - Image 60x90_card.png uploaded successfully
+2024-08-01 17:36:38,613 - app - INFO - Image 60x90_card.png uploaded successfully
+2024-08-01 17:37:01,716 - app - INFO - Image 60x90_card.png uploaded successfully
+2024-08-01 17:37:17,850 - app - INFO - Image 60x90_card.png uploaded successfully
+2024-08-01 17:38:09,880 - app - INFO - Image 60x90_card.png uploaded successfully
+2024-08-01 17:38:09,880 - app - INFO - Box data received:
+2024-08-01 17:38:09,880 - app - INFO - Text data received:
+2024-08-01 17:38:09,880 - app - INFO - No box data found.
+2024-08-01 17:38:09,880 - app - INFO - No text data found.
+2024-08-01 17:39:06,663 - app - INFO - Image 60x90_card.png uploaded successfully
+2024-08-01 17:39:06,663 - app - INFO - Box data received:
+2024-08-01 17:39:06,663 - app - INFO - Text data received:
+2024-08-01 17:39:06,663 - app - INFO - No box data found.
+2024-08-01 17:39:06,663 - app - INFO - No text data found.
+2024-08-01 17:57:18,628 - app - INFO - Image 60x90_card.png uploaded successfully
+2024-08-01 17:57:18,628 - app - INFO - Box data received:
+2024-08-01 17:57:18,628 - app - INFO - Text data received:
+2024-08-01 17:57:18,628 - app - INFO - No box data found.
+2024-08-01 17:57:18,628 - app - INFO - No text data found.
+2024-08-01 18:02:41,723 - app - INFO - Image 60x90_card.png uploaded successfully
+2024-08-01 18:02:41,723 - app - INFO - Box data received:
+2024-08-01 18:02:41,723 - app - INFO - Text data received:
+2024-08-01 18:02:41,723 - app - INFO - No box data found.
+2024-08-01 18:02:41,723 - app - INFO - No text data found.
+2024-08-01 18:24:32,953 - app - INFO - Image 60x90_card.png uploaded successfully
+2024-08-01 18:24:32,953 - app - INFO - Box data received:
+2024-08-01 18:24:32,953 - app - INFO - Text data received:
+2024-08-01 18:24:32,953 - app - INFO - No box data found.
+2024-08-01 18:24:32,953 - app - INFO - No text data found.
+2024-08-01 18:24:32,993 - app - INFO - Annotated image saved as annotated_60x90_card.png
+2024-08-01 18:29:05,955 - app - INFO - Box data received: None
+2024-08-01 18:29:05,955 - app - INFO - Box data received: None
+2024-08-01 18:29:05,955 - app - INFO - Box data received: None
+2024-08-01 18:29:05,955 - app - INFO - Text data received: None
+2024-08-01 18:29:05,955 - app - INFO - Text data received: None
+2024-08-01 18:29:05,955 - app - INFO - Text data received: None
+2024-08-01 18:29:05,956 - app - INFO - No box data found.
+2024-08-01 18:29:05,956 - app - INFO - No box data found.
+2024-08-01 18:29:05,956 - app - INFO - No box data found.
+2024-08-01 18:29:05,956 - app - INFO - No text data found.
+2024-08-01 18:29:05,956 - app - INFO - No text data found.
+2024-08-01 18:29:05,956 - app - INFO - No text data found.
+2024-08-01 18:29:05,956 - app - ERROR - Error processing data: Image path not provided.
+2024-08-01 18:29:05,956 - app - ERROR - Error processing data: Image path not provided.
+2024-08-01 18:29:05,956 - app - ERROR - Error processing data: Image path not provided.
+2024-08-01 18:29:12,783 - app - INFO - Image 60x90_card.png uploaded successfully
+2024-08-01 18:29:12,784 - app - INFO - Box data received:
+2024-08-01 18:29:12,784 - app - INFO - Text data received:
+2024-08-01 18:29:12,784 - app - INFO - No box data found.
+2024-08-01 18:29:12,785 - app - INFO - No text data found.
+2024-08-01 18:29:12,817 - app - INFO - Annotated image saved as annotated_60x90_card.png
+2024-08-01 18:30:53,748 - app - INFO - Image 60x90_card.png uploaded successfully
+2024-08-01 18:30:53,748 - app - INFO - Box data received:
+2024-08-01 18:30:53,748 - app - INFO - Text data received:
+2024-08-01 18:30:53,748 - app - INFO - No box data found.
+2024-08-01 18:30:53,748 - app - INFO - No text data found.
+2024-08-01 18:31:36,334 - app - INFO - Image 60x90_card.png uploaded successfully
+2024-08-01 18:31:36,334 - app - INFO - Box data received:
+2024-08-01 18:31:36,334 - app - INFO - Text data received:
+2024-08-01 18:31:36,334 - app - INFO - No box data found.
+2024-08-01 18:31:36,334 - app - INFO - No text data found.

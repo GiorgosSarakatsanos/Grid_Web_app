@@ -24,22 +24,23 @@ const sendDataToServer = () => {
         texts: state.texts
     };
 
-    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content'); // Get CSRF token
+    console.log("This data goint to server:", JSON.stringify(data)); // Log data before sending
 
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     fetch('/submit-data', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRFToken': csrfToken // Add CSRF token to the request
+            'X-CSRFToken': csrfToken
         },
         body: JSON.stringify(data)
     })
     .then(response => response.json())
     .then(data => {
-        console.log('Success:', data);
+        console.log('JSON response of Box data:', data);
     })
     .catch((error) => {
-        console.error('Error:', error);
+        console.error('JSON response of Box data:', error);
     });
 };
 
@@ -81,28 +82,23 @@ export function setupBoxEvents(ctx, imageCanvas) {
                 selectedBox = box;
                 resizeHandle = 'topLeft';
                 isResizing = true;
-                debugLog('Resizing from top-left handle');
             } else if (isInsideHandle(event.offsetX, event.offsetY, topRightHandle.x, topRightHandle.y, handleSize)) {
                 selectedBox = box;
                 resizeHandle = 'topRight';
                 isResizing = true;
-                debugLog('Resizing from top-right handle');
             } else if (isInsideHandle(event.offsetX, event.offsetY, bottomLeftHandle.x, bottomLeftHandle.y, handleSize)) {
                 selectedBox = box;
                 resizeHandle = 'bottomLeft';
                 isResizing = true;
-                debugLog('Resizing from bottom-left handle');
             } else if (isInsideHandle(event.offsetX, event.offsetY, bottomRightHandle.x, bottomRightHandle.y, handleSize)) {
                 selectedBox = box;
                 resizeHandle = 'bottomRight';
                 isResizing = true;
-                debugLog('Resizing from bottom-right handle');
             } else if (event.offsetX >= scaledX && event.offsetX <= scaledX + scaledWidth && event.offsetY >= scaledY && event.offsetY <= scaledY + scaledHeight) {
                 selectedBox = box;
                 isDragging = true;
                 dragOffsetX = (event.offsetX - scaledX) / state.scale;
                 dragOffsetY = (event.offsetY - scaledY) / state.scale;
-                debugLog('Dragging box:', selectedBox);
             }
         });
 

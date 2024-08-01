@@ -36,10 +36,10 @@ const sendDataToServer = () => {
     })
     .then(response => response.json())
     .then(data => {
-        console.log('Success:', data);
+        console.log('JSON response of Text data:', data);
     })
     .catch((error) => {
-        console.error('Error:', error);
+        console.error('JSON response of Text data:', error);
     });
 };
 

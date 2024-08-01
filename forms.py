@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import FileField, SelectField, SubmitField, IntegerField, FloatField, BooleanField, HiddenField, FieldList, FormField
-from wtforms.validators import DataRequired, NumberRange, Optional, ValidationError
-
+from wtforms import StringField, FileField, SelectField, SubmitField, IntegerField, FloatField, HiddenField, ValidationError, BooleanField
+from wtforms.validators import DataRequired, NumberRange, Optional
+import json
 
 def validate_custom_dimensions(form, field):
     if form.paper_size.data == 'Custom' and not field.data:
@@ -11,6 +11,20 @@ class DataForm(FlaskForm):
     csrf_token = HiddenField('CSRF Token', validators=[DataRequired()])
     box_data = HiddenField('Box Data', validators=[DataRequired()])
     text_data = HiddenField('Text Data', validators=[DataRequired()])
+
+    def validate_box_data(self, field):
+        print("Box data received in Forms.py:", field.data)
+        try:
+            json.loads(field.data)
+        except json.JSONDecodeError:
+            raise ValidationError('Invalid JSON for box data.')
+
+    def validate_text_data(self, field):
+        print("Text data received in Forms.py:", field.data)
+        try:
+            json.loads(field.data)
+        except json.JSONDecodeError:
+            raise ValidationError('Invalid JSON for text data.')
 
 class ImageForm(FlaskForm):
     csrf_token = HiddenField()
@@ -51,7 +65,4 @@ class ImageForm(FlaskForm):
     custom_image_height = IntegerField('Custom Image Height (mm)', validators=[Optional()])
 
     show_marks = BooleanField('Show Marks', default=False)
-
     reverse_order = BooleanField('Reverse Numbering Order')
-
-    submit = SubmitField('Create PDF')
