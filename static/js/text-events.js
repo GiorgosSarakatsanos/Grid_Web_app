@@ -34,13 +34,6 @@ const sendDataToServer = () => {
         },
         body: JSON.stringify(data)
     })
-    .then(response => response.json())
-    .then(data => {
-        console.log('JSON response of Text data:', data);
-    })
-    .catch((error) => {
-        console.error('JSON response of Text data:', error);
-    });
 };
 
 const debouncedSendDataToServer = debounce(sendDataToServer, 500);

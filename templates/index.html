@@ -8,8 +8,8 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 <body>
-    <form id="upload-form" method="POST" action="/submit-data" enctype="multipart/form-data">
-        <input type="hidden" id="csrf_token" name="csrf_token" value="{{ csrf_token() }}">
+    <form id="upload-form" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <div class="grid-wrapper">
             <div class="grid-container upload-container">
                 <header class="top-container">
@@ -32,8 +32,8 @@
                 </fieldset>
                 <fieldset class="field-group">
                     <legend>Επεξεργασία</legend>
-                    <input type="hidden" id="box_data" name="box_data" value="">
-                    <input type="hidden" id="text_data" name="text_data" value="">
+                    <input type="hidden" name="box_data" id="box_data">
+                    <input type="hidden" name="text_data" id="text_data">
                     <button id="add-box" class="button add-box" type="button">Προσθήκη Κουτιού</button>
                     <button id="set-numbering-position" type="button">Set Numbering Position</button>
                 </fieldset>
@@ -159,16 +159,6 @@
                 </fieldset>
             </div>
         </div>
-    </form>
-
-    <!-- Form for submitting box data -->
-    <form id="box-data-form" method="post" action="/update-boxes" style="display: none;">
-        <input type="hidden" id="box-data" name="box_data">
-    </form>
-
-    <!-- Form for submitting text data -->
-    <form id="text-data-form" method="post" action="/update-texts" style="display: none;">
-        <input type="hidden" id="text-data" name="text_data">
     </form>
 
     <div id="context-menu" class="context-menu box">

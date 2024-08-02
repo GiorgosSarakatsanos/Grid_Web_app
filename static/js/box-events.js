@@ -35,13 +35,6 @@ const sendDataToServer = () => {
         },
         body: JSON.stringify(data)
     })
-    .then(response => response.json())
-    .then(data => {
-        console.log('JSON response of Box data:', data);
-    })
-    .catch((error) => {
-        console.error('JSON response of Box data:', error);
-    });
 };
 
 // Create a debounced version of sendDataToServer

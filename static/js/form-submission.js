@@ -3,11 +3,22 @@ import { state } from './shared-state.js';
 document.getElementById('upload-form').addEventListener('submit', function(event) {
     event.preventDefault(); // Prevent default form submission
 
-    const formData = new FormData(this); // Use FormData to handle file upload
-    formData.append('box_data', JSON.stringify(state.boxes));
-    formData.append('text_data', JSON.stringify(state.texts));
+    // Update the hidden input fields with the current state
+    const boxDataInput = document.getElementById('box_data');
+    const textDataInput = document.getElementById('text_data');
 
-    console.log("This data going to server:", state); // Log data before sending
+    if (boxDataInput && textDataInput) {
+        boxDataInput.value = JSON.stringify(state.boxes);
+        textDataInput.value = JSON.stringify(state.texts);
+    } else {
+        console.error('Box data or text data input fields are missing');
+        return;
+    }
+
+    const formData = new FormData(this); // Use FormData to handle file upload
+
+    // Log the FormData content to verify it before sending
+    console.log("FormData content:", Array.from(formData.entries()));
 
     fetch('/', {
         method: 'POST',
@@ -20,18 +31,16 @@ document.getElementById('upload-form').addEventListener('submit', function(event
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
         }
-        return response.json();
+        return response.blob(); // Expecting a binary response (image)
     })
-    .then(data => {
-        console.log('Server response:', data);
-        if (data.status === 'success') {
-            console.log('Form submission successful:', data);
-            // Handle success, e.g., display the path to the merged PDF
-            alert(`PDF created successfully: ${data.merged_pdf_path}`);
-        } else {
-            console.error('Form submission failed:', data);
-            alert(`Form submission failed: ${data.message}`);
-        }
+    .then(blob => {
+        // Create a URL for the image
+        const imageUrl = URL.createObjectURL(blob);
+        // Display the image or provide a download link
+        const img = document.createElement('img');
+        img.src = imageUrl;
+        document.body.appendChild(img); // Append image to body (or handle it as needed)
+        console.log('Image successfully received and displayed.');
     })
     .catch(error => {
         console.error('Error submitting form:', error);
