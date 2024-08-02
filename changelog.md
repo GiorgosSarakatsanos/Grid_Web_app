@@ -112,4 +112,5 @@ All notable changes to this project will be documented in this file.
     - Separate the javascript files of box, text and numbering addition to smaller individual files for better maintainability
     -
 20240802
-    - Move all the python code to one file, to reduse the problems i run. I move the code and delete the image_processing, corners, outlines files.
+    - Moved all the python code to one file, to reduse the problems i run. I move the code and delete the image_processing, corners, outlines files.
+    - Moved all the imports to an init file

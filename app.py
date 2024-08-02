@@ -1,31 +1,8 @@
-import logging
-from flask import Flask, render_template, send_file, request, jsonify, session
-from flask_wtf.csrf import CSRFProtect
-from forms import ImageForm, DataForm
-from PyPDF2 import PdfReader, PdfWriter
-from werkzeug.utils import secure_filename
-from dotenv import load_dotenv
-from flask_cors import CORS
-from reportlab.lib.pagesizes import landscape
-from reportlab.lib.units import mm
-from reportlab.pdfgen import canvas
-from PIL import Image, ImageDraw, ImageFont, ImageFilter
-from reportlab.pdfbase.ttfonts import TTFont
-from reportlab.pdfbase import pdfmetrics
+from __init__ import create_app, Image, ImageDraw, ImageFont, ImageFilter, canvas, landscape, mm, get_paper_size, img_size, page_margins, mark_margin_top, mark_line_length, mark_margin_bottom, mark_line_thickness, mark_margin_left, mark_margin_right, ImageForm, request, secure_filename, send_file, render_template
 import os
 import json
-from definitions import get_paper_size, img_size, page_margins, mark_margin_top, mark_line_length, mark_margin_bottom, margin_options, mark_line_thickness, mark_margin_left, mark_margin_right
 
-load_dotenv()
-
-app = Flask(__name__)
-CORS(app)
-csrf = CSRFProtect(app)
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'your secret key')
-app.config['UPLOAD_FOLDER'] = 'static/uploads/'  # Ensure this folder exists
-
-font_path = os.path.join(os.path.dirname(__file__), 'static', 'fonts', 'Arial.ttf')
-pdfmetrics.registerFont(TTFont('Arial', font_path))
+app = create_app()
 
 def draw_boxes(image, boxes):
     draw = ImageDraw.Draw(image)
