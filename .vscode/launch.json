@@ -2,6 +2,14 @@
     "version": "0.2.0",
     "configurations": [
       {
+        "name": "Launch Chrome",
+        "request": "launch",
+        "type": "chrome",
+        "url": "http://localhost:5000",
+        "webRoot": "${Grid_Web_app}"
+      },
+
+      {
         "name": "Python: Flask",
         "type": "debugpy",
         "request": "launch",
@@ -16,16 +24,7 @@
           "--no-reload"
         ],
         "jinja": true,
-        "autoStartBrowser": false
-      },
-      {
-        "type": "chrome",
-        "request": "launch",
-        "name": "Debug with Chrome",
-        "url": "http://localhost:5000",
-        "webRoot": "${workspaceFolder}",
-        "sourceMaps": true,
-        "trace": true
+        "autoStartBrowser": true
       }
     ]
   }

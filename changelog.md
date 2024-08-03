@@ -118,3 +118,11 @@ All notable changes to this project will be documented in this file.
 20240803
     - In the pdf file, fixed the font size to be the actual size in mm on paper (not yet the actual position)
     - Before the names of the produced images and pdf's was dependent of the filename. So i remove this function to dont create a lot of files in server. User can download the result and rename it i what name he wants. Maybe I'll add a button that renames the file before download it.
+    - Now crate images for contours, uploaded image, processed image
+    - Now create 3 pdfs, one with image grid, one with the corners, one with the contours on grid
+    - Have a lot of javascript bugs like input and button toggles
+    - The contours now, follow the shape of the image and is filled with white color
+    - The numbering mode is not working at all
+    - The printed texts is not aligned with the selected position in canvas
+    - The producing speed is a litle bit slow when i combined all in a file
+    - Now show the file name next to upload button
