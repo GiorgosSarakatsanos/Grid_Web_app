@@ -114,3 +114,7 @@ All notable changes to this project will be documented in this file.
 20240802
     - Moved all the python code to one file, to reduse the problems i run. I move the code and delete the image_processing, corners, outlines files.
     - Moved all the imports to an init file
+
+20240803
+    - In the pdf file, fixed the font size to be the actual size in mm on paper (not yet the actual position)
+    - Before the names of the produced images and pdf's was dependent of the filename. So i remove this function to dont create a lot of files in server. User can download the result and rename it i what name he wants. Maybe I'll add a button that renames the file before download it.

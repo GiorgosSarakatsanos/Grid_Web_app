@@ -16,16 +16,34 @@ def draw_boxes(image, boxes):
 
 def draw_text(image, texts):
     draw = ImageDraw.Draw(image)
+
+    # Define the paper size in millimeters (A4 size for example: 210mm x 297mm)
+    paper_width_mm = 210
+    paper_height_mm = 297
+
+    # Get the image dimensions in pixels
+    image_width_px, image_height_px = image.size
+
+    # Calculate the pixel-to-millimeter ratio for both dimensions
+    px_to_mm_x = paper_width_mm / image_width_px
+    px_to_mm_y = paper_height_mm / image_height_px
+
+    # Use the average of both ratios to ensure consistent scaling
+    px_to_mm = (px_to_mm_x + px_to_mm_y) / 2
+
     for text in texts:
         x = text['x'] * image.width
         y = text['y'] * image.height
-        font_size = text['fontSize']
+        font_size_mm = text['fontSize']  # font size in millimeters
         rotation = text['rotation']
         content = text['content']
 
+        # Convert font size from millimeters to pixels
+        font_size_px = font_size_mm / px_to_mm
+
         # Load a font
         try:
-            font = ImageFont.truetype("arial.ttf", font_size)
+            font = ImageFont.truetype("arial.ttf", int(font_size_px))
         except IOError:
             font = ImageFont.load_default()
 
@@ -76,8 +94,6 @@ def generate_pdf_content(c, image_path, form, width, height, margins, gap, img_w
             number = start_number
             step = 1
 
-        horizontalMarkLength = font_size * 1.5 * 2  # Define horizontalMarkLength here
-
         # Mirror the vertical coordinate
         mirrored_rel_y = 1 - rel_y
 
@@ -116,7 +132,8 @@ def generate_pdf(image_path: str, form, numbering_position_x, numbering_position
         image = background.convert('RGB')
 
     # Save the modified image temporarily
-    temp_image_path = os.path.splitext(image_path)[0] + '_temp.jpg'
+    temp_image_path = os.path.join(app.config['UPLOAD_FOLDER'], 'contours.png')
+
     image.save(temp_image_path)
 
     width, height = get_paper_size(form.paper_size.data)
@@ -124,7 +141,7 @@ def generate_pdf(image_path: str, form, numbering_position_x, numbering_position
         width = (form.custom_paper_width.data * mm or 297 * mm)
         height = (form.custom_paper_height.data * mm or 210 * mm)
 
-    images_pdf_path = os.path.splitext(image_path)[0] + '_grid_images.pdf'
+    images_pdf_path = os.path.join(app.config['UPLOAD_FOLDER'], 'result.pdf')
     c = canvas.Canvas(images_pdf_path, pagesize=landscape((width, height)))
 
     gap = (form.gap.data or 0) * mm
@@ -146,7 +163,7 @@ def generate_corner_lines(image_path: str, form):
         width, height = get_paper_size(form.paper_size.data, form.custom_paper_width.data, form.custom_paper_height.data)
         img_width, img_height = img_size(form.img_size.data, form.custom_image_width.data, form.custom_image_height.data)
     # Path for the corner lines PDF
-    corner_lines_pdf_path = os.path.splitext(image_path)[0] + '_corner_lines.pdf'
+    corner_lines_pdf_path = images_pdf_path = os.path.join(app.config['UPLOAD_FOLDER'], 'corners.pdf')
     c = canvas.Canvas(corner_lines_pdf_path, pagesize=landscape((width, height)))  # Create a canvas for the corner lines
 
     # Draw corner lines
@@ -188,7 +205,7 @@ def generate_outlines(image_path, form):
     final_image.paste(Image.new('RGBA', image.size, (0, 0, 0, 255)), mask=edges)
     # Invert the image
     final_image = Image.composite(final_image, Image.new('RGBA', image.size, (255, 255, 255, 255)), edges)
-    temp_image_path = os.path.splitext(image_path)[0] + '_temp.png'
+    temp_image_path = os.path.join(app.config['UPLOAD_FOLDER'], 'edges.png')
     final_image.save(temp_image_path)  # Save the image
     return temp_image_path
 
@@ -198,7 +215,7 @@ def index():
     if request.method == 'POST' and form.validate_on_submit():
         image = form.image.data
         image_filename = secure_filename(image.filename)
-        image_path = os.path.join(app.config['UPLOAD_FOLDER'], image_filename)
+        image_path = os.path.join(app.config['UPLOAD_FOLDER'],'uploaded.png')
 
         # Save the image
         image.save(image_path)
@@ -244,7 +261,7 @@ def index():
         image = draw_text(image, texts)
 
         # Save the processed image
-        output_path = os.path.join(app.config['UPLOAD_FOLDER'], f"processed_{image_filename}")
+        output_path = os.path.join(app.config['UPLOAD_FOLDER'],'processed.png')
         image.save(output_path)
         app.logger.info(f"Processed image saved as {output_path}")
 

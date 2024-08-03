@@ -41,3 +41,4 @@ new_index.html
 static/css/new_style
 .gitignore
 node_modules
+static/uploads/processed_60x90_card.png
