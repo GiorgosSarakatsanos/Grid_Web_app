@@ -1,4 +1,4 @@
-from __init__ import create_app, Image, ImageDraw, ImageFont, ImageFilter, canvas, landscape, mm, get_paper_size, img_size, page_margins, mark_margin_top, mark_line_length, mark_margin_bottom, mark_line_thickness, mark_margin_left, mark_margin_right, ImageForm, request, secure_filename, send_file, render_template
+from __init__ import create_app, Image, ImageDraw, ImageFont, ImageFilter, canvas, landscape, mm, get_paper_size, img_size, page_margins, mark_margin_top, mark_line_length, mark_margin_bottom, mark_line_thickness, mark_margin_left, mark_margin_right, ImageForm, request, secure_filename, send_file, render_template, np, cv2, ImageOps, shutil
 import os
 import json
 
@@ -189,25 +189,34 @@ def generate_corner_lines(image_path: str, form):
     return corner_lines_pdf_path  # Return the path to the corner lines PDF
 
 def generate_outlines(image_path, form):
-    # Generate the main content PDF
     image = Image.open(str(image_path))  # Open the image
-    alpha = image.split()[-1]  # Get the alpha channel
 
-    # Create an image to hold the alpha channel with a transparent background
-    contour_image = Image.new('L', image.size, 0)
-    contour_image.paste(alpha, mask=alpha)  # Paste the alpha channel
+     # Convert image to grayscale and apply edge detection
+    gray_image = image.convert("L")
+    edges = gray_image.filter(ImageFilter.FIND_EDGES)
 
-    # Detect edges in the alpha channel
-    edges = contour_image.filter(ImageFilter.FIND_EDGES)
+    # Binarize the image
+    edges = edges.point(lambda p: p > 128 and 255)
 
-    # Convert edges to black lines on a transparent background
-    final_image = Image.new('RGBA', image.size, (0, 0, 0, 0))
-    final_image.paste(Image.new('RGBA', image.size, (0, 0, 0, 255)), mask=edges)
-    # Invert the image
-    final_image = Image.composite(final_image, Image.new('RGBA', image.size, (255, 255, 255, 255)), edges)
-    temp_image_path = os.path.join(app.config['UPLOAD_FOLDER'], 'edges.png')
-    final_image.save(temp_image_path)  # Save the image
-    return temp_image_path
+    # Find the outer edges by using edge detection and filling the contour
+    edges_np = np.array(edges)
+    contours, _ = cv2.findContours(edges_np, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+    # Create a new image to draw the outer contour
+    contour_image = Image.new("L", image.size, 0)
+    contour_draw = ImageDraw.Draw(contour_image)
+
+    for contour in contours:
+        # Convert numpy contour to a list of tuples
+        contour = [(point[0][0], point[0][1]) for point in contour]
+        contour_draw.polygon(contour, outline=255, fill=0)
+
+    # Convert the contour image to RGBA
+    final_image = Image.new("L", image.size)
+    final_image.paste(image, (0, 0), contour_image)
+    inverted_final = ImageOps.invert(final_image)
+
+    return inverted_final
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -265,19 +274,25 @@ def index():
         image.save(output_path)
         app.logger.info(f"Processed image saved as {output_path}")
 
-        # Generate PDF from the processed image
-        pdf_path = generate_pdf(output_path, form, numbering_position_x=0.5, numbering_position_y=0.5)
-
         # Generate image with corner lines
         corner_pdf_path = generate_corner_lines(output_path, form)
+        # Trace outer edges
+        outlined_image = generate_outlines(image_path, form)
 
-        # Generate outline image
-        outline_image_path = generate_outlines(output_path, form)
+        # Save the outlined image
+        outline_image_path = os.path.join(app.config['UPLOAD_FOLDER'], 'outlines.png')
+        outlined_image.save(outline_image_path)
 
-        # Generate PDF with outline images
-        outline_pdf_path = generate_pdf(outline_image_path, form, numbering_position_x=0.5, numbering_position_y=0.5)
+        # Generate the first PDF (grid)
+        grid_pdf_temp_path = generate_pdf(output_path, form, numbering_position_x=0.5, numbering_position_y=0.5)
+        grid_pdf_path = os.path.join(app.config['UPLOAD_FOLDER'], 'grid_pdf.pdf')
+        shutil.move(grid_pdf_temp_path, grid_pdf_path)
 
-        return send_file(pdf_path, mimetype='application/pdf')  # Send the PDF file as response
+        # Generate the second PDF (outline)
+        outline_image_path = os.path.join(app.config['UPLOAD_FOLDER'], 'outlines.png')
+        outline_pdf_temp_path = generate_pdf(outline_image_path, form, numbering_position_x=0.5, numbering_position_y=0.5)
+        outline_pdf_path = os.path.join(app.config['UPLOAD_FOLDER'], 'outline_pdf.pdf')
+        shutil.move(outline_pdf_temp_path, outline_pdf_path)
 
     return render_template('index.html', form=form)
 

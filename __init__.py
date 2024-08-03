@@ -6,7 +6,7 @@ from flask_wtf.csrf import CSRFProtect
 from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
 from flask_cors import CORS
-from PIL import Image, ImageDraw, ImageFont, ImageFilter
+from PIL import Image, ImageDraw, ImageFont, ImageFilter, ImageOps
 from reportlab.lib.pagesizes import landscape
 from reportlab.lib.units import mm
 from reportlab.pdfgen import canvas
@@ -14,6 +14,9 @@ from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfbase import pdfmetrics
 from definitions import get_paper_size, img_size, page_margins, mark_margin_top, mark_line_length, mark_margin_bottom, margin_options, mark_line_thickness, mark_margin_left, mark_margin_right
 from forms import ImageForm
+import numpy as np
+import cv2
+import shutil
 
 load_dotenv()
 
