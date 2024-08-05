@@ -9,9 +9,9 @@
     height: 98vh;
     width: 100%;
     overflow: clip;
-    padding: 1em 1em 0 1em;
-    grid-template-rows:fit-content(100px) fit-content(125px) 1fr;
-    grid-template-columns: fit-content(100px) 1fr fit-content(200px);
+    padding: 1em;
+    grid-template-rows: 8 * 1fr;
+    grid-template-columns: 6 * 1fr;
     gap: 8px;
 }
 
@@ -21,52 +21,48 @@
     background-color: #f3f3f3;
 }
 
-.basic-settings {
-    grid-row: 2;
-    grid-column: 3;
-    display: flex;
-    align-content: center;
-    justify-content: space-between
+.home {
+    grid-row: 1;
+    grid-column: 1;
 }
-
-.basic-info {
-    display: flex;
-    align-content: center;
-    justify-content: left;
-    gap: 1em;
-    grid-row: 2;
+.basic-options {
+    grid-row: 2 / 4;
+    grid-column: 1;
 }
-.upload-container {
-    display: flex;
-    justify-content: space-between;
+.more-options {
+    grid-row: 4 / 8;
+    grid-column: 1;
 }
 .submit-container {
-    grid-row: 1;
-    grid-column: 3;
-    display: flex;
-    align-content: center;
-    justify-content: right;
-}
-.preview-window {
-    grid-row: 3;
+    grid-row: 8;
     grid-column: 1;
-    overflow: hidden;
+}
+
+.pdf-preview {
+    grid-column: 3 / 7;
+    grid-row: 1 / 9;
+}
+.add-container {
+    display: flex;
+    grid-column: 2 / 3;
+    grid-row: 1;
+}
+
+.image-preview {
+    grid-column: 2 / 3;
+    grid-row: 2 / 9;
+}
+
+nav {
+    align-items: center;
+    justify-content: space-between;
+    gap: 2em;
 }
 
 canvas {
     padding: 0;
     margin: 0;
 }
-
-.pdf-preview {
-    grid-row: 1/4;
-    grid-column: 2;
-}
-.properties {
-    grid-row: 3;
-    grid-column: 3;
-}
-
 
 .radio-icon {
     width: 24px;
@@ -80,16 +76,13 @@ canvas {
     cursor: pointer;
     margin-right: 20px;
 }
-
-.field-group {
+header {
     display: flex;
-    justify-content: space-between;
-    gap: 0.5em;
+    align-items: center;
+    gap: 1em;
 }
-
 fieldset {
-    display: flex;
-    flex-direction: column;
+    justify-content: space-between;
     padding: 0.5em;
     font-size: x-small;
     border-radius: 8px;
@@ -108,23 +101,31 @@ input[type="checkbox"] {
     text-align: right;
     padding: 5px;
     border-radius: 4px;
-    width: 8em;
-}
-input[type="radio"] {
-    position: absolute;
-    opacity: 0;
-    cursor: pointer;
+    width: 3em;
 }
 
-input[type="radio"]:checked + img + span {
+input[type="text"] {
+    width: 6em;
+    padding: 5px;
+    border-radius: 4px;
+}
+
+span {
+    font: 1em sans-serif;
+    text-decoration: none;
     font-weight: bold;
-    text-decoration: underline;
+    color: #000;
+}
+
+a {
+    text-decoration: none;
 }
 
 select {
+    text-align: right;
     padding: 5px;
     border-radius: 4px;
-    width: 8em;
+    width: 6em;
 }
 
 legend {
@@ -135,12 +136,6 @@ legend {
     color: #333; /* Set a consistent font color */
     width: max-content; /* Set a consistent width for all legends */
     display: inline-block; /* Make legend behave like a block element */
-}
-
-.navbar {
-    display: flex;
-    align-items: center;
-    gap: 2em;
 }
 
 form {
@@ -165,7 +160,6 @@ form {
 }
 
 .button {
-    display: flex;
     align-items: center;
     justify-content: center;
     font-weight: normal;
@@ -187,21 +181,9 @@ form {
     color: white;
 }
 
-.zoom_in, .zoom_out {
-    background-color: darkgray;
-    font-weight: bold;
-    font-size: 1rem;
-    padding: 0 0.2em;
-    border-radius: 8px;
-}
-
-.zoom-button {
-    margin-right: 5px;
-}
-
 .button img {
-    width: 35px;
-    height: 35px;
+    width: 24px;
+    height: 24px;
 }
 
 .button:hover:hover {
@@ -257,37 +239,4 @@ iframe {
 
 .context-menu ul li:hover {
     background-color: #f0f0f0;
-}
-
-@media screen and (max-width: 945px) {
-
-    .submit-container {
-        grid-row: 1;
-        grid-column: 3;
-        display: flex;
-        align-content: center;
-        justify-content: right;
-    }
-    .basic-settings {
-        grid-row: 1;
-        grid-column: 2;
-        display: flex;
-        align-content: center;
-        justify-content: space-between
-    }
-    .preview-window {
-        grid-row: 3;
-        grid-column: 1;
-        overflow: hidden;
-    }
-
-
-    .pdf-preview {
-        grid-row: 3;
-        grid-column: 2/4;
-    }
-    .properties {
-        grid-row: 2;
-        grid-column: 2/4;
-    }
 }

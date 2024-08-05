@@ -11,163 +11,193 @@
     <form id="upload-form" method="post" enctype="multipart/form-data">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <div class="grid-wrapper">
-            <div class="grid-container upload-container">
-                <header class="top-container">
-                    <nav class="navbar">
-                        <a href="/"><img class="logo-img" src="{{ url_for('static', filename='icons/logo-icon.png') }}" alt="Fix Store">Plexi</a>
+            <div class="grid-container home">
+                <header>
+                    <div class="logo-container">
+                        <a href="/"><img class="logo-img" src="{{ url_for('static', filename='icons/home-icon.png') }}" alt="Fix Store">
+                        <span>Plexi</span></a>
+                    </div>
+                    <div class="upload-container">
                         <button class="button upload" type="button" onclick="document.getElementById('image').click()">
-                            <img src="{{ url_for('static', filename='icons/upload-icon.png') }}" alt="Upload" class="radio-icon"><span>Προσθήκη</span>
+                            <img src="{{ url_for('static', filename='icons/upload-icon.png') }}" alt="Upload" class="radio-icon">
                             <input type="file" id="image" name="image" accept="image/*" required style="display: none;">
                         </button>
+                    </div>
+                    <div class="image-name-container">
                         <span id="image-name"></span>
-                    </nav>
+                    </div>
                 </header>
             </div>
-            <div class="grid-container basic-info">
-                <input type="radio" name="mode" value="Page" id="mode_page" required checked style="display: none;">
-                <input type="radio" name="mode" value="Numbering" id="mode_numbering" required style="display: none;">
-                <fieldset class="field-group">
-                    <legend>Λειτουργία</legend>
-                    <button id="mode-switch" type="button" class="button">Μία σελίδα</button>
-                </fieldset>
-                <fieldset class="field-group">
-                    <legend>Επεξεργασία</legend>
+            <div id="context-menu" class="context-menu box">
+                <ul>
+                    <li id="delete-box">Διαγραφή</li>
+                    <li id="cancel-menu">Άκυρο</li>
+                </ul>
+            </div>
+            <div class="grid-container basic-options">
+                <nav>
+                    <div>
+                        <div>
+                            <fieldset>
+                                <legend>Χαρτί</legend>
+                                <div class="paper-size">
+                                    <label for="paper_size">
+                                        <select name="paper_size" id="paper_size" required>
+                                            <option value="255x235">255x235</option>
+                                            <option value="255x210">255x210</option>
+                                            <option value="487x330">487x330</option>
+                                            <option value="350x330">350x330</option>
+                                            <option value="A3">A3</option>
+                                            <option value="A4">A4</option>
+                                            <option value="Custom">Προσαρμογή</option>
+                                        </select>
+                                    </label>
+                                </div>
+                                <div class="custom-paper-size" id="custom_paper_settings" style="display: none;">
+                                    <label for="custom_paper_width">Πλάτος
+                                        <input type="number" id="custom_paper_width" name="custom_paper_width" style="display: none;">
+                                    </label>
+                                    <label for="custom_paper_height">Ύψος
+                                        <input type="number" id="custom_paper_height" name="custom_paper_height" style="display: none;">
+                                    </label>
+                            </fieldset>
+                        </div>
+                        <div>
+                            <fieldset>
+                                <legend>Εικόνα</legend>
+                            <div class="image-size">
+                                    <label for="img_size">
+                                        <select name="img_size" id="img_size" required>
+                                            <option value="Sticker">60x90</option>
+                                            <option value="Card">85x55</option>
+                                            <option value="Square">55x55</option>
+                                            <option value="Custom">Προσαρμογή</option>
+                                        </select>
+                                    </label>
+                            </div>
+                            <div class="custom-image-size" id="custom_image_settings" style="display: none;">
+                                    <label for="custom_image_width">Πλάτος
+                                        <input type="number" id="custom_image_width"  name="custom_image_width" style="display: none;">
+                                    </label>
+                                    <label for="custom_image_height">Ύψος
+                                        <input type="number" id="custom_image_height" name="custom_image_height" style="display: none;">
+                                    </label>
+                            </div>
+                            </fieldset>
+                        </div>
+                        <div>
+                            <fieldset>
+                                <legend>Προσαρμογή κενού</legend>
+                                    <input type="number" id="gap" name="gap" value="0" required>
+                                </label>
+                            </fieldset>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+            <div class="grid-container more-options">
+                <div>
+                    <fieldset class="field-group field-group-numbering" style="display: none;">
+                        <legend>Επιλογές αρίθμησης</legend>
+                        <label for="start_number">Αρχικός
+                            <input type="number" id="start_number" name="start_number">
+                        </label>
+                        <label for="end_number">Τελικός
+                            <input type="number" id="end_number" name="end_number">
+                        </label>
+                        <legend>Επιλογές γραμματοσειράς</legend>
+                        <label for="font_size">Μέγεθος
+                            <input type="number" id="font_size" name="font_size" value="8">
+                        </label>
+                        <label for="reverse_order">
+                            <input type="checkbox" id="reverse_order" name="reverse_order"> Αντιστροφή σειράς αρίθμησης
+                        </label>
+                    </fieldset>
+                </div>
+                <div id="add-text-input-container" style="display:none;">
+                    <fieldset>
+                        <legend>Ρυθμίσεις κειμένου</legend>
+                        <div>
+                            <input type="text" id="text-content" placeholder="Κείμενο">
+                        </div>
+                        <div>
+                            <select id="text-rotation">
+                                <option value="0">0°</option>
+                                <option value="90">+90°</option>
+                                <option value="-90">-90°</option>
+                            </select>
+                        </div>
+                        <div>
+                            <select id="text-font-size">
+                                <option value="6">6px</option>
+                                <option value="8">8px</option>
+                                <option value="10">10px</option>
+                                <option value="12">12px</option>
+                                <option value="14">14px</option>
+                                <option value="16">16px</option>
+                                <option value="18">18px</option>
+                                <option value="20">20px</option>
+                                <option value="22">22px</option>
+                                <option value="24">24px</option>
+                                <option value="26">26px</option>
+                                <option value="28">28px</option>
+                                <option value="30">30px</option>
+                                <option value="32">32px</option>
+                            </select>
+                        </div>
+                        <div>
+                            <button id="submit-text" class="button " >Υποβολή</button>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+            <div class="grid-container add-container">
+                <div style="display: none;">
                     <input type="hidden" name="box_data" id="box_data">
                     <input type="hidden" name="text_data" id="text_data">
-                    <button id="add-box" class="button add-box" type="button">Προσθήκη Κουτιού</button>
-                    <button id="set-numbering-position" type="button">Set Numbering Position</button>
-                </fieldset>
-                <fieldset class="field-group">
-                    <legend>Add Text</legend>
-                    <div>
-                        <button id="add-text" type="button">Add Text</button>
-                    </div>
-                    <div id="add-text-input-container" style="display:none;">
-                        <input type="text" id="text-content" placeholder="Enter text">
-                        <select id="text-rotation">
-                            <option value="0">0°</option>
-                            <option value="90">+90°</option>
-                            <option value="-90">-90°</option>
-                        </select>
-                        <select id="text-font-size">
-                            <option value="6">6px</option>
-                            <option value="8">8px</option>
-                            <option value="10">10px</option>
-                            <option value="12">12px</option>
-                            <option value="14">14px</option>
-                            <option value="16">16px</option>
-                            <option value="18">18px</option>
-                            <option value="20">20px</option>
-                            <option value="22">22px</option>
-                            <option value="24">24px</option>
-                            <option value="26">26px</option>
-                            <option value="28">28px</option>
-                            <option value="30">30px</option>
-                            <option value="32">32px</option>
-                        </select>
-                        <button id="submit-text">Submit</button>
-                    </div>
-                </fieldset>
-                <fieldset class="field-group">
-                    <legend>Ζουμ</legend>
-                    <button id="zoom-in" class="button zoom_in" type="button">+</button>
-                    <button id="zoom-out" class="button zoom_out" type="button">-</button>
-                </fieldset>
+                </div>
+                <div>
+                    <button id="mode-switch" type="button" class="button">Απλή</button>
+                    <input type="radio" name="mode" value="Page" id="mode_page" required checked style="display: none;">
+                    <input type="radio" name="mode" value="Numbering" id="mode_numbering" required style="display: none;">
+                </div>
+                <div>
+                    <button id="add-box" class="button add-box" type="button"><img src="{{ url_for('static', filename='icons/add-box-icon.png') }}"  style="cursor:pointer;" title="Προσθήκη Κουτιού" alt="add box" class="radio-icon"></button>
+                </div>
+                <div>
+                    <button id="set-numbering-position" class="button add-numbering"><img src="{{ url_for('static', filename='icons/add-number-icon.png') }}" style"curson:pointer;" title="Θέση αρίθμησης" alt="set number position" class="radio-icon"></button>
+                </div>
+                <div>
+                    <button id="add-text" class="button add-text"><img src="{{ url_for('static', filename='icons/add-text-icon.png') }}" style"curson:pointer;" title="Προσθήκη κειμένου" alt="add text" class="radio-icon"></button>
+                </div>
+                <div>
+                    <button id="zoom-in" class="button zoom" type="button">
+                        <img  src="{{ url_for('static', filename='icons/zoom-in-icon.png') }}"  style="cursor:pointer;" title="Μεγένθυνση" alt="zoom in">
+                    </button>
+                </div>
+                <div>
+                    <button id="zoom-out" class="button zoom" type="button">
+                        <img src="{{ url_for('static', filename='icons/zoom-out-icon.png') }}"  style="cursor:pointer;" title="Σμίκρυνση" alt="zoom out">
+                    </button>
+                </div>
             </div>
-            <div class="grid-container basic-settings">
-                <fieldset class="field-group">
-                    <legend>Χαρτί / Εικόνα</legend>
-                    <label for="paper_size">
-                        <img class="logo-img" src="{{ url_for('static', filename='icons/paper-type.png') }}" alt="Fix Store">
-                        <span>Χαρτί</span>
-                        <select name="paper_size" id="paper_size" required>
-                            <option value="255x235">255x235</option>
-                            <option value="255x210">255x210</option>
-                            <option value="487x330">487x330</option>
-                            <option value="350x330">350x330</option>
-                            <option value="A3">A3</option>
-                            <option value="A4">A4</option>
-                            <option value="Custom">Προσαρμογή</option>
-                        </select>
-                    </label>
-                    <label for="img_size">
-                        <img class="logo-img" src="{{ url_for('static', filename='icons/image-size.png') }}" alt="Fix Store">
-                        <span>Εικόνα</span>
-                        <select name="img_size" id="img_size" required>
-                            <option value="Sticker">60x90</option>
-                            <option value="Card">85x55</option>
-                            <option value="Square">55x55</option>
-                            <option value="Custom">Προσαρμογή</option>
-                        </select>
-                    </label>
-                </fieldset>
-            </div>
-            <div class="grid-container submit-container">
-                <button type="submit" class="button run">Δημιουργία</button>
-            </div>
-            <div class="grid-container preview-window">
+            <div class="grid-container image-preview">
                 <div id="image-preview">
                     <canvas id="image-canvas"></canvas>
                 </div>
             </div>
-
             <div class="grid-container pdf-preview">
-                {% if merged_pdf_path %}
-                <iframe src="{{ url_for('download', filename=merged_pdf_path.split('/')[-1]) }}" frameborder="0"></iframe>
-                {% endif %}
+                <div>
+                    {% if merged_pdf_path %}
+                    <iframe src="{{ url_for('download', filename=merged_pdf_path.split('/')[-1]) }}" frameborder="0"></iframe>
+                    {% endif %}
+                </div>
             </div>
-            <div class="grid-container properties">
-                <fieldset class="field-group" id="custom_paper_settings" style="display: none;">
-                    <legend>Διαστάσεις σελίδας</legend>
-                    <label for="custom_paper_width">Πλάτος
-                        <input type="number" id="custom_paper_width" name="custom_paper_width" style="display: none;">
-                    </label>
-                    <label for="custom_paper_height">Ύψος
-                        <input type="number" id="custom_paper_height" name="custom_paper_height" style="display: none;">
-                    </label>
-                </fieldset>
-                <fieldset class="field-group" id="custom_image_settings" style="display: none;">
-                    <legend>Διαστάσεις εικόνας</legend>
-                    <label for="custom_image_width">Πλάτος
-                        <input type="number" id="custom_image_width"  name="custom_image_width" style="display: none;">
-                    </label>
-                    <label for="custom_image_height">Ύψος
-                        <input type="number" id="custom_image_height" name="custom_image_height" style="display: none;">
-                    </label>
-                </fieldset>
-                <fieldset class="field-group">
-                    <legend>Προσαρμογή κενού</legend>
-                    <label for="gap">Κενό ανάμεσα
-                        <input type="number" id="gap" name="gap" value="0" required>
-                    </label>
-                </fieldset>
-                <fieldset class="field-group field-group-numbering" style="display: none;">
-                    <legend>Επιλογές αρίθμησης</legend>
-                    <label for="start_number">Αρχικός
-                        <input type="number" id="start_number" name="start_number">
-                    </label>
-                    <label for="end_number">Τελικός
-                        <input type="number" id="end_number" name="end_number">
-                    </label>
-                    <legend>Επιλογές γραμματοσειράς</legend>
-                    <label for="font_size">Μέγεθος
-                        <input type="number" id="font_size" name="font_size" value="8">
-                    </label>
-                    <label for="reverse_order">
-                        <input type="checkbox" id="reverse_order" name="reverse_order"> Αντιστροφή σειράς αρίθμησης
-                    </label>
-                </fieldset>
+            <div class="grid-container submit-container">
+                <button type="submit" class="button run"><img src="{{ url_for('static', filename='icons/pdf-icon.png') }}" style"curson:pointer;" title="Θέση αρίθμησης" alt="Submit" class="radio-icon"</button>
             </div>
         </div>
     </form>
-
-    <div id="context-menu" class="context-menu box">
-        <ul>
-            <li id="delete-box">Διαγραφή</li>
-            <li id="cancel-menu">Άκυρο</li>
-        </ul>
-    </div>
-
     <script type="module" src="{{ url_for('static', filename='js/main.js') }}"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {

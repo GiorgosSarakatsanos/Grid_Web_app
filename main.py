@@ -14,15 +14,23 @@ def draw_boxes(image, boxes):
         draw.rectangle([x, y, x + width, y + height], fill="white")
     return image
 
-def draw_text(image, texts):
+def draw_text(image, texts, form):
     draw = ImageDraw.Draw(image)
 
-    # Define the paper size in millimeters (A4 size for example: 210mm x 297mm)
-    paper_width_mm = 210
-    paper_height_mm = 297
+
 
     # Get the image dimensions in pixels
     image_width_px, image_height_px = image.size
+
+    # Define the paper size in millimeters
+    width, height = get_paper_size(form.paper_size.data)
+    if form.paper_size.data == 'Custom':
+        width = (form.custom_paper_width.data * mm or 297 * mm)
+        height = (form.custom_paper_height.data * mm or 210 * mm)
+
+
+    paper_width_mm = width
+    paper_height_mm = height
 
     # Calculate the pixel-to-millimeter ratio for both dimensions
     px_to_mm_x = paper_width_mm / image_width_px
@@ -39,7 +47,7 @@ def draw_text(image, texts):
         content = text['content']
 
         # Convert font size from millimeters to pixels
-        font_size_px = font_size_mm / px_to_mm
+        font_size_px = (font_size_mm / px_to_mm) * 2
 
         # Load a font
         try:
@@ -267,7 +275,7 @@ def index():
 
         # Draw boxes and text on the image
         image = draw_boxes(image, boxes)
-        image = draw_text(image, texts)
+        image = draw_text(image, texts, form)
 
         # Save the processed image
         output_path = os.path.join(app.config['UPLOAD_FOLDER'],'processed.png')

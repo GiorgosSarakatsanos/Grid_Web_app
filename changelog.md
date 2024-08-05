@@ -126,3 +126,4 @@ All notable changes to this project will be documented in this file.
     - The printed texts is not aligned with the selected position in canvas
     - The producing speed is a litle bit slow when i combined all in a file
     - Now show the file name next to upload button
+    - Adjusted the font size to be like that the user see in canvas but not real measured on physical paper
