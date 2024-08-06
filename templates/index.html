@@ -13,14 +13,14 @@
         <div class="grid-wrapper">
             <div class="grid-container home">
                 <header>
-                    <div class="logo-container">
-                        <a href="/"><img class="logo-img" src="{{ url_for('static', filename='icons/home-icon.png') }}" alt="Fix Store">
-                        <span>Plexi</span></a>
+                    <div>
+                        <button onclick="location.href='/'" type="button" class="button home-button">
+                            <img class="logo-img" src="{{ url_for('static', filename='icons/home-icon.png') }}" alt="Fix Store">Plexi</button>
                     </div>
-                    <div class="upload-container">
+                    <div>
                         <button class="button upload" type="button" onclick="document.getElementById('image').click()">
-                            <img src="{{ url_for('static', filename='icons/upload-icon.png') }}" alt="Upload" class="radio-icon">
-                            <input type="file" id="image" name="image" accept="image/*" required style="display: none;">
+                            <img src="{{ url_for('static', filename='icons/upload-icon.png') }}" alt="Upload" class="critical-icon">
+                            <input type="file" id="image" name="image" accept="image/*" required style="display: none;"><span>Ανέβασμα</span>
                         </button>
                     </div>
                     <div class="image-name-container">
@@ -41,7 +41,6 @@
                             <fieldset>
                                 <legend>Χαρτί</legend>
                                 <div class="paper-size">
-                                    <label for="paper_size">
                                         <select name="paper_size" id="paper_size" required>
                                             <option value="255x235">255x235</option>
                                             <option value="255x210">255x210</option>
@@ -51,14 +50,10 @@
                                             <option value="A4">A4</option>
                                             <option value="Custom">Προσαρμογή</option>
                                         </select>
-                                    </label>
                                 </div>
-                                <div class="custom-paper-size" id="custom_paper_settings" style="display: none;">
-                                    <label for="custom_paper_width">Πλάτος
-                                        <input type="number" id="custom_paper_width" name="custom_paper_width" style="display: none;">
-                                    </label>
-                                    <label for="custom_paper_height">Ύψος
-                                        <input type="number" id="custom_paper_height" name="custom_paper_height" style="display: none;">
+                                <div class="side-by-side-group" id="custom_paper_settings" style="display: none;">
+                                        <input class="side-by-side" type="number" id="custom_paper_width" name="custom_paper_width" placeholder="Πλάτος">
+                                        <input class="side-by-side" type="number" id="custom_paper_height" name="custom_paper_height" placeholder="Ύψος">
                                     </label>
                             </fieldset>
                         </div>
@@ -66,30 +61,22 @@
                             <fieldset>
                                 <legend>Εικόνα</legend>
                             <div class="image-size">
-                                    <label for="img_size">
-                                        <select name="img_size" id="img_size" required>
+                                        <select class= name="img_size" id="img_size" required>
                                             <option value="Sticker">60x90</option>
                                             <option value="Card">85x55</option>
                                             <option value="Square">55x55</option>
                                             <option value="Custom">Προσαρμογή</option>
                                         </select>
-                                    </label>
                             </div>
-                            <div class="custom-image-size" id="custom_image_settings" style="display: none;">
-                                    <label for="custom_image_width">Πλάτος
-                                        <input type="number" id="custom_image_width"  name="custom_image_width" style="display: none;">
-                                    </label>
-                                    <label for="custom_image_height">Ύψος
-                                        <input type="number" id="custom_image_height" name="custom_image_height" style="display: none;">
-                                    </label>
+                            <div class="side-by-side-group" id="custom_image_settings" style="display: none;">
+                                <input class="side-by-side" type="number" id="custom_image_width"  name="custom_image_width" placeholder="Πλάτος">
+                                <input class="side-by-side" type="number" id="custom_image_height" name="custom_image_height" placeholder="Ύψος">
                             </div>
-                            </fieldset>
                         </div>
                         <div>
                             <fieldset>
                                 <legend>Προσαρμογή κενού</legend>
                                     <input type="number" id="gap" name="gap" value="0" required>
-                                </label>
                             </fieldset>
                         </div>
                     </div>
@@ -117,33 +104,34 @@
                 <div id="add-text-input-container" style="display:none;">
                     <fieldset>
                         <legend>Ρυθμίσεις κειμένου</legend>
+                            <div>
+                                <label for="text-content">Εισάγετε κείμενο
+                                    <input type="text" id="text-content" name="text-content" class="text-content">
+                                </label>
+                            </div>
                         <div>
-                            <input type="text" id="text-content" placeholder="Κείμενο">
-                        </div>
-                        <div>
-                            <select id="text-rotation">
-                                <option value="0">0°</option>
-                                <option value="90">+90°</option>
-                                <option value="-90">-90°</option>
-                            </select>
-                        </div>
-                        <div>
-                            <select id="text-font-size">
-                                <option value="6">6px</option>
-                                <option value="8">8px</option>
-                                <option value="10">10px</option>
-                                <option value="12">12px</option>
-                                <option value="14">14px</option>
-                                <option value="16">16px</option>
-                                <option value="18">18px</option>
-                                <option value="20">20px</option>
-                                <option value="22">22px</option>
-                                <option value="24">24px</option>
-                                <option value="26">26px</option>
-                                <option value="28">28px</option>
-                                <option value="30">30px</option>
-                                <option value="32">32px</option>
-                            </select>
+                            <legend>Γωνία και μέγεθος κειμένου</legend>
+                            <select id="text-rotation" name="text-rotation" class="side-by-side" type="text">
+                                    <option value="0">0°</option>
+                                    <option value="90">+90°</option>
+                                    <option value="-90">-90°</option>
+                                </select>
+                                <select id="text-font-size" name="text-font-size" class="side-by-side" type="text">
+                                    <option value="6">6px</option>
+                                    <option value="8">8px</option>
+                                    <option value="10">10px</option>
+                                    <option value="12">12px</option>
+                                    <option value="14">14px</option>
+                                    <option value="16">16px</option>
+                                    <option value="18">18px</option>
+                                    <option value="20">20px</option>
+                                    <option value="22">22px</option>
+                                    <option value="24">24px</option>
+                                    <option value="26">26px</option>
+                                    <option value="28">28px</option>
+                                    <option value="30">30px</option>
+                                    <option value="32">32px</option>
+                                </select>
                         </div>
                         <div>
                             <button id="submit-text" class="button " >Υποβολή</button>
@@ -156,27 +144,27 @@
                     <input type="hidden" name="box_data" id="box_data">
                     <input type="hidden" name="text_data" id="text_data">
                 </div>
-                <div>
-                    <button id="mode-switch" type="button" class="button">Απλή</button>
+                <div style="display: none;">
+                    <button id="mode-switch" type="button" class="button tool"><img src="{{ url_for('static', filename='icons/one-page-icon.png') }}"  style="cursor:pointer;" title="Λειτουργία" alt="add box" class="tool-icon"></button>
                     <input type="radio" name="mode" value="Page" id="mode_page" required checked style="display: none;">
                     <input type="radio" name="mode" value="Numbering" id="mode_numbering" required style="display: none;">
                 </div>
                 <div>
-                    <button id="add-box" class="button add-box" type="button"><img src="{{ url_for('static', filename='icons/add-box-icon.png') }}"  style="cursor:pointer;" title="Προσθήκη Κουτιού" alt="add box" class="radio-icon"></button>
+                    <button id="add-box" class="button tool" type="button"><img src="{{ url_for('static', filename='icons/add-box-icon.png') }}"  style="cursor:pointer;" title="Προσθήκη Κουτιού" alt="add box" class="tool-icon"></button>
                 </div>
                 <div>
-                    <button id="set-numbering-position" class="button add-numbering"><img src="{{ url_for('static', filename='icons/add-number-icon.png') }}" style"curson:pointer;" title="Θέση αρίθμησης" alt="set number position" class="radio-icon"></button>
+                    <button id="set-numbering-position" class="button tool"><img src="{{ url_for('static', filename='icons/add-number-icon.png') }}" style"curson:pointer;" title="Θέση αρίθμησης" alt="set number position" class="tool-icon"></button>
                 </div>
                 <div>
-                    <button id="add-text" class="button add-text"><img src="{{ url_for('static', filename='icons/add-text-icon.png') }}" style"curson:pointer;" title="Προσθήκη κειμένου" alt="add text" class="radio-icon"></button>
+                    <button id="add-text" class="button tool"><img src="{{ url_for('static', filename='icons/add-text-icon.png') }}" style"curson:pointer;" title="Προσθήκη κειμένου" alt="add text" ></button>
                 </div>
                 <div>
-                    <button id="zoom-in" class="button zoom" type="button">
+                    <button id="zoom-in" class="button tool" type="button">
                         <img  src="{{ url_for('static', filename='icons/zoom-in-icon.png') }}"  style="cursor:pointer;" title="Μεγένθυνση" alt="zoom in">
                     </button>
                 </div>
                 <div>
-                    <button id="zoom-out" class="button zoom" type="button">
+                    <button id="zoom-out" class="button tool" type="button">
                         <img src="{{ url_for('static', filename='icons/zoom-out-icon.png') }}"  style="cursor:pointer;" title="Σμίκρυνση" alt="zoom out">
                     </button>
                 </div>
@@ -194,7 +182,7 @@
                 </div>
             </div>
             <div class="grid-container submit-container">
-                <button type="submit" class="button run"><img src="{{ url_for('static', filename='icons/pdf-icon.png') }}" style"curson:pointer;" title="Θέση αρίθμησης" alt="Submit" class="radio-icon"</button>
+                <button type="submit" class="button run"><img src="{{ url_for('static', filename='icons/pdf-icon.png') }}" style"curson:pointer;" title="Θέση αρίθμησης" alt="Submit" class="critical-icon"><span>Εκτέλεση</span></button>
             </div>
         </div>
     </form>

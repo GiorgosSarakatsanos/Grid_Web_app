@@ -11,6 +11,7 @@ import { toggleFields } from './ui-controls.js';
 import { drawImageWithBoxes } from './canvas-operations.js';
 import { populateBoxFields } from './box-handlers.js';
 import './form-submission.js';
+
 let canvasEventsSetup = false;
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -38,4 +39,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initial call to set correct visibility
     toggleFields();
+
+    // Expose toggleFields to the global scope for debugging
+    window.toggleFields = toggleFields;
+
+    // Add event listener to paper_size dropdown
+    const paperSizeDropdown = document.getElementById('paper_size');
+    paperSizeDropdown.addEventListener('change', () => {
+        toggleFields();
+    });
+
+    // Add event listener to img_size dropdown (if required similarly)
+    const imgSizeDropdown = document.getElementById('img_size');
+    imgSizeDropdown.addEventListener('change', () => {
+        toggleFields();
+    });
 });

@@ -1,9 +1,12 @@
-// ui-controls.js
 export function toggleFields() {
     const mode = document.querySelector('input[name="mode"]:checked').value;
     const paperSize = document.getElementById('paper_size').value;
     const imgSize = document.getElementById('img_size').value;
     const numberingFields = document.querySelector('.field-group-numbering');
+
+    console.log("Mode:", mode);
+    console.log("Paper Size:", paperSize);
+    console.log("Image Size:", imgSize);
 
     numberingFields.style.display = mode === 'Numbering' ? 'block' : 'none';
 
